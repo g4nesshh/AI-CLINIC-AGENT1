@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Clinic Appointments</title>
+</head>
+
+<body>
+
+<h2>Appointments</h2>
+
+<div id="appointments"></div>
+
+<script>
+
+async function loadAppointments(){
+
+const res = await fetch("/appointments")
+const data = await res.json()
+
+let html = ""
+
+data.forEach(a=>{
+html += `
+<p>
+<b>Name:</b> ${a.name} <br>
+<b>Phone:</b> ${a.phone} <br>
+<b>Date:</b> ${a.date} <br>
+<b>Service:</b> ${a.service}
+</p>
+<hr>
+`
+})
+
+document.getElementById("appointments").innerHTML = html
+
+}
+
+loadAppointments()
+
+</script>
+
+</body>
+
+</html>

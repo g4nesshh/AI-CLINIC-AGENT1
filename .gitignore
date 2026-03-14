@@ -1,0 +1,5 @@
+node_modules/
+appointments.json
+appointments.db
+appointment.json
+.env
