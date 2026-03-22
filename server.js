@@ -251,7 +251,7 @@ Return ONLY this exact JSON (no markdown, no explanation):
 
 User message: "${message}"`
 
-  const raw = await callAI(MODELS.extraction, prompt)
+  const raw = await callAI("llama3-8b-8192", prompt)
 
   const match = raw.match(/\{[\s\S]*?\}/)
   if (!match) return {}
@@ -1579,7 +1579,7 @@ app.post("/chat", async (req, res) => {
     history.slice(-6).map(h => `${h.role==="user"?"Patient":"Receptionist"}: ${h.content}`).join("\n") +
     `\nPatient: ${message}\nReceptionist:`
 
-  const aiReply    = await callAI(MODELS.conversation, systemPrompt)
+  const aiReply    = await callAI("llama3-8b-8192", systemPrompt)
   const finalReply = aiReply || "I'm here to help! You can ask about our services or say 'book appointment' to schedule a visit."
 
   history.push({ role: "assistant", content: finalReply })
