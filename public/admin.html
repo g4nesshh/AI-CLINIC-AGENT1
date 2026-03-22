@@ -17,29 +17,21 @@
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 .layout{display:flex;min-height:100vh}
-
-/* SIDEBAR */
 .sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:28px 16px;display:flex;flex-direction:column;gap:4px;position:fixed;top:0;left:0;bottom:0}
 .logo{font-size:15px;font-weight:600;padding:8px 12px 20px;letter-spacing:-0.3px;border-bottom:1px solid var(--border);margin-bottom:8px}
 .logo span{display:inline-block;width:8px;height:8px;background:var(--accent2);border-radius:50%;margin-right:8px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .nav-item{padding:9px 12px;border-radius:8px;font-size:13.5px;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
 .nav-item:hover,.nav-item.active{background:var(--border);color:var(--text)}
-
-/* MAIN */
 .main{margin-left:220px;flex:1;padding:32px 36px}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
 .topbar h1{font-size:20px;font-weight:600;letter-spacing:-0.4px}
 .topbar-right{display:flex;align-items:center;gap:12px}
-
-/* BUTTONS */
 .btn{padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all .15s}
 .btn-primary{background:var(--accent);color:white}.btn-primary:hover{background:#2563eb}
 .btn-ghost{background:var(--border);color:var(--text)}.btn-ghost:hover{background:#2e3650}
 .btn-danger{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid var(--danger)}.btn-danger:hover{background:rgba(239,68,68,.2)}
 .btn-sm{padding:5px 12px;font-size:12px}
-
-/* STATS */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;opacity:0;transform:translateY(12px);animation:fadeUp .4s forwards}
 .stat-card:nth-child(1){animation-delay:.05s}.stat-card:nth-child(2){animation-delay:.1s}.stat-card:nth-child(3){animation-delay:.15s}.stat-card:nth-child(4){animation-delay:.2s}
@@ -47,25 +39,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
 .stat-value{font-size:28px;font-weight:600;letter-spacing:-1px}
 .blue{color:var(--accent)}.green{color:var(--accent2)}.warn{color:var(--warn)}.red{color:var(--danger)}
-
-/* SECTION */
 .section{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;opacity:0;animation:fadeUp .4s .25s forwards;margin-bottom:24px}
 .section-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
 .section-header h2{font-size:15px;font-weight:600}
 .section-controls{display:flex;gap:10px;align-items:center}
-
-/* FILTER TABS */
 .filter-tabs{display:flex;gap:6px;padding:12px 22px;border-bottom:1px solid var(--border)}
 .filter-tab{padding:5px 14px;border-radius:6px;font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;color:var(--muted)}
 .filter-tab:hover{color:var(--text)}
 .filter-tab.active{background:var(--border);color:var(--text)}
-
-/* SEARCH */
 .search-input{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:220px;transition:border-color .15s}
 .search-input:focus{border-color:var(--accent)}
 .search-input::placeholder{color:var(--muted)}
-
-/* TABLE */
 table{width:100%;border-collapse:collapse}
 thead th{padding:11px 22px;text-align:left;font-size:11.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
 tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
@@ -75,8 +59,6 @@ tbody td{padding:13px 22px;font-size:13.5px}
 .td-name{font-weight:500}
 .td-mono{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--muted)}
 .td-doctor{font-size:12.5px;color:var(--accent)}
-
-/* BADGE */
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:500}
 .badge-today{background:rgba(59,130,246,.15);color:#93c5fd}
 .badge-upcoming{background:rgba(16,185,129,.12);color:#6ee7b7}
@@ -84,21 +66,15 @@ tbody td{padding:13px 22px;font-size:13.5px}
 .badge-urgent{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3);animation:urgentPulse 2s infinite}
 @keyframes urgentPulse{0%,100%{opacity:1}50%{opacity:.6}}
 .appt-card.urgent{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.04)}
-
-/* ACTION BUTTONS */
 .action-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s;margin-right:4px}
 .action-btn:hover{background:var(--border);color:var(--text)}
 .action-btn.del:hover{background:rgba(239,68,68,.1);border-color:var(--danger);color:var(--danger)}
-
-/* DOCTOR CARDS */
 .doctor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding:20px 22px}
 .doctor-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px}
 .doctor-card-name{font-size:14px;font-weight:600;margin-bottom:4px}
 .doctor-card-spec{font-size:12px;color:var(--accent);margin-bottom:10px}
 .doctor-card-days{font-size:11.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px}
 .doctor-card-actions{display:flex;gap:8px}
-
-/* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center}
 .modal-bg.show{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:420px;max-width:90vw}
@@ -108,21 +84,13 @@ tbody td{padding:13px 22px;font-size:13.5px}
 .form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;transition:border-color .15s}
 .form-input:focus{border-color:var(--accent)}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
-
-/* EMPTY / LOADING */
 .empty{text-align:center;padding:56px 0;color:var(--muted);font-size:14px}
 .loading{text-align:center;padding:48px;color:var(--muted);font-size:13px}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13.5px;display:none;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:999}
 .toast.show{display:flex}
 .toast.success{border-left:3px solid var(--accent2)}
 .toast.error{border-left:3px solid var(--danger)}
-
-/* PAGE VISIBILITY */
 .page{display:none}.page.active{display:block}
-
-/* TODAY VIEW */
 .today-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:20px 22px}
 .appt-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;transition:border-color .2s}
 .appt-card:hover{border-color:var(--accent)}
@@ -154,7 +122,6 @@ tbody td{padding:13px 22px;font-size:13.5px}
 <body>
 <div class="layout">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="logo"><span></span>ClinicAI</div>
     <div class="nav-item active" onclick="showPage('appointments',this)">📋 Appointments</div>
@@ -168,7 +135,7 @@ tbody td{padding:13px 22px;font-size:13.5px}
 
   <main class="main">
 
-    <!-- ── APPOINTMENTS PAGE ── -->
+    <!-- APPOINTMENTS -->
     <div class="page active" id="page-appointments">
       <div class="topbar">
         <div>
@@ -180,14 +147,12 @@ tbody td{padding:13px 22px;font-size:13.5px}
           <button class="btn btn-primary" onclick="exportCSV()">↓ Export CSV</button>
         </div>
       </div>
-
       <div class="stats">
         <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value blue" id="stat-total">—</div></div>
         <div class="stat-card"><div class="stat-label">Today</div><div class="stat-value green" id="stat-today">—</div></div>
         <div class="stat-card"><div class="stat-label">Upcoming</div><div class="stat-value warn" id="stat-upcoming">—</div></div>
         <div class="stat-card"><div class="stat-label">Past</div><div class="stat-value" id="stat-past" style="color:var(--muted)">—</div></div>
       </div>
-
       <div class="section">
         <div class="section-header">
           <h2>All Appointments</h2>
@@ -208,7 +173,7 @@ tbody td{padding:13px 22px;font-size:13.5px}
       </div>
     </div>
 
-    <!-- ── TODAY PAGE ── -->
+    <!-- TODAY -->
     <div class="page" id="page-today">
       <div class="topbar">
         <div>
@@ -226,7 +191,7 @@ tbody td{padding:13px 22px;font-size:13.5px}
       </div>
     </div>
 
-    <!-- ── WAITLIST PAGE ── -->
+    <!-- WAITLIST -->
     <div class="page" id="page-waitlist">
       <div class="topbar">
         <div>
@@ -246,7 +211,7 @@ tbody td{padding:13px 22px;font-size:13.5px}
       </div>
     </div>
 
-    <!-- ── SERVICES PAGE ── -->
+    <!-- SERVICES -->
     <div class="page" id="page-services">
       <div class="topbar">
         <div>
@@ -267,7 +232,7 @@ tbody td{padding:13px 22px;font-size:13.5px}
       </div>
     </div>
 
-    <!-- ── SETTINGS PAGE ── -->
+    <!-- SETTINGS -->
     <div class="page" id="page-settings">
       <div class="topbar">
         <div>
@@ -283,34 +248,14 @@ tbody td{padding:13px 22px;font-size:13.5px}
             Configure SMTP to send 24-hour and 1-hour appointment reminders to patients.
             For Gmail, use an <strong style="color:var(--text)">App Password</strong> (not your regular password).
           </div>
-
-          <div class="form-group">
-            <label>Clinic Name</label>
-            <input class="form-input" id="cfg-clinic-name" placeholder="ClinicAI Dental">
-          </div>
-          <div class="form-group">
-            <label>Clinic Email (sender address)</label>
-            <input class="form-input" id="cfg-clinic-email" placeholder="clinic@example.com" type="email">
-          </div>
+          <div class="form-group"><label>Clinic Name</label><input class="form-input" id="cfg-clinic-name" placeholder="ClinicAI Dental"></div>
+          <div class="form-group"><label>Clinic Email (sender address)</label><input class="form-input" id="cfg-clinic-email" placeholder="clinic@example.com" type="email"></div>
           <div style="display:grid;grid-template-columns:1fr 120px;gap:12px">
-            <div class="form-group">
-              <label>SMTP Host</label>
-              <input class="form-input" id="cfg-smtp-host" placeholder="smtp.gmail.com">
-            </div>
-            <div class="form-group">
-              <label>SMTP Port</label>
-              <input class="form-input" id="cfg-smtp-port" placeholder="587" type="number">
-            </div>
+            <div class="form-group"><label>SMTP Host</label><input class="form-input" id="cfg-smtp-host" placeholder="smtp.gmail.com"></div>
+            <div class="form-group"><label>SMTP Port</label><input class="form-input" id="cfg-smtp-port" placeholder="587" type="number"></div>
           </div>
-          <div class="form-group">
-            <label>SMTP Username (your email)</label>
-            <input class="form-input" id="cfg-smtp-user" placeholder="you@gmail.com" type="email">
-          </div>
-          <div class="form-group">
-            <label>SMTP Password / App Password</label>
-            <input class="form-input" id="cfg-smtp-pass" placeholder="App password" type="password">
-          </div>
-
+          <div class="form-group"><label>SMTP Username (your email)</label><input class="form-input" id="cfg-smtp-user" placeholder="you@gmail.com" type="email"></div>
+          <div class="form-group"><label>SMTP Password / App Password</label><input class="form-input" id="cfg-smtp-pass" placeholder="App password" type="password"></div>
           <div style="display:flex;gap:10px;margin-top:8px">
             <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
             <button class="btn btn-ghost" onclick="testEmail()">Send Test Email</button>
@@ -322,56 +267,22 @@ tbody td{padding:13px 22px;font-size:13.5px}
         <div class="section-header"><h2>Clinic Hours</h2></div>
         <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-            <div class="form-group">
-              <label>Open Hour (24h)</label>
-              <input class="form-input" id="cfg-open-hour" placeholder="10" type="number" min="0" max="23">
-            </div>
-            <div class="form-group">
-              <label>Close Hour (24h)</label>
-              <input class="form-input" id="cfg-close-hour" placeholder="17" type="number" min="0" max="23">
-            </div>
-            <div class="form-group">
-              <label>Slot Duration (min)</label>
-              <input class="form-input" id="cfg-slot-dur" placeholder="30" type="number" min="15" max="120">
-            </div>
+            <div class="form-group"><label>Open Hour (24h)</label><input class="form-input" id="cfg-open-hour" placeholder="10" type="number" min="0" max="23"></div>
+            <div class="form-group"><label>Close Hour (24h)</label><input class="form-input" id="cfg-close-hour" placeholder="17" type="number" min="0" max="23"></div>
+            <div class="form-group"><label>Slot Duration (min)</label><input class="form-input" id="cfg-slot-dur" placeholder="30" type="number" min="15" max="120"></div>
           </div>
-          <div class="form-group">
-            <label>Open Days (comma separated)</label>
-            <input class="form-input" id="cfg-open-days" placeholder="Mon,Tue,Wed,Thu,Fri,Sat">
-          </div>
+          <div class="form-group"><label>Open Days (comma separated)</label><input class="form-input" id="cfg-open-days" placeholder="Mon,Tue,Wed,Thu,Fri,Sat"></div>
           <button class="btn btn-primary" onclick="saveHours()">Save Hours</button>
         </div>
       </div>
-      
-      <div class="section" style="max-width:600px;margin-top:20px">
-        <div class="section-header"><h2>SMS OTP Verification</h2></div>
-        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
-          <div style="font-size:13px;color:var(--muted);line-height:1.8;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 16px">
-            Prevents fake bookings. Enter your SMS provider key below.<br>
-            <strong style="color:var(--text)">MSG91</strong> (India, free trial): <code style="color:#93c5fd;font-size:12px">msg91:AUTH_KEY:TEMPLATE_ID</code><br>
-            <strong style="color:var(--text)">Twilio</strong> (global, free trial): <code style="color:#93c5fd;font-size:12px">twilio:SID:TOKEN:+FROM</code><br>
-            Leave blank → OTP printed to server console only (dev/test mode).
-          </div>
-          <div class="form-group">
-            <label>SMS API Key</label>
-            <input class="form-input" id="cfg-sms-key" placeholder="e.g. fast2sms:AbCdEfGhIjKlMnOpQrStUv">
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <input type="checkbox" id="cfg-otp-enabled" style="width:16px;height:16px;cursor:pointer">
-            <label for="cfg-otp-enabled" style="font-size:13.5px;cursor:pointer">Enable OTP verification for bookings</label>
-          </div>
-          <button class="btn btn-primary" onclick="saveSettings()">Save</button>
-        </div>
-      </div>
-
     </div>
 
-    <!-- ── HOLIDAYS PAGE ── -->
+    <!-- HOLIDAYS -->
     <div class="page" id="page-holidays">
       <div class="topbar">
         <div>
           <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Clinic Management</div>
-          <h1>Holidays & Closures</h1>
+          <h1>Holidays &amp; Closures</h1>
         </div>
         <div class="topbar-right">
           <button class="btn btn-ghost" onclick="loadHolidays()">↻ Refresh</button>
@@ -387,7 +298,7 @@ tbody td{padding:13px 22px;font-size:13.5px}
       </div>
     </div>
 
-    <!-- ── DOCTORS PAGE ── -->
+    <!-- DOCTORS -->
     <div class="page" id="page-doctors">
       <div class="topbar">
         <div>
@@ -399,7 +310,6 @@ tbody td{padding:13px 22px;font-size:13.5px}
           <button class="btn btn-primary" onclick="openAddDoctor()">+ Add Doctor</button>
         </div>
       </div>
-
       <div class="section">
         <div class="section-header"><h2>Active Doctors</h2></div>
         <div class="doctor-grid" id="doctor-grid"><div class="loading">Loading…</div></div>
@@ -409,18 +319,12 @@ tbody td{padding:13px 22px;font-size:13.5px}
   </main>
 </div>
 
-<!-- ADD SERVICE MODAL -->
+<!-- SERVICE MODAL -->
 <div class="modal-bg" id="service-modal">
   <div class="modal">
     <h3 id="svc-modal-title">Add Service</h3>
-    <div class="form-group">
-      <label>Service Name</label>
-      <input class="form-input" id="svc-name" placeholder="e.g. Root Canal">
-    </div>
-    <div class="form-group">
-      <label>Duration (minutes)</label>
-      <input class="form-input" id="svc-duration" type="number" placeholder="30" min="15" max="240">
-    </div>
+    <div class="form-group"><label>Service Name</label><input class="form-input" id="svc-name" placeholder="e.g. Root Canal"></div>
+    <div class="form-group"><label>Duration (minutes)</label><input class="form-input" id="svc-duration" type="number" placeholder="30" min="15" max="240"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeSvcModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveService()">Save</button>
@@ -428,18 +332,12 @@ tbody td{padding:13px 22px;font-size:13.5px}
   </div>
 </div>
 
-<!-- ADD HOLIDAY MODAL -->
+<!-- HOLIDAY MODAL -->
 <div class="modal-bg" id="holiday-modal">
   <div class="modal">
     <h3>Add Holiday / Closure</h3>
-    <div class="form-group">
-      <label>Date</label>
-      <input type="date" class="form-input" id="hol-date">
-    </div>
-    <div class="form-group">
-      <label>Reason</label>
-      <input class="form-input" id="hol-reason" placeholder="e.g. Diwali, Doctor's Leave">
-    </div>
+    <div class="form-group"><label>Date</label><input type="date" class="form-input" id="hol-date"></div>
+    <div class="form-group"><label>Reason</label><input class="form-input" id="hol-reason" placeholder="e.g. Diwali, Doctor's Leave"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeHolidayModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveHoliday()">Add</button>
@@ -447,22 +345,13 @@ tbody td{padding:13px 22px;font-size:13.5px}
   </div>
 </div>
 
-<!-- ADD DOCTOR MODAL -->
+<!-- DOCTOR MODAL -->
 <div class="modal-bg" id="doctor-modal">
   <div class="modal">
     <h3 id="modal-title">Add Doctor</h3>
-    <div class="form-group">
-      <label>Full Name</label>
-      <input class="form-input" id="doc-name" placeholder="e.g. Dr. Sharma">
-    </div>
-    <div class="form-group">
-      <label>Specialization</label>
-      <input class="form-input" id="doc-spec" placeholder="e.g. General Dentist">
-    </div>
-    <div class="form-group">
-      <label>Available Days (comma separated)</label>
-      <input class="form-input" id="doc-days" placeholder="Mon,Tue,Wed,Thu,Fri,Sat" value="Mon,Tue,Wed,Thu,Fri,Sat">
-    </div>
+    <div class="form-group"><label>Full Name</label><input class="form-input" id="doc-name" placeholder="e.g. Dr. Sharma"></div>
+    <div class="form-group"><label>Specialization</label><input class="form-input" id="doc-spec" placeholder="e.g. General Dentist"></div>
+    <div class="form-group"><label>Available Days (comma separated)</label><input class="form-input" id="doc-days" placeholder="Mon,Tue,Wed,Thu,Fri,Sat" value="Mon,Tue,Wed,Thu,Fri,Sat"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveDoctor()">Save</button>
@@ -473,33 +362,34 @@ tbody td{padding:13px 22px;font-size:13.5px}
 <div class="toast" id="toast"></div>
 
 <script>
+// ── CHANGE THIS to your Render backend URL after deploying ──
+const API_URL = 'https://YOUR-APP-NAME.onrender.com'
+
 let allData    = []
 let allDoctors = []
 let activeFilter = 'all'
 let editingDoctorId = null
 const today = new Date().toISOString().split('T')[0]
 
-/* ── PAGE NAVIGATION ── */
 function showPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
   document.getElementById('page-' + name).classList.add('active')
   el.classList.add('active')
   if (name === 'appointments') loadAppointments()
-  if (name === 'doctors') loadDoctors()
-  if (name === 'today') loadToday()
-  if (name === 'waitlist') loadWaitlist()
-  if (name === 'services') loadServices()
-  if (name === 'holidays') loadHolidays()
-  if (name === 'settings') loadSettings()
+  if (name === 'doctors')      loadDoctors()
+  if (name === 'today')        loadToday()
+  if (name === 'waitlist')     loadWaitlist()
+  if (name === 'services')     loadServices()
+  if (name === 'holidays')     loadHolidays()
+  if (name === 'settings')     loadSettings()
 }
 
-/* ── LOAD APPOINTMENTS ── */
 async function loadAppointments() {
   try {
     const [appts, docs] = await Promise.all([
-      fetch('/appointments').then(r => r.json()),
-      fetch('/doctors').then(r => r.json())
+      fetch(API_URL + '/appointments').then(r => r.json()),
+      fetch(API_URL + '/doctors').then(r => r.json())
     ])
     allData    = appts
     allDoctors = docs
@@ -523,7 +413,6 @@ function populateDoctorFilter(docs) {
   })
 }
 
-/* ── STATS ── */
 function updateStats() {
   document.getElementById('stat-total').textContent    = allData.length
   document.getElementById('stat-today').textContent    = allData.filter(a => a.date === today).length
@@ -531,7 +420,6 @@ function updateStats() {
   document.getElementById('stat-past').textContent     = allData.filter(a => a.date < today).length
 }
 
-/* ── FILTER ── */
 function setFilter(f, el) {
   activeFilter = f
   document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'))
@@ -539,7 +427,6 @@ function setFilter(f, el) {
   renderTable()
 }
 
-/* ── RENDER TABLE ── */
 function renderTable() {
   const query    = document.getElementById('search').value.toLowerCase()
   const doctorId = document.getElementById('doctor-filter').value
@@ -596,20 +483,18 @@ function renderTable() {
     </table>`
 }
 
-/* ── CANCEL APPOINTMENT ── */
 async function cancelAppt(id, name) {
-  if (!confirm(`Cancel appointment for ${name}?`)) return
+  if (!confirm('Cancel appointment for ' + name + '?')) return
   try {
-    const r = await fetch(`/appointments/${id}`, { method: 'DELETE' })
+    const r = await fetch(API_URL + '/appointments/' + id, { method: 'DELETE' })
     if (r.ok) {
       allData = allData.filter(a => a.id !== id)
       updateStats(); renderTable()
-      showToast('success', `Appointment for ${name} cancelled`)
+      showToast('success', 'Appointment for ' + name + ' cancelled')
     } else showToast('error', 'Could not cancel')
   } catch { showToast('error', 'Server error') }
 }
 
-/* ── EXPORT CSV ── */
 function exportCSV() {
   const headers = ['ID','Name','Phone','Doctor','Date','Time','Service','Notes']
   const rows = allData.map(a =>
@@ -619,15 +504,14 @@ function exportCSV() {
   const blob = new Blob([csv],{type:'text/csv'})
   const url  = URL.createObjectURL(blob)
   const el   = document.createElement('a')
-  el.href = url; el.download = `appointments-${today}.csv`; el.click()
+  el.href = url; el.download = 'appointments-' + today + '.csv'; el.click()
   URL.revokeObjectURL(url)
   showToast('success', 'CSV exported')
 }
 
-/* ── LOAD DOCTORS ── */
 async function loadDoctors() {
   try {
-    const docs = await fetch('/doctors').then(r => r.json())
+    const docs = await fetch(API_URL + '/doctors').then(r => r.json())
     allDoctors = docs
     renderDoctors(docs)
   } catch { document.getElementById('doctor-grid').innerHTML = '<div class="empty">Could not load doctors.</div>' }
@@ -651,7 +535,6 @@ function renderDoctors(docs) {
   `).join('')
 }
 
-/* ── DOCTOR MODAL ── */
 function openAddDoctor() {
   editingDoctorId = null
   document.getElementById('modal-title').textContent = 'Add Doctor'
@@ -670,45 +553,38 @@ function openEditDoctor(id, name, spec, days) {
   document.getElementById('doctor-modal').classList.add('show')
 }
 
-function closeModal() {
-  document.getElementById('doctor-modal').classList.remove('show')
-}
+function closeModal() { document.getElementById('doctor-modal').classList.remove('show') }
 
 async function saveDoctor() {
   const name  = document.getElementById('doc-name').value.trim()
   const spec  = document.getElementById('doc-spec').value.trim()
   const days  = document.getElementById('doc-days').value.trim()
   if (!name || !spec) { showToast('error', 'Name and specialization are required'); return }
-
   try {
-    const url    = editingDoctorId ? `/doctors/${editingDoctorId}` : '/doctors'
+    const url    = editingDoctorId ? API_URL + '/doctors/' + editingDoctorId : API_URL + '/doctors'
     const method = editingDoctorId ? 'PUT' : 'POST'
     const r = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, specialization: spec, available_days: days, active: 1 })
     })
-    if (r.ok) {
-      closeModal()
-      loadDoctors()
-      showToast('success', editingDoctorId ? 'Doctor updated' : 'Doctor added')
-    } else showToast('error', 'Could not save doctor')
+    if (r.ok) { closeModal(); loadDoctors(); showToast('success', editingDoctorId ? 'Doctor updated' : 'Doctor added') }
+    else showToast('error', 'Could not save doctor')
   } catch { showToast('error', 'Server error') }
 }
 
 async function deleteDoctor(id, name) {
-  if (!confirm(`Remove ${name} from active doctors?`)) return
+  if (!confirm('Remove ' + name + ' from active doctors?')) return
   try {
-    const r = await fetch(`/doctors/${id}`, { method: 'DELETE' })
-    if (r.ok) { loadDoctors(); showToast('success', `${name} removed`) }
+    const r = await fetch(API_URL + '/doctors/' + id, { method: 'DELETE' })
+    if (r.ok) { loadDoctors(); showToast('success', name + ' removed') }
     else showToast('error', 'Could not remove')
   } catch { showToast('error', 'Server error') }
 }
 
-/* ── UTILS ── */
 function showToast(type, msg) {
   const t = document.getElementById('toast')
-  t.textContent = msg; t.className = `toast show ${type}`
+  t.textContent = msg; t.className = 'toast show ' + type
   setTimeout(() => t.classList.remove('show'), 3000)
 }
 
@@ -722,12 +598,11 @@ function esc(str) {
   return s
 }
 
-/* ── HOLIDAYS ── */
 let allHolidays = []
 
 async function loadHolidays() {
   try {
-    allHolidays = await fetch('/holidays').then(r => r.json())
+    allHolidays = await fetch(API_URL + '/holidays').then(r => r.json())
     renderHolidays()
   } catch { document.getElementById('holiday-table').innerHTML = '<div class="empty">Could not load holidays.</div>' }
 }
@@ -750,7 +625,6 @@ function renderHolidays() {
       <td><button class="action-btn del" onclick="removeHoliday(${h.id},'${esc(h.reason)}')">Remove</button></td>
     </tr>`
   }).join('')
-
   document.getElementById('holiday-table').innerHTML = `
     <table>
       <thead><tr><th>Date</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead>
@@ -764,48 +638,39 @@ function openAddHoliday() {
   document.getElementById('holiday-modal').classList.add('show')
 }
 
-function closeHolidayModal() {
-  document.getElementById('holiday-modal').classList.remove('show')
-}
+function closeHolidayModal() { document.getElementById('holiday-modal').classList.remove('show') }
 
 async function saveHoliday() {
   const date   = document.getElementById('hol-date').value
   const reason = document.getElementById('hol-reason').value.trim() || 'Clinic Holiday'
   if (!date) { showToast('error', 'Please select a date'); return }
   try {
-    const r = await fetch('/holidays', {
+    const r = await fetch(API_URL + '/holidays', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date, reason })
     })
-    if (r.ok) {
-      closeHolidayModal()
-      loadHolidays()
-      showToast('success', `Holiday added: ${date}`)
-    } else showToast('error', 'Could not add holiday')
+    if (r.ok) { closeHolidayModal(); loadHolidays(); showToast('success', 'Holiday added: ' + date) }
+    else showToast('error', 'Could not add holiday')
   } catch { showToast('error', 'Server error') }
 }
 
 async function removeHoliday(id, reason) {
-  if (!confirm(`Remove holiday: ${reason}?`)) return
+  if (!confirm('Remove holiday: ' + reason + '?')) return
   try {
-    const r = await fetch(`/holidays/${id}`, { method: 'DELETE' })
+    const r = await fetch(API_URL + '/holidays/' + id, { method: 'DELETE' })
     if (r.ok) { loadHolidays(); showToast('success', 'Holiday removed') }
     else showToast('error', 'Could not remove')
   } catch { showToast('error', 'Server error') }
 }
 
-/* ── TODAY VIEW ── */
-const apptStatuses = {}   // apptId → status string (in-memory only)
+const apptStatuses = {}
 
 async function loadToday() {
-  const todayStr = new Date().toISOString().split('T')[0]
-  const label    = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
+  const label = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
   document.getElementById('today-date-label').textContent = label
-
   try {
-    const todayAppts = await fetch('/appointments/today').then(r => r.json())
-
+    const todayAppts = await fetch(API_URL + '/appointments/today').then(r => r.json())
     renderTodaySchedule(todayAppts)
   } catch {
     document.getElementById('today-container').innerHTML = '<div class="empty-today">Could not load appointments.</div>'
@@ -813,13 +678,12 @@ async function loadToday() {
 }
 
 function renderTodaySchedule(appts) {
-  // Summary bar
-  const total    = appts.length
-  const arrived  = Object.values(apptStatuses).filter(s => s === 'arrived').length
-  const inProg   = Object.values(apptStatuses).filter(s => s === 'in-progress').length
-  const done     = Object.values(apptStatuses).filter(s => s === 'done').length
-  const noShow   = Object.values(apptStatuses).filter(s => s === 'no-show').length
-  const urgent   = appts.filter(a => a.is_urgent === 1 || a.is_urgent === true).length
+  const total     = appts.length
+  const arrived   = Object.values(apptStatuses).filter(s => s === 'arrived').length
+  const inProg    = Object.values(apptStatuses).filter(s => s === 'in-progress').length
+  const done      = Object.values(apptStatuses).filter(s => s === 'done').length
+  const noShow    = Object.values(apptStatuses).filter(s => s === 'no-show').length
+  const urgent    = appts.filter(a => a.is_urgent === 1 || a.is_urgent === true).length
   const remaining = total - done - noShow
 
   document.getElementById('today-summary').innerHTML = `
@@ -829,7 +693,7 @@ function renderTodaySchedule(appts) {
     <div class="today-stat">In Progress <span style="color:#f59e0b">${inProg}</span></div>
     <div class="today-stat">Completed <span style="color:#10b981">${done}</span></div>
     <div class="today-stat">No-show <span style="color:#ef4444">${noShow}</span></div>
-    ${urgent > 0 ? `<div class="today-stat">🚨 Urgent <span style="color:#fca5a5">${urgent}</span></div>` : ''}
+    ${urgent > 0 ? '<div class="today-stat">🚨 Urgent <span style="color:#fca5a5">' + urgent + '</span></div>' : ''}
   `
 
   if (!appts.length) {
@@ -838,24 +702,11 @@ function renderTodaySchedule(appts) {
     return
   }
 
-  // Split into morning and afternoon
   const morning   = appts.filter(a => parseInt(a.time) < 12)
   const afternoon = appts.filter(a => parseInt(a.time) >= 12)
-
   let html = ''
-
-  if (morning.length) {
-    html += '<div class="period-header">Morning</div><div class="today-grid">'
-    html += morning.map(a => apptCard(a)).join('')
-    html += '</div>'
-  }
-
-  if (afternoon.length) {
-    html += '<div class="period-header">Afternoon / Evening</div><div class="today-grid">'
-    html += afternoon.map(a => apptCard(a)).join('')
-    html += '</div>'
-  }
-
+  if (morning.length)   { html += '<div class="period-header">Morning</div><div class="today-grid">'   + morning.map(a => apptCard(a)).join('') + '</div>' }
+  if (afternoon.length) { html += '<div class="period-header">Afternoon / Evening</div><div class="today-grid">' + afternoon.map(a => apptCard(a)).join('') + '</div>' }
   document.getElementById('today-container').innerHTML = html
 }
 
@@ -864,35 +715,31 @@ function apptCard(a) {
   const isDone   = status === 'done' || status === 'no-show'
   const isUrgent = a.is_urgent === 1 || a.is_urgent === true
   const timeDisp = to12hrStr(a.time)
-  const notes    = a.notes && a.notes !== 'None' && a.notes !== '' ? `<div class="appt-notes">${esc(a.notes)}</div>` : ''
+  const notes    = a.notes && a.notes !== 'None' && a.notes !== '' ? '<div class="appt-notes">' + esc(a.notes) + '</div>' : ''
   const urgentTag = isUrgent ? '<span class="badge badge-urgent" style="margin-bottom:8px;display:inline-flex">🚨 URGENT</span>' : ''
-
-  return `<div class="appt-card ${isDone ? 'done' : ''} ${isUrgent ? 'urgent' : ''}" id="card-${a.id}">
-    ${urgentTag}
-    <div class="appt-time">${timeDisp}</div>
-    <div class="appt-name">${esc(a.name)}</div>
-    <div class="appt-service">${esc(a.service)}${a.service_duration ? ' · ' + a.service_duration + 'min' : ''}</div>
-    <div class="appt-doctor">${esc(a.doctor_name || 'Any doctor')}</div>
-    ${notes}
-    <div class="appt-phone">${esc(a.phone)}</div>
-    <div class="status-bar">
-      ${statusBtn(a.id, 'arrived',     '✓ Arrived',     status)}
-      ${statusBtn(a.id, 'in-progress', '⏳ In Progress', status)}
-      ${statusBtn(a.id, 'done',        '✅ Done',        status)}
-      ${statusBtn(a.id, 'no-show',     '✗ No-show',     status)}
-    </div>
-  </div>`
+  return '<div class="appt-card ' + (isDone ? 'done' : '') + ' ' + (isUrgent ? 'urgent' : '') + '" id="card-' + a.id + '">' +
+    urgentTag +
+    '<div class="appt-time">' + timeDisp + '</div>' +
+    '<div class="appt-name">' + esc(a.name) + '</div>' +
+    '<div class="appt-service">' + esc(a.service) + (a.service_duration ? ' · ' + a.service_duration + 'min' : '') + '</div>' +
+    '<div class="appt-doctor">' + esc(a.doctor_name || 'Any doctor') + '</div>' +
+    notes +
+    '<div class="appt-phone">' + esc(a.phone) + '</div>' +
+    '<div class="status-bar">' +
+      statusBtn(a.id, 'arrived',     '✓ Arrived',     status) +
+      statusBtn(a.id, 'in-progress', '⏳ In Progress', status) +
+      statusBtn(a.id, 'done',        '✅ Done',        status) +
+      statusBtn(a.id, 'no-show',     '✗ No-show',     status) +
+    '</div></div>'
 }
 
 function statusBtn(id, value, label, current) {
-  const cls = value.replace('-', '-') + (current === value ? ' active-status' : '')
-  return `<button class="status-btn ${cls}" onclick="setStatus(${id},'${value}')">${label}</button>`
+  const cls = value + (current === value ? ' active-status' : '')
+  return '<button class="status-btn ' + cls + '" onclick="setStatus(' + id + ',\'' + value + '\')">' + label + '</button>'
 }
 
 function setStatus(id, status) {
-  // Toggle off if already selected
   apptStatuses[id] = apptStatuses[id] === status ? '' : status
-  // Re-render just this card
   loadToday()
 }
 
@@ -900,28 +747,24 @@ function to12hrStr(t) {
   const [h, m] = t.split(':').map(Number)
   const period = h >= 12 ? 'PM' : 'AM'
   const h12    = h % 12 || 12
-  return `${h12}:${m.toString().padStart(2,'0')} ${period}`
+  return h12 + ':' + m.toString().padStart(2,'0') + ' ' + period
 }
 
-function printSchedule() {
-  window.print()
-}
+function printSchedule() { window.print() }
 
-// ── SERVICES ──
 let allServices  = []
 let editingSvcId = null
 
-/* ── WAITLIST ── */
 async function loadWaitlist() {
   try {
-    const data = await fetch('/waitlist').then(r => r.json())
+    const data = await fetch(API_URL + '/waitlist').then(r => r.json())
     renderWaitlist(data)
   } catch { document.getElementById('waitlist-table').innerHTML = '<div class="empty">Could not load waitlist.</div>' }
 }
 
 function renderWaitlist(data) {
   if (!data.length) {
-    document.getElementById('waitlist-table').innerHTML = '<div class="empty">No one on the waitlist. &#x1F389;</div>'
+    document.getElementById('waitlist-table').innerHTML = '<div class="empty">No one on the waitlist. 🎉</div>'
     return
   }
   const today = new Date().toISOString().split('T')[0]
@@ -931,37 +774,34 @@ function renderWaitlist(data) {
     const statusBadge = isNotified ? '<span class="badge badge-today">Notified</span>'
       : isPast ? '<span class="badge badge-past">Expired</span>'
       : '<span class="badge badge-upcoming">Waiting</span>'
-    return `<tr>
-      <td style="font-size:12px;color:var(--muted)">${i+1}</td>
-      <td class="td-name">${esc(w.name)}</td>
-      <td class="td-mono">${esc(w.phone)}</td>
-      <td class="td-mono">${esc(w.date)}</td>
-      <td>${esc(w.service)}</td>
-      <td class="td-doctor">${esc(w.doctor_name || 'Any')}</td>
-      <td>${esc(w.email || '—')}</td>
-      <td>${statusBadge}</td>
-      <td><button class="action-btn del" onclick="removeWaiter(${w.id},'${esc(w.name)}')">Remove</button></td>
-    </tr>`
+    return '<tr>' +
+      '<td style="font-size:12px;color:var(--muted)">' + (i+1) + '</td>' +
+      '<td class="td-name">' + esc(w.name) + '</td>' +
+      '<td class="td-mono">' + esc(w.phone) + '</td>' +
+      '<td class="td-mono">' + esc(w.date) + '</td>' +
+      '<td>' + esc(w.service) + '</td>' +
+      '<td class="td-doctor">' + esc(w.doctor_name || 'Any') + '</td>' +
+      '<td>' + esc(w.email || '—') + '</td>' +
+      '<td>' + statusBadge + '</td>' +
+      '<td><button class="action-btn del" onclick="removeWaiter(' + w.id + ',\'' + esc(w.name) + '\')">Remove</button></td>' +
+    '</tr>'
   }).join('')
-  document.getElementById('waitlist-table').innerHTML = `
-    <table><thead><tr>
-      <th>#</th><th>Patient</th><th>Phone</th><th>Date</th>
-      <th>Service</th><th>Doctor</th><th>Email</th><th>Status</th><th>Action</th>
-    </tr></thead><tbody>${rows}</tbody></table>`
+  document.getElementById('waitlist-table').innerHTML =
+    '<table><thead><tr><th>#</th><th>Patient</th><th>Phone</th><th>Date</th><th>Service</th><th>Doctor</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody>' + rows + '</tbody></table>'
 }
 
 async function removeWaiter(id, name) {
-  if (!confirm(`Remove ${name} from the waitlist?`)) return
+  if (!confirm('Remove ' + name + ' from the waitlist?')) return
   try {
-    const r = await fetch(`/waitlist/${id}`, { method: 'DELETE' })
-    if (r.ok) { loadWaitlist(); showToast('success', `${name} removed from waitlist`) }
+    const r = await fetch(API_URL + '/waitlist/' + id, { method: 'DELETE' })
+    if (r.ok) { loadWaitlist(); showToast('success', name + ' removed from waitlist') }
     else showToast('error', 'Could not remove')
   } catch { showToast('error', 'Server error') }
 }
 
 async function loadServices() {
   try {
-    allServices = await fetch('/services').then(r => r.json())
+    allServices = await fetch(API_URL + '/services').then(r => r.json())
     renderServices()
   } catch { document.getElementById('service-table').innerHTML = '<div class="empty">Could not load services.</div>' }
 }
@@ -971,20 +811,17 @@ function renderServices() {
     document.getElementById('service-table').innerHTML = '<div class="empty">No services yet.</div>'
     return
   }
-  const rows = allServices.map(s => `<tr>
-    <td class="td-name">${esc(s.name)}</td>
-    <td><span class="badge badge-upcoming">${s.duration_minutes} min</span></td>
-    <td style="color:var(--muted);font-size:12px">${Math.ceil(s.duration_minutes/30)} slot(s) blocked</td>
-    <td>
-      <button class="action-btn" onclick="openEditService(${s.id},'${esc(s.name)}',${s.duration_minutes})">Edit</button>
-      <button class="action-btn del" onclick="deleteService(${s.id},'${esc(s.name)}')">Remove</button>
-    </td>
-  </tr>`).join('')
-  document.getElementById('service-table').innerHTML = `
-    <table>
-      <thead><tr><th>Service</th><th>Duration</th><th>Slots used</th><th>Action</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`
+  const rows = allServices.map(s =>
+    '<tr>' +
+    '<td class="td-name">' + esc(s.name) + '</td>' +
+    '<td><span class="badge badge-upcoming">' + s.duration_minutes + ' min</span></td>' +
+    '<td style="color:var(--muted);font-size:12px">' + Math.ceil(s.duration_minutes/30) + ' slot(s) blocked</td>' +
+    '<td><button class="action-btn" onclick="openEditService(' + s.id + ',\'' + esc(s.name) + '\',' + s.duration_minutes + ')">Edit</button>' +
+    '<button class="action-btn del" onclick="deleteService(' + s.id + ',\'' + esc(s.name) + '\')">Remove</button></td>' +
+    '</tr>'
+  ).join('')
+  document.getElementById('service-table').innerHTML =
+    '<table><thead><tr><th>Service</th><th>Duration</th><th>Slots used</th><th>Action</th></tr></thead><tbody>' + rows + '</tbody></table>'
 }
 
 function openAddService() {
@@ -1010,7 +847,7 @@ async function saveService() {
   const duration = parseInt(document.getElementById('svc-duration').value) || 30
   if (!name) { showToast('error', 'Service name required'); return }
   try {
-    const url    = editingSvcId ? `/services/${editingSvcId}` : '/services'
+    const url    = editingSvcId ? API_URL + '/services/' + editingSvcId : API_URL + '/services'
     const method = editingSvcId ? 'PUT' : 'POST'
     const r = await fetch(url, {
       method,
@@ -1023,37 +860,32 @@ async function saveService() {
 }
 
 async function deleteService(id, name) {
-  if (!confirm(`Remove service: ${name}?`)) return
+  if (!confirm('Remove service: ' + name + '?')) return
   try {
-    const r = await fetch(`/services/${id}`, { method: 'DELETE' })
-    if (r.ok) { loadServices(); showToast('success', `${name} removed`) }
+    const r = await fetch(API_URL + '/services/' + id, { method: 'DELETE' })
+    if (r.ok) { loadServices(); showToast('success', name + ' removed') }
     else showToast('error', 'Could not remove')
   } catch { showToast('error', 'Server error') }
 }
 
-// ── SETTINGS ──
 async function loadSettings() {
   try {
-    const cfg = await fetch('/clinic-config').then(r => r.json())
-    document.getElementById('cfg-clinic-name').value  = cfg.clinic_name  || ''
-    document.getElementById('cfg-clinic-email').value = cfg.clinic_email || ''
-    document.getElementById('cfg-smtp-host').value    = cfg.smtp_host    || 'smtp.gmail.com'
-    document.getElementById('cfg-smtp-port').value    = cfg.smtp_port    || 587
-    document.getElementById('cfg-smtp-user').value    = cfg.smtp_user    || ''
-    document.getElementById('cfg-smtp-pass').value    = cfg.smtp_pass    || ''
-    document.getElementById('cfg-open-hour').value    = cfg.open_hour    || 10
-    document.getElementById('cfg-close-hour').value   = cfg.close_hour   || 17
+    const cfg = await fetch(API_URL + '/clinic-config').then(r => r.json())
+    document.getElementById('cfg-clinic-name').value  = cfg.clinic_name   || ''
+    document.getElementById('cfg-clinic-email').value = cfg.clinic_email  || ''
+    document.getElementById('cfg-smtp-host').value    = cfg.smtp_host     || 'smtp.gmail.com'
+    document.getElementById('cfg-smtp-port').value    = cfg.smtp_port     || 587
+    document.getElementById('cfg-smtp-user').value    = cfg.smtp_user     || ''
+    document.getElementById('cfg-smtp-pass').value    = cfg.smtp_pass     || ''
+    document.getElementById('cfg-open-hour').value    = cfg.open_hour     || 10
+    document.getElementById('cfg-close-hour').value   = cfg.close_hour    || 17
     document.getElementById('cfg-slot-dur').value     = cfg.slot_duration || 30
-    document.getElementById('cfg-open-days').value    = cfg.open_days    || 'Mon,Tue,Wed,Thu,Fri,Sat'
-    document.getElementById('cfg-sms-key').value       = cfg.sms_api_key  || ''
-    document.getElementById('cfg-otp-enabled').checked = cfg.otp_enabled  !== 0
+    document.getElementById('cfg-open-days').value    = cfg.open_days     || 'Mon,Tue,Wed,Thu,Fri,Sat'
   } catch { showToast('error', 'Could not load settings') }
 }
 
 async function saveSettings() {
   const body = {
-    sms_api_key:   document.getElementById('cfg-sms-key').value.trim(),
-    otp_enabled:   document.getElementById('cfg-otp-enabled').checked ? 1 : 0,
     clinic_name:   document.getElementById('cfg-clinic-name').value,
     clinic_email:  document.getElementById('cfg-clinic-email').value,
     smtp_host:     document.getElementById('cfg-smtp-host').value,
@@ -1066,7 +898,7 @@ async function saveSettings() {
     open_days:     document.getElementById('cfg-open-days').value
   }
   try {
-    const r = await fetch('/clinic-config', {
+    const r = await fetch(API_URL + '/clinic-config', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -1082,7 +914,7 @@ async function testEmail() {
   const to = document.getElementById('cfg-clinic-email').value
   if (!to) { showToast('error', 'Please enter a clinic email first'); return }
   try {
-    const r = await fetch('/test-email', {
+    const r = await fetch(API_URL + '/test-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to })
@@ -1093,7 +925,6 @@ async function testEmail() {
   } catch { showToast('error', 'Server error') }
 }
 
-// ── INIT ──
 loadAppointments()
 </script>
 </body>

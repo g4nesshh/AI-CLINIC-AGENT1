@@ -384,6 +384,9 @@ textarea::placeholder { color: var(--muted); }
 
 <script>
 
+// ── CHANGE THIS to your Render backend URL after deploying ──
+const API_URL = 'https://YOUR-APP-NAME.onrender.com'
+
 const userId     = Math.random().toString(36).substring(2)
 const messagesEl = document.getElementById('messages')
 
@@ -446,13 +449,11 @@ function addSlotPicker(labelText, slots, slotDate) {
   const card = document.createElement('div')
   card.className = 'slot-card'
 
-  // Label
   const label = document.createElement('div')
   label.className = 'slot-label'
   label.textContent = labelText
   card.appendChild(label)
 
-  // Grid of slot buttons
   const grid = document.createElement('div')
   grid.className = 'slot-grid'
 
@@ -464,17 +465,11 @@ function addSlotPicker(labelText, slots, slotDate) {
     btn.innerHTML = `<span class="slot-time">${t.display}</span><span class="slot-period">${t.period}</span>`
 
     btn.onclick = () => {
-      // Visually select this button, deselect others
       grid.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'))
       btn.classList.add('selected')
-
-      // If slotDate is given (from slots query), send "book appointment at X on Y"
-      // Otherwise just send the time
       const msg = slotDate
         ? `I'd like to book at ${slot} on ${slotDate}`
         : slot
-
-      // Small delay so user sees the selection before send
       setTimeout(() => sendSlot(msg, slot), 200)
     }
 
@@ -483,7 +478,6 @@ function addSlotPicker(labelText, slots, slotDate) {
 
   card.appendChild(grid)
 
-  // Timestamp
   const timeEl = document.createElement('div')
   timeEl.className = 'slot-bubble-time'
   timeEl.textContent = nowTime()
@@ -497,12 +491,11 @@ function addSlotPicker(labelText, slots, slotDate) {
 
 /* ── SEND SLOT SELECTION ── */
 async function sendSlot(message, displayTime) {
-  // Show user bubble with the selected time
   addMessage('user', `Selected: ${displayTime}`)
   showTyping()
 
   try {
-    const res  = await fetch('/chat', {
+    const res  = await fetch(API_URL + '/chat', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ message, userId })
@@ -519,10 +512,8 @@ async function sendSlot(message, displayTime) {
 /* ── HANDLE SERVER RESPONSE ── */
 function handleResponse(data) {
   if (data.slots && data.slots.length > 0) {
-    // Server sent slot options — render as clickable buttons
     addSlotPicker(data.reply, data.slots, data.slotDate || null)
   } else {
-    // Plain text reply
     addMessage('ai', data.reply)
   }
 }
@@ -564,7 +555,7 @@ async function send() {
   showTyping()
 
   try {
-    const res  = await fetch('/chat', {
+    const res  = await fetch(API_URL + '/chat', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ message: text, userId })
