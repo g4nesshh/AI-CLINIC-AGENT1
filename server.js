@@ -1075,6 +1075,38 @@ app.post("/chat", async (req, res) => {
       state.name = t.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
     }
   }
+  
+  // ── Service fallback: if waiting for service and message looks like one ──
+  if (!state.service && state.step === "collecting") {
+    const t = message.trim().toLowerCase()
+    const services = ['checkup','cleaning','tooth cleaning','consultation','x-ray','xray','x ray',
+      'root canal','braces','whitening','extraction','filling','crown','implant']
+    const matched = services.find(s => t.includes(s))
+    if (matched) {
+      state.service = matched === 'x ray' || matched === 'xray' ? 'x-ray' : matched
+    }
+  }
+
+// ── Date fallback: if waiting for date and message is a day name ──
+  if (!state.date && state.step === "collecting") {
+    const t = message.trim().toLowerCase()
+    const dayMap = {
+      'monday':1,'tuesday':2,'wednesday':3,'thursday':4,'friday':5,'saturday':6,'sunday':0,
+      'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6,'sun':0,
+      'thurs':4,'tues':2,'weds':3
+    }
+    const found = Object.keys(dayMap).find(d => t === d || t === 'next '+d || t === 'this '+d)
+    if (found) {
+      const targetDay = dayMap[found.replace('next ','').replace('this ','')]
+      const today = new Date()
+      today.setHours(0,0,0,0)
+      let diff = targetDay - today.getDay()
+      if (diff <= 0) diff += 7
+      today.setDate(today.getDate() + diff)
+      state.date = today.toISOString().split('T')[0]
+    }
+  }
+  
 
   // ── Mid-flow field correction
   if (state.step === "collecting" || state.step === "confirming") {
