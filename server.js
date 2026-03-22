@@ -1058,12 +1058,20 @@ app.post("/chat", async (req, res) => {
     time:    aiDetails.time    || localTime    || null,
     service: aiDetails.service || null
   }
-
+// Apply to state — never overwrite already set fields with null
   for (const key of ["intent","name","phone","date","time","service","notes"]) {
     if (merged[key]) state[key] = merged[key]
   }
 
-  // ── Mid-flow field correction ─────────────────────────
+  // ── Name fallback: if collecting and message looks like a plain name ──
+  if (!state.name && (state.step === "collecting" || state.intent === "book")) {
+    const t = message.trim()
+    if (/^[a-zA-Z\s]{2,40}$/.test(t) && t.split(' ').length <= 4) {
+      state.name = t.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+    }
+  }
+
+  // ── Mid-flow field correction
   if (state.step === "collecting" || state.step === "confirming") {
     const corrField = detectCorrection(message, null)
     if (corrField && typeof corrField === 'string') {
