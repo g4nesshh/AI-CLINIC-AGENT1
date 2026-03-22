@@ -1639,7 +1639,8 @@ app.post("/chat", async (req, res) => {
     history.slice(-6).map(h => `${h.role==="user"?"Patient":"Receptionist"}: ${h.content}`).join("\n") +
     `\nPatient: ${message}\nReceptionist:`
 
-const aiReply = await callAI("llama-3.3-70b-versatile", systemPrompt)  const finalReply = aiReply || "I'm here to help! You can ask about our services or say 'book appointment' to schedule a visit."
+ const aiReply = await callAI("llama-3.3-70b-versatile", systemPrompt) 
+ const finalReply = aiReply || "I'm here to help! You can ask about our services or say 'book appointment' to schedule a visit."
 
   history.push({ role: "assistant", content: finalReply })
   if (history.length > 20) conversations[userId] = history.slice(-20)
