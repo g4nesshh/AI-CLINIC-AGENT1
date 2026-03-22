@@ -169,36 +169,37 @@ setInterval(sweepExpiredSessions, SWEEP_INTERVAL)
 console.log(`[Session] Expiry set to ${SESSION_TTL/60000} min, sweep every ${SWEEP_INTERVAL/60000} min`)
 
 
-/* ================================================
-   OLLAMA AI CALL — with timeout + error handling
-================================================ */
-
 async function callAI(model, prompt) {
   try {
     const controller = new AbortController()
-    const timeout    = setTimeout(() => controller.abort(), 30000)
+    const timeout = setTimeout(() => controller.abort(), 30000)
 
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method:  "POST",
+      method: "POST",
       headers: {
-        "Content-Type":  "application/json",
+        "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       signal: controller.signal,
       body: JSON.stringify({
-        model:      "llama3-8b-8192",
-        messages:   [{ role: "user", content: prompt }],
+        model: "llama3-8b-8192",
+        messages: [{ role: "user", content: prompt }],
         max_tokens: 500
       })
     })
+    
+    const MODELS = {
+  conversation: "llama3-8b-8192",
+  extraction:   "llama3-8b-8192"
+}
 
     clearTimeout(timeout)
     const data = await res.json()
     return data.choices?.[0]?.message?.content?.trim() || ""
 
   } catch (err) {
-    if (err.name === "AbortError") { console.error("AI call timed out"); return "" }
-    console.error("AI call failed:", err.message)
+    if (err.name === "AbortError") { console.error("AI timed out"); return "" }
+    console.error("AI failed:", err.message)
     return ""
   }
 }
