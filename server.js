@@ -1603,6 +1603,21 @@ app.post("/chat", async (req, res) => {
 
     return res.json({ reply: `Available slots${filterLabel} for ${label} — tap one to book:`, slots: filtered.length > 0 ? filtered : slots, slotDate: queryDate })
   }
+  
+  // ── Quick answers for common questions (no AI needed) ──
+  const tLow = message.toLowerCase()
+  if (/hour|time|open|close|timing/i.test(tLow)) {
+    return res.json({ reply: "We are open Monday to Saturday, 10:00 AM to 5:00 PM. Closed on Sundays and public holidays. 🕐" })
+  }
+  if (/service|offer|treatment|provide/i.test(tLow)) {
+    return res.json({ reply: "We offer: Checkup, Tooth Cleaning, Root Canal, Consultation, X-Ray, Braces, Whitening, and more! Say 'book appointment' to get started. 😊" })
+  }
+  if (/price|cost|fee|charge|how much/i.test(tLow)) {
+    return res.json({ reply: "For pricing details, please visit the clinic or call us directly. Say 'book appointment' to schedule a consultation! 😊" })
+  }
+  if (/location|address|where|find you/i.test(tLow)) {
+    return res.json({ reply: "Please contact the clinic directly for our address and directions. Say 'book appointment' to schedule a visit! 📍" })
+  }
 
   // ── GENERAL CHAT ──────────────────────────────────────
   const systemPrompt =
