@@ -1064,9 +1064,14 @@ app.post("/chat", async (req, res) => {
   }
 
   // ── Name fallback: if collecting and message looks like a plain name ──
+ // ── Name fallback: if collecting and message looks like a plain name ──
   if (!state.name && (state.step === "collecting" || state.intent === "book")) {
     const t = message.trim()
-    if (/^[a-zA-Z\s]{2,40}$/.test(t) && t.split(' ').length <= 4) {
+    const isName = /^[a-zA-Z\s]{2,30}$/.test(t) &&
+      t.split(' ').length <= 3 &&
+      !detectIntent(t) &&
+      !/\b(book|appointment|cancel|clinic|hours|service|slot|time|available|what|how|when|where|help)\b/i.test(t)
+    if (isName) {
       state.name = t.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
     }
   }
