@@ -11,6 +11,7 @@ const { getAllDoctors, getDoctorById, isDoctorAvailableOnDate, formatDoctorList,
 const { bookAppointment, checkDuplicateBooking, cancelAppointment, findAppointmentsByPhone, rescheduleAppointment, getServiceByName } = require('../services/booking')
 const { addToWaitlist, getAllWaitlist, removeFromWaitlist, notifyWaitlistOnCancel, getWaitlistForDate } = require('../services/waitlist')
 const { rateLimit, getHistory, getState, getCheckState, getRescheduleState, resetState, resetCheck, resetReschedule, touchSession, isExpired, isValidEmail, buildSummary } = require('../utils/helpers')
+const { getPatient, buildWelcomeBack } = require('../services/patients')
 
 /* ================================================
    FIELD FALLBACKS
@@ -283,6 +284,21 @@ router.post('/', async (req, res) => {
     state.step = 'collecting'
     if (!state.name)  return res.json({ reply: "I'd be happy to book an appointment! May I have your full name?" })
     if (!state.phone) return res.json({ reply: `Thanks ${state.name}! Please share your 10-digit phone number.` })
+
+    // ── Returning patient check ──────────────────────
+    // Runs once right after phone is collected
+    if (state.phone && !state._patientChecked) {
+      state._patientChecked = true
+      const patient = await getPatient(state.phone)
+      if (patient && patient.visit_count > 0) {
+        // Pre-fill known details
+        if (!state.name)    state.name    = patient.name
+        if (!state.service) state.service = patient.last_service
+        // Build personalised greeting
+        const welcome = buildWelcomeBack(patient)
+        if (welcome) return res.json({ reply: welcome })
+      }
+    }
 
     if (!state.doctor_id) {
       let doctors; try { doctors = await getAllDoctors() } catch(e) { doctors = [] }
