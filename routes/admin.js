@@ -6,59 +6,14 @@ const db      = require('../database/db')
 
 const { rateLimit }       = require('../utils/helpers')
 const { getAllWaitlist, removeFromWaitlist } = require('../services/waitlist')
-const { getAllServices, getServiceByName }   = require('../services/booking')
+const { getAllServices }   = require('../services/booking')
 const { getAllHolidays, addHoliday, deleteHoliday } = require('../services/slots')
 
-/* ── Email reminders ── */
-let nodemailer = null
-try { nodemailer = require('nodemailer'); console.log('[Reminders] nodemailer loaded ✅') }
-catch(e) { console.log('[Reminders] nodemailer not installed — reminders disabled') }
+// Note: Email reminders are handled by worker.js (run separately)
 
 async function getSmtpConfig() {
   return new Promise((resolve) => { db.get('SELECT * FROM clinic_config WHERE id = 1', [], (err, row) => resolve(row || {})) })
 }
-
-async function sendReminderEmail({ to, patientName, clinicName, doctorName, date, time, service, type }) {
-  if (!nodemailer || !to || !to.includes('@')) return false
-  const config = await getSmtpConfig()
-  if (!config.smtp_user || !config.smtp_pass) return false
-  try {
-    const transporter = nodemailer.createTransport({ host: config.smtp_host||'smtp.gmail.com', port: config.smtp_port||587, secure: false, auth: { user: config.smtp_user, pass: config.smtp_pass } })
-    const timeLabel = type === '24h' ? 'tomorrow' : type === 'waitlist' ? 'as a slot just opened' : 'in 1 hour'
-    await transporter.sendMail({
-      from: `"${clinicName}" <${config.smtp_user}>`, to,
-      subject: `Reminder: Your appointment at ${clinicName} is ${timeLabel}`,
-      html: `<div style="font-family:Arial,sans-serif;padding:24px"><h2 style="color:#0ea5e9">Appointment Reminder</h2><p>Hello <strong>${patientName}</strong>, your appointment is <strong>${timeLabel}</strong>.</p><p>Date: ${date} | Time: ${time} | Service: ${service}</p><p>Please arrive 10 minutes early.</p></div>`
-    })
-    console.log(`[Reminders] ${type} reminder sent to ${to}`)
-    return true
-  } catch(err) { console.error('[Reminders] Failed:', err.message); return false }
-}
-
-async function runReminderJob() {
-  if (!nodemailer) return
-  const config = await getSmtpConfig()
-  if (!config.smtp_user) return
-  const nowMs = Date.now()
-  db.all(`SELECT * FROM appointments WHERE email != '' AND email IS NOT NULL AND date >= date('now') AND (reminder_24h = 0 OR reminder_1h = 0) ORDER BY date, time`, [], async (err, rows) => {
-    if (err || !rows.length) return
-    for (const appt of rows) {
-      const diffHrs = (new Date(`${appt.date}T${appt.time}:00`).getTime() - nowMs) / 3600000
-      if (!appt.reminder_24h && diffHrs >= 23 && diffHrs <= 25) {
-        const sent = await sendReminderEmail({ to: appt.email, patientName: appt.name, clinicName: config.clinic_name||'ClinicAI', doctorName: appt.doctor_name, date: appt.date, time: appt.time, service: appt.service, type: '24h' })
-        if (sent) db.run('UPDATE appointments SET reminder_24h = 1 WHERE id = ?', [appt.id])
-      }
-      if (!appt.reminder_1h && diffHrs >= 0.916 && diffHrs <= 1.083) {
-        const sent = await sendReminderEmail({ to: appt.email, patientName: appt.name, clinicName: config.clinic_name||'ClinicAI', doctorName: appt.doctor_name, date: appt.date, time: appt.time, service: appt.service, type: '1h' })
-        if (sent) db.run('UPDATE appointments SET reminder_1h = 1 WHERE id = ?', [appt.id])
-      }
-    }
-  })
-}
-
-setInterval(runReminderJob, 15 * 60 * 1000)
-setTimeout(runReminderJob, 10000)
-console.log('[Reminders] Scheduler started')
 
 /* ── Clinic Config ── */
 router.get('/clinic-config', (req, res) => {
@@ -148,5 +103,19 @@ router.delete('/services/:id', (req, res) => {
 router.get('/holidays',        async (req, res) => { try { res.json(await getAllHolidays()) } catch { res.status(500).json({ error: 'DB error' }) } })
 router.post('/holidays',       async (req, res) => { const { date, reason } = req.body; if (!date) return res.status(400).json({ error: 'date required' }); const id = await addHoliday(date, reason||'Clinic Holiday'); if (id) res.json({ success: true, id }); else res.status(500).json({ error: 'DB error' }) })
 router.delete('/holidays/:id', async (req, res) => { const ok = await deleteHoliday(req.params.id); if (ok) res.json({ success: true }); else res.status(404).json({ error: 'Not found' }) })
+
+/* ── Analytics ── */
+const { getAnalyticsSummary, getTopServices, getDropOffPoints } = require('../utils/analytics')
+
+router.get('/analytics', async (req, res) => {
+  try {
+    const [summary, topServices, dropOffs] = await Promise.all([
+      getAnalyticsSummary(),
+      getTopServices(),
+      getDropOffPoints()
+    ])
+    res.json({ summary, topServices, dropOffs })
+  } catch(e) { res.status(500).json({ error: 'DB error' }) }
+})
 
 module.exports = router

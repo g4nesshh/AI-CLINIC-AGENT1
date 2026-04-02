@@ -4,14 +4,16 @@ const express = require('express')
 const router  = express.Router()
 
 const { extractDetails, chatReply }           = require('../nlp/extract')
+const { decideNextStep, applyDecision }        = require('../nlp/reasoning')
 const { detectIntent, detectCorrection }       = require('../nlp/intent')
 const { parseDate, parseTime, parsePhone, isSimpleMessage } = require('../nlp/parser')
 const { getAvailableSlots, formatSlots, isClinicOpen, isDailyCapReached } = require('../services/slots')
 const { getAllDoctors, getDoctorById, isDoctorAvailableOnDate, formatDoctorList, findEarliestSlot } = require('../services/doctors')
 const { bookAppointment, checkDuplicateBooking, cancelAppointment, findAppointmentsByPhone, rescheduleAppointment, getServiceByName } = require('../services/booking')
 const { addToWaitlist, getAllWaitlist, removeFromWaitlist, notifyWaitlistOnCancel, getWaitlistForDate } = require('../services/waitlist')
-const { rateLimit, getHistory, getState, getCheckState, getRescheduleState, resetState, resetCheck, resetReschedule, touchSession, isExpired, isValidEmail, buildSummary } = require('../utils/helpers')
+const { rateLimit, getHistory, getState, getCheckState, getRescheduleState, resetState, resetCheck, resetReschedule, touchSession, isExpired, isValidEmail, buildSummary, respond } = require('../utils/helpers')
 const { getPatient, buildWelcomeBack } = require('../services/patients')
+const { logEvent } = require('../utils/analytics')
 
 /* ================================================
    FIELD FALLBACKS
@@ -81,6 +83,7 @@ router.post('/', async (req, res) => {
   history.push({ role: 'user', content: message })
 
   if (isExpired(userId)) {
+    logEvent({ event: 'session_expired', userId })
     resetState(userId)
     return res.json({ reply: "Your session expired. How can I help you today?" })
   }
@@ -112,6 +115,11 @@ router.post('/', async (req, res) => {
 
   // Apply fallbacks for common extraction misses
   applyFallbacks(message, state, merged)
+
+  // ── Log incoming intent ──
+  if (merged.intent) {
+    logEvent({ event: 'intent_detected', userId, intent: merged.intent, service: state.service })
+  }
 
   // ── Mid-flow field correction ──
   if (state.step === 'collecting' || state.step === 'confirming') {
@@ -146,12 +154,14 @@ router.post('/', async (req, res) => {
       const id = await bookAppointment(state)
       if (id) {
         const msg = `✅ Appointment confirmed!\n\n  Ref #   : ${id}\n  Name    : ${state.name}\n  Doctor  : ${state.doctor_name||'Any available'}\n  Date    : ${state.date}\n  Time    : ${state.time}\n  Service : ${state.service}\n  Notes   : ${state.notes && state.notes !== '__asking__' ? state.notes : 'None'}\n\nPlease arrive 10 minutes early. See you! 😊`
+        logEvent({ event: 'booking_confirmed', userId, intent: 'book', service: state.service, doctor: state.doctor_name, success: true, metadata: { refId: id, date: state.date, time: state.time } })
         resetState(userId)
-        return res.json({ reply: msg })
+        return respond(res, { reply: msg, action: 'confirmed' })
       } else {
         state.step = 'collecting'; state.time = null
+        logEvent({ event: 'booking_failed', userId, intent: 'book', service: state.service, success: false, metadata: { reason: 'slot_taken' } })
         const slots = await getAvailableSlots(state.date)
-        return res.json({ reply: 'Sorry, that slot was just taken! Please pick another:', slots })
+        return respond(res, { reply: 'Sorry, that slot was just taken! Please pick another:', slots, action: 'show_slots' })
       }
     }
 
@@ -221,7 +231,10 @@ router.post('/', async (req, res) => {
     if (!state.time)  return res.json({ reply: "What time is the appointment?" })
     const result = await cancelAppointment(state)
     resetState(userId)
-    if (result === 'cancelled') return res.json({ reply: "✅ Your appointment has been successfully cancelled." })
+    if (result === 'cancelled') {
+      logEvent({ event: 'appointment_cancelled', userId, intent: 'cancel', success: true })
+      return res.json({ reply: "✅ Your appointment has been successfully cancelled." })
+    }
     if (result === 'not_found') return res.json({ reply: "❌ No appointment found with those details. Please check the date and time." })
     return res.json({ reply: "Something went wrong. Please try again." })
   }
@@ -375,7 +388,7 @@ router.post('/', async (req, res) => {
     }
 
     state.intent = 'book'; state.step = 'confirming'
-    return res.json({ reply: buildSummary(state) })
+    return respond(res, { reply: buildSummary(state), action: 'show_summary' })
   }
 
   // ── MID-FLOW ──
@@ -402,7 +415,7 @@ router.post('/', async (req, res) => {
       else return res.json({ reply: `That doesn't look like a valid email. Please share a valid email or say skip.` })
     }
     state.intent = 'book'; state.step = 'confirming'
-    return res.json({ reply: buildSummary(state) })
+    return respond(res, { reply: buildSummary(state), action: 'show_summary' })
   }
 
   // ── SLOTS QUERY ──
@@ -445,6 +458,22 @@ router.post('/', async (req, res) => {
   if (/service|offer|treatment|provide/i.test(tLow)) return res.json({ reply: "We offer: Checkup, Tooth Cleaning, Root Canal, Consultation, X-Ray, Braces, Whitening, and more! Say 'book appointment' to get started. 😊" })
   if (/price|cost|fee|charge|how much/i.test(tLow))  return res.json({ reply: "For pricing, please visit the clinic or call us directly. 😊" })
   if (/location|address|where/i.test(tLow))          return res.json({ reply: "Please contact the clinic directly for our address. 📍" })
+
+  // ── AI REASONING LAYER ──
+  // Fires when normal flow doesn't match — AI decides what to do next
+  if (state.step === 'collecting' || state.intent === 'book') {
+    try {
+      const slots = state.date ? await getAvailableSlots(state.date).catch(() => []) : []
+      const decision = await decideNextStep(state, message)
+      const response = applyDecision(decision, state, slots)
+      if (response) {
+        logEvent({ event: 'reasoning_used', userId, intent: state.intent, metadata: { action: decision.action, missing: decision.missing_field } })
+        return res.json(response)
+      }
+    } catch(e) {
+      console.error('[Reasoning] Error:', e.message)
+    }
+  }
 
   // ── GENERAL CHAT ──
   const aiReply    = await chatReply(message, history)

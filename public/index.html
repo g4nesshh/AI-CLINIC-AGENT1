@@ -385,7 +385,7 @@ textarea::placeholder { color: var(--muted); }
 <script>
 
 // ── CHANGE THIS to your Render backend URL after deploying ──
-const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+const API_URL = 'https://YOUR-APP-NAME.onrender.com'
 
 const userId     = Math.random().toString(36).substring(2)
 const messagesEl = document.getElementById('messages')
@@ -511,10 +511,47 @@ async function sendSlot(message, displayTime) {
 
 /* ── HANDLE SERVER RESPONSE ── */
 function handleResponse(data) {
-  if (data.slots && data.slots.length > 0) {
-    addSlotPicker(data.reply, data.slots, data.slotDate || null)
-  } else {
-    addMessage('ai', data.reply)
+  const action = data.action || (data.slots && data.slots.length > 0 ? 'show_slots' : 'chat')
+
+  switch (action) {
+
+    case 'show_slots':
+      addSlotPicker(data.reply, data.slots, data.slotDate || null)
+      break
+
+    case 'show_summary':
+      addMessage('ai', data.reply)
+      addQuickReplies(['✅ Yes, confirm', '❌ No, change something'])
+      break
+
+    case 'confirmed':
+      addMessage('ai', data.reply)
+      addQuickReplies(['📅 Book another appointment', '🔍 Check my appointments'])
+      break
+
+    case 'cancelled':
+      addMessage('ai', data.reply)
+      addQuickReplies(['📅 Book new appointment', '🔍 Check my appointments'])
+      break
+
+    case 'ask_date':
+      addMessage('ai', data.reply)
+      addQuickReplies(['Today', 'Tomorrow', 'Next Monday', 'Next Saturday'])
+      break
+
+    case 'ask_service':
+      addMessage('ai', data.reply)
+      addQuickReplies(['Checkup', 'Tooth Cleaning', 'Consultation', 'X-Ray'])
+      break
+
+    case 'show_options':
+      addMessage('ai', data.reply)
+      if (data.options) addQuickReplies(data.options)
+      break
+
+    default:
+      addMessage('ai', data.reply)
+      break
   }
 }
 
@@ -552,6 +589,9 @@ async function send() {
   addMessage('user', text)
   textarea.value = ''
   textarea.style.height = 'auto'
+  // Remove quick reply buttons when user types
+  const qr = document.getElementById('quick-replies')
+  if (qr) qr.remove()
   showTyping()
 
   try {
@@ -575,6 +615,45 @@ function quickSend(text) {
 }
 
 /* ── HELPERS ── */
+/* ── QUICK REPLIES ── */
+function addQuickReplies(options) {
+  // Remove any existing quick replies first
+  const existing = document.getElementById('quick-replies')
+  if (existing) existing.remove()
+
+  const wrapper = document.createElement('div')
+  wrapper.id = 'quick-replies'
+  wrapper.style.cssText = 'display:flex;flex-wrap:wrap;gap:7px;padding:4px 16px 8px;animation:popIn 0.2s cubic-bezier(0.16,1,0.3,1) forwards;opacity:0'
+
+  options.forEach(option => {
+    const btn = document.createElement('button')
+    btn.textContent = option
+    btn.style.cssText = `
+      padding: 7px 14px;
+      background: var(--brand-soft);
+      border: 1.5px solid var(--brand);
+      border-radius: 99px;
+      font-family: 'Sora', sans-serif;
+      font-size: 12.5px;
+      color: var(--brand-dark);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    `
+    btn.onmouseover = () => { btn.style.background = 'var(--brand)'; btn.style.color = 'white' }
+    btn.onmouseout  = () => { btn.style.background = 'var(--brand-soft)'; btn.style.color = 'var(--brand-dark)' }
+    btn.onclick = () => {
+      wrapper.remove()
+      document.getElementById('msg').value = option
+      send()
+    }
+    wrapper.appendChild(btn)
+  })
+
+  messagesEl.appendChild(wrapper)
+  scrollBottom()
+}
+
 function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight }
 
 function autoResize(el) {

@@ -140,3 +140,29 @@ module.exports = {
   touchSession, isExpired,
   isValidEmail, buildSummary
 }
+
+/* ================================================
+   STRUCTURED RESPONSE BUILDER
+   Adds action tags to every response so the
+   frontend can render the right UI element.
+================================================ */
+
+function respond(res, payload) {
+  if (!payload.action) {
+    if (payload.slots && payload.slots.length > 0)                                     payload.action = 'show_slots'
+    else if (payload.reply && payload.reply.includes('📋 Booking Summary'))            payload.action = 'show_summary'
+    else if (payload.reply && payload.reply.startsWith('✅ Appointment confirmed'))    payload.action = 'confirmed'
+    else if (payload.reply && payload.reply.includes('successfully cancelled'))         payload.action = 'cancelled'
+    else if (payload.reply && payload.reply.includes('May I have your full name'))      payload.action = 'ask_name'
+    else if (payload.reply && payload.reply.includes('10-digit phone'))                payload.action = 'ask_phone'
+    else if (payload.reply && payload.reply.includes('Which date'))                    payload.action = 'ask_date'
+    else if (payload.reply && payload.reply.includes('What service'))                  payload.action = 'ask_service'
+    else if (payload.options)                                                           payload.action = 'show_options'
+    else                                                                                payload.action = 'chat'
+  }
+  return res.json(payload)
+}
+
+// Re-export everything including respond
+const originalExports = module.exports
+module.exports = { ...originalExports, respond }
