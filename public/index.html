@@ -354,6 +354,7 @@ textarea::placeholder { color: var(--muted); }
         <div class="chip" onclick="quickSend('Book an appointment')">📅 Book Appointment</div>
         <div class="chip" onclick="quickSend('What are your clinic hours?')">🕐 Clinic Hours</div>
         <div class="chip" onclick="quickSend('What services do you offer?')">💊 Services</div>
+        <div class="chip" onclick="window.location.href='/clinic.html'">🏥 About Us</div>
       </div>
     </div>
 
@@ -385,7 +386,7 @@ textarea::placeholder { color: var(--muted); }
 <script>
 
 // ── CHANGE THIS to your Render backend URL after deploying ──
-const API_URL = 'https://YOUR-APP-NAME.onrender.com'
+const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
 
 const userId     = Math.random().toString(36).substring(2)
 const messagesEl = document.getElementById('messages')
@@ -394,6 +395,16 @@ const messagesEl = document.getElementById('messages')
 window.addEventListener('load', () => {
   setTimeout(() => {
     addMessage('ai', 'Hello! 👋 Welcome to our clinic. I can help you book an appointment, answer questions about our services, or check available time slots.\n\nHow can I help you today?')
+
+    // Handle prefill from clinic info page
+    const params  = new URLSearchParams(window.location.search)
+    const prefill = params.get('prefill')
+    if (prefill) {
+      setTimeout(() => {
+        document.getElementById('msg').value = decodeURIComponent(prefill)
+        send()
+      }, 600)
+    }
   }, 400)
 })
 

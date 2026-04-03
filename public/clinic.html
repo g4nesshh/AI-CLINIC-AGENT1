@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClinicAI — Our Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4f8;--white:#fff;--brand:#0ea5e9;--brand-dark:#0284c7;
+  --brand-soft:#e0f2fe;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;
+  --card:#fff;--shadow:0 4px 24px rgba(14,165,233,0.08),0 1px 4px rgba(0,0,0,0.04);
+}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:10;box-shadow:0 1px 8px rgba(0,0,0,0.04)}
+.nav-logo{font-size:16px;font-weight:700;color:var(--brand);letter-spacing:-0.5px}
+.nav-links{display:flex;gap:8px}
+.nav-link{padding:7px 16px;border-radius:8px;font-size:13.5px;font-weight:500;cursor:pointer;text-decoration:none;color:var(--muted);transition:all .15s;border:none;background:none;font-family:inherit}
+.nav-link:hover{color:var(--text);background:var(--bg)}
+.nav-cta{background:var(--brand);color:white;border-radius:8px;padding:7px 18px;font-size:13.5px;font-weight:500;text-decoration:none;transition:all .15s}
+.nav-cta:hover{background:var(--brand-dark)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%);padding:64px 24px;text-align:center;color:white;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:400px;height:400px;background:rgba(255,255,255,.06);border-radius:50%;top:-100px;right:-100px}
+.hero::after{content:'';position:absolute;width:300px;height:300px;background:rgba(255,255,255,.04);border-radius:50%;bottom:-80px;left:-60px}
+.hero-content{position:relative;z-index:1;max-width:640px;margin:0 auto}
+.hero h1{font-size:36px;font-weight:700;letter-spacing:-1px;margin-bottom:14px}
+.hero p{font-size:16px;opacity:.85;margin-bottom:28px;line-height:1.6}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero{padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;text-decoration:none;display:inline-block}
+.btn-hero-primary{background:white;color:var(--brand)}
+.btn-hero-primary:hover{background:#f0f9ff}
+.btn-hero-outline{background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.4)}
+.btn-hero-outline:hover{background:rgba(255,255,255,.25)}
+
+/* QUICK INFO BAR */
+.info-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px}
+.info-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:40px;padding:16px 0;flex-wrap:wrap}
+.info-item{display:flex;align-items:center;gap:10px;font-size:13.5px}
+.info-item-icon{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.info-item-text{line-height:1.4}
+.info-item-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.info-item-value{font-size:13.5px;font-weight:500}
+
+/* MAIN CONTENT */
+.container{max-width:1100px;margin:0 auto;padding:48px 24px}
+section{margin-bottom:56px}
+.section-title{font-size:24px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px}
+.section-subtitle{font-size:14px;color:var(--muted);margin-bottom:28px}
+
+/* DOCTORS */
+.doctors-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.doctor-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;box-shadow:var(--shadow);transition:all .2s}
+.doctor-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(14,165,233,0.12)}
+.doctor-avatar{width:56px;height:56px;border-radius:16px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
+.doctor-name{font-size:16px;font-weight:600;margin-bottom:4px}
+.doctor-spec{font-size:13px;color:var(--brand);font-weight:500;margin-bottom:12px}
+.doctor-days{display:flex;gap:5px;flex-wrap:wrap}
+.day-badge{padding:3px 8px;background:var(--brand-soft);color:var(--brand-dark);border-radius:6px;font-size:11px;font-weight:500}
+.day-badge.off{background:var(--bg);color:var(--muted)}
+.book-btn{margin-top:16px;width:100%;padding:9px;border:1.5px solid var(--brand);border-radius:10px;color:var(--brand);background:transparent;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.book-btn:hover{background:var(--brand);color:white}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;transition:all .2s;cursor:pointer}
+.service-card:hover{border-color:var(--brand);transform:translateY(-1px)}
+.service-icon{width:42px;height:42px;border-radius:12px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.service-name{font-size:14px;font-weight:500}
+.service-duration{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* SLOTS */
+.slots-section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;box-shadow:var(--shadow)}
+.slots-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px}
+.slots-title{font-size:18px;font-weight:600}
+.date-picker-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.date-btn{padding:8px 16px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s;color:var(--text);font-weight:500}
+.date-btn:hover{border-color:var(--brand);color:var(--brand)}
+.date-btn.active{background:var(--brand);border-color:var(--brand);color:white}
+.date-input{padding:8px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:13px;outline:none;color:var(--text);transition:border-color .15s}
+.date-input:focus{border-color:var(--brand)}
+.slots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.slot-btn{padding:10px;border-radius:8px;border:1.5px solid #bae6fd;background:#f0f9ff;font-family:'JetBrains Mono',monospace;font-size:13px;color:#0369a1;cursor:pointer;transition:all .15s;text-align:center;font-weight:500}
+.slot-btn:hover{background:var(--brand);border-color:var(--brand);color:white;transform:translateY(-1px)}
+.slots-empty{text-align:center;padding:32px;color:var(--muted);font-size:14px}
+.slots-closed{text-align:center;padding:32px;color:var(--muted);font-size:14px;background:var(--bg);border-radius:12px}
+.slots-loading{text-align:center;padding:32px;color:var(--muted)}
+
+/* HOURS TABLE */
+.hours-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.hour-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:var(--shadow)}
+.hour-day{font-size:13px;font-weight:600;margin-bottom:6px}
+.hour-time{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.hour-closed{color:var(--muted);opacity:.6}
+
+/* FLOATING CHAT */
+.chat-float{position:fixed;bottom:28px;right:28px;z-index:50}
+.chat-float-btn{width:56px;height:56px;border-radius:16px;background:var(--brand);border:none;color:white;font-size:24px;cursor:pointer;box-shadow:0 8px 24px rgba(14,165,233,.4);transition:all .2s;display:flex;align-items:center;justify-content:center}
+.chat-float-btn:hover{transform:scale(1.08);box-shadow:0 12px 32px rgba(14,165,233,.5)}
+.chat-float-label{position:absolute;right:66px;top:50%;transform:translateY(-50%);background:var(--text);color:white;font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s}
+.chat-float:hover .chat-float-label{opacity:1}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,#e2e8f0 25%,#f0f4f8 50%,#e2e8f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:8px;height:16px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .hero h1{font-size:26px}
+  .info-bar-inner{gap:20px}
+  .container{padding:32px 16px}
+  .chat-float{bottom:16px;right:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🏥 ClinicAI</div>
+  <div class="nav-links">
+    <a href="#doctors" class="nav-link">Doctors</a>
+    <a href="#services" class="nav-link">Services</a>
+    <a href="#slots" class="nav-link">Availability</a>
+    <a href="#hours" class="nav-link">Hours</a>
+  </div>
+  <a href="/" class="nav-cta">💬 Chat with Us</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <h1 id="hero-name">ClinicAI Dental</h1>
+    <p>Quality dental care with easy online booking. Check availability, meet our doctors, and book your appointment — all in minutes.</p>
+    <div class="hero-actions">
+      <a href="/" class="btn-hero btn-hero-primary">💬 Book via Chat</a>
+      <a href="#slots" class="btn-hero btn-hero-outline">📅 Check Availability</a>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK INFO BAR -->
+<div class="info-bar">
+  <div class="info-bar-inner">
+    <div class="info-item">
+      <div class="info-item-icon">🕐</div>
+      <div class="info-item-text">
+        <div class="info-item-label">Hours</div>
+        <div class="info-item-value" id="info-hours">Loading…</div>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="info-item-icon">📅</div>
+      <div class="info-item-text">
+        <div class="info-item-label">Open Days</div>
+        <div class="info-item-value" id="info-days">Loading…</div>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="info-item-icon">👨‍⚕️</div>
+      <div class="info-item-text">
+        <div class="info-item-label">Doctors</div>
+        <div class="info-item-value" id="info-doctors">Loading…</div>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="info-item-icon">💊</div>
+      <div class="info-item-text">
+        <div class="info-item-label">Services</div>
+        <div class="info-item-value" id="info-services">Loading…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- DOCTORS -->
+  <section id="doctors">
+    <div class="section-title">Our Doctors</div>
+    <div class="section-subtitle">Meet our experienced dental team</div>
+    <div class="doctors-grid" id="doctors-grid">
+      <div class="skeleton" style="height:220px;border-radius:16px"></div>
+      <div class="skeleton" style="height:220px;border-radius:16px"></div>
+      <div class="skeleton" style="height:220px;border-radius:16px"></div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-title">Our Services</div>
+    <div class="section-subtitle">Comprehensive dental care for your whole family</div>
+    <div class="services-grid" id="services-grid">
+      <div class="skeleton" style="height:80px;border-radius:12px"></div>
+      <div class="skeleton" style="height:80px;border-radius:12px"></div>
+      <div class="skeleton" style="height:80px;border-radius:12px"></div>
+      <div class="skeleton" style="height:80px;border-radius:12px"></div>
+    </div>
+  </section>
+
+  <!-- SLOTS -->
+  <section id="slots">
+    <div class="section-title">Check Availability</div>
+    <div class="section-subtitle">See available slots for any date — tap one to start booking</div>
+    <div class="slots-section">
+      <div class="date-picker-row" id="date-quick-btns"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <span style="font-size:13px;color:var(--muted)">Or pick a date:</span>
+        <input type="date" class="date-input" id="date-custom" onchange="loadSlots(this.value)">
+      </div>
+      <div id="slots-container"><div class="slots-loading">Select a date to see available slots</div></div>
+    </div>
+  </section>
+
+  <!-- HOURS -->
+  <section id="hours">
+    <div class="section-title">Clinic Hours</div>
+    <div class="section-subtitle">We're open Monday through Saturday</div>
+    <div class="hours-grid" id="hours-grid">
+      <div class="skeleton" style="height:80px;border-radius:12px"></div>
+      <div class="skeleton" style="height:80px;border-radius:12px"></div>
+      <div class="skeleton" style="height:80px;border-radius:12px"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FLOATING CHAT BUTTON -->
+<div class="chat-float">
+  <div class="chat-float-label">Chat &amp; Book</div>
+  <button class="chat-float-btn" onclick="window.location.href='/'">💬</button>
+</div>
+
+<script>
+const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+
+const SERVICE_ICONS = {
+  'checkup':'🦷', 'tooth cleaning':'✨', 'cleaning':'✨', 'consultation':'💬',
+  'x-ray':'🔬', 'xray':'🔬', 'root canal':'🔧', 'braces':'😁',
+  'whitening':'⭐', 'extraction':'🩺', 'filling':'🔩', 'crown':'👑',
+  'implant':'🦿', 'default':'💊'
+}
+
+function serviceIcon(name) {
+  const k = name.toLowerCase()
+  return SERVICE_ICONS[k] || Object.entries(SERVICE_ICONS).find(([key]) => k.includes(key))?.[1] || SERVICE_ICONS.default
+}
+
+function to12hr(t) {
+  const [h, m] = t.split(':').map(Number)
+  const p = h >= 12 ? 'PM' : 'AM'
+  return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${p}`
+}
+
+function fmtDate(d) { return d.toISOString().split('T')[0] }
+
+/* ── Load clinic info ── */
+async function loadClinicInfo() {
+  try {
+    const res  = await fetch(API_URL + '/public/clinic-info')
+    const data = await res.json()
+    const { config, doctors, services } = data
+
+    // Hero & info bar
+    document.getElementById('hero-name').textContent    = config.clinic_name || 'ClinicAI Dental'
+    document.title = config.clinic_name || 'ClinicAI Dental'
+    document.getElementById('info-hours').textContent   = `${to12hr(String(config.open_hour).padStart(2,'0')+':00')} – ${to12hr(String(config.close_hour).padStart(2,'0')+':00')}`
+    document.getElementById('info-days').textContent    = config.open_days || 'Mon–Sat'
+    document.getElementById('info-doctors').textContent = doctors.length + ' available'
+    document.getElementById('info-services').textContent = services.length + ' offered'
+
+    renderDoctors(doctors)
+    renderServices(services)
+    renderHours(config)
+    setupDatePicker()
+
+  } catch(e) {
+    console.error('Failed to load clinic info:', e)
+  }
+}
+
+/* ── DOCTORS ── */
+function renderDoctors(doctors) {
+  if (!doctors.length) {
+    document.getElementById('doctors-grid').innerHTML = '<p style="color:var(--muted)">No doctors listed yet.</p>'
+    return
+  }
+  const allDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+  document.getElementById('doctors-grid').innerHTML = doctors.map(d => {
+    const activeDays = (d.available_days || '').split(',').map(x => x.trim())
+    const dayBadges  = allDays.map(day =>
+      `<span class="day-badge ${activeDays.includes(day) ? '' : 'off'}">${day}</span>`
+    ).join('')
+    return `
+      <div class="doctor-card">
+        <div class="doctor-avatar">👨‍⚕️</div>
+        <div class="doctor-name">${esc(d.name)}</div>
+        <div class="doctor-spec">${esc(d.specialization)}</div>
+        <div class="doctor-days">${dayBadges}</div>
+        <button class="book-btn" onclick="bookWithDoctor('${esc(d.name)}')">Book with ${esc(d.name.split(' ').pop())}</button>
+      </div>`
+  }).join('')
+}
+
+/* ── SERVICES ── */
+function renderServices(services) {
+  if (!services.length) {
+    document.getElementById('services-grid').innerHTML = '<p style="color:var(--muted)">No services listed yet.</p>'
+    return
+  }
+  document.getElementById('services-grid').innerHTML = services.map(s =>
+    `<div class="service-card" onclick="bookWithService('${esc(s.name)}')">
+      <div class="service-icon">${serviceIcon(s.name)}</div>
+      <div>
+        <div class="service-name">${esc(s.name)}</div>
+        <div class="service-duration">${s.duration_minutes} min</div>
+      </div>
+    </div>`
+  ).join('')
+}
+
+/* ── HOURS ── */
+function renderHours(config) {
+  const allDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+  const openDays = (config.open_days || 'Mon,Tue,Wed,Thu,Fri,Sat').split(',').map(d => d.trim())
+  const timeStr = `${to12hr(String(config.open_hour).padStart(2,'0')+':00')} – ${to12hr(String(config.close_hour).padStart(2,'0')+':00')}`
+  document.getElementById('hours-grid').innerHTML = allDays.map(day => {
+    const isOpen = openDays.includes(day)
+    return `<div class="hour-card ${isOpen ? '' : 'hour-closed'}">
+      <div class="hour-day">${day}</div>
+      <div class="hour-time">${isOpen ? timeStr : 'Closed'}</div>
+    </div>`
+  }).join('')
+}
+
+/* ── DATE PICKER ── */
+function setupDatePicker() {
+  const today    = new Date(); today.setHours(0,0,0,0)
+  const btns     = []
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+
+  for (let i = 0; i < 7; i++) {
+    const d    = new Date(today); d.setDate(d.getDate() + i)
+    const date = fmtDate(d)
+    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayNames[d.getDay()]
+    btns.push(`<button class="date-btn" onclick="selectDate('${date}',this)">${label}<br><small style="font-size:10px;opacity:.7">${d.getDate()}/${d.getMonth()+1}</small></button>`)
+  }
+
+  document.getElementById('date-quick-btns').innerHTML = btns.join('')
+  document.getElementById('date-custom').min = fmtDate(today)
+
+  // Auto-load today
+  const firstBtn = document.querySelector('.date-btn')
+  if (firstBtn) selectDate(fmtDate(today), firstBtn)
+}
+
+let selectedDate = null
+
+function selectDate(date, btn) {
+  selectedDate = date
+  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'))
+  if (btn) btn.classList.add('active')
+  document.getElementById('date-custom').value = date
+  loadSlots(date)
+}
+
+/* ── SLOTS ── */
+async function loadSlots(date) {
+  if (!date) return
+  selectedDate = date
+  document.getElementById('slots-container').innerHTML = '<div class="slots-loading">⏳ Loading available slots…</div>'
+
+  try {
+    const res  = await fetch(`${API_URL}/public/public-slots?date=${date}`)
+    const data = await res.json()
+
+    if (!data.open) {
+      document.getElementById('slots-container').innerHTML =
+        `<div class="slots-closed">🗓️ The clinic is closed on this date${data.reason === 'holiday' ? ' (holiday)' : ''}.<br><small style="color:var(--muted)">Please select another date.</small></div>`
+      return
+    }
+
+    if (!data.slots || !data.slots.length) {
+      document.getElementById('slots-container').innerHTML =
+        `<div class="slots-empty">😔 No available slots on this date.<br><small style="color:var(--muted)">Try a different date or join our waitlist via chat.</small></div>`
+      return
+    }
+
+    const slotBtns = data.slots.map(s =>
+      `<button class="slot-btn" onclick="bookSlot('${s}','${date}')">${to12hr(s)}</button>`
+    ).join('')
+
+    document.getElementById('slots-container').innerHTML =
+      `<div style="margin-bottom:12px;font-size:13px;color:var(--muted)">${data.slots.length} slot(s) available — tap one to start booking</div>
+       <div class="slots-grid">${slotBtns}</div>`
+
+  } catch(e) {
+    document.getElementById('slots-container').innerHTML =
+      `<div class="slots-empty">⚠️ Could not load slots. Please try again.</div>`
+  }
+}
+
+/* ── BOOKING SHORTCUTS ── */
+function bookSlot(time, date) {
+  // Send user to chat with pre-filled context
+  const msg = encodeURIComponent(`I'd like to book a slot on ${date} at ${time}`)
+  window.location.href = `/?prefill=${msg}`
+}
+
+function bookWithDoctor(name) {
+  const msg = encodeURIComponent(`I'd like to book an appointment with ${name}`)
+  window.location.href = `/?prefill=${msg}`
+}
+
+function bookWithService(name) {
+  const msg = encodeURIComponent(`I'd like to book a ${name}`)
+  window.location.href = `/?prefill=${msg}`
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+}
+
+// Smooth scroll for nav links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault()
+    const el = document.querySelector(a.getAttribute('href'))
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' })
+  })
+})
+
+loadClinicInfo()
+</script>
+</body>
+</html>
