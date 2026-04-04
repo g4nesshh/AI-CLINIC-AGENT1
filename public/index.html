@@ -3,679 +3,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClinicAI — Book Your Appointment</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg:         #f0f4f8;
-  --white:      #ffffff;
-  --brand:      #0ea5e9;
-  --brand-dark: #0284c7;
-  --brand-soft: #e0f2fe;
-  --text:       #0f172a;
-  --muted:      #94a3b8;
-  --border:     #e2e8f0;
-  --user-bg:    #0ea5e9;
-  --user-text:  #ffffff;
-  --ai-bg:      #f8fafc;
-  --shadow:     0 20px 60px rgba(14,165,233,0.12), 0 4px 16px rgba(0,0,0,0.06);
-  --slot-bg:    #f0f9ff;
-  --slot-border:#bae6fd;
-  --slot-hover: #0ea5e9;
-  --slot-sel:   #0ea5e9;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#0ea5e9;--brand-dark:#0284c7;--brand-soft:#e0f2fe;
+  --bg:#f0f4f8;--white:#fff;--text:#0f172a;--muted:#64748b;
+  --border:#e2e8f0;--shadow:0 4px 24px rgba(14,165,233,.08),0 1px 4px rgba(0,0,0,.04);
 }
-
-body {
-  font-family: 'Sora', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-}
-
-body::before, body::after {
-  content: '';
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(80px);
-  pointer-events: none;
-  z-index: 0;
-}
-body::before {
-  width: 500px; height: 500px;
-  background: rgba(14,165,233,0.1);
-  top: -100px; left: -100px;
-}
-body::after {
-  width: 400px; height: 400px;
-  background: rgba(16,185,129,0.08);
-  bottom: -80px; right: -80px;
-}
-
-.wrapper {
-  width: 100%;
-  max-width: 420px;
-  position: relative;
-  z-index: 1;
-  animation: riseIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
-  opacity: 0;
-  transform: translateY(24px);
-}
-
-@keyframes riseIn { to { opacity: 1; transform: translateY(0); } }
-
-.card {
-  background: var(--white);
-  border-radius: 24px;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  height: 620px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.8);
-}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px}
 
 /* ── HEADER ── */
-.header {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  padding: 20px 22px 18px;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.header::after {
-  content: '';
-  position: absolute;
-  width: 200px; height: 200px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 50%;
-  top: -80px; right: -40px;
-}
-.header-top { display: flex; align-items: center; gap: 12px; }
-.avatar {
-  width: 42px; height: 42px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  backdrop-filter: blur(4px);
-  flex-shrink: 0;
-}
-.header-info h2 { font-size: 15px; font-weight: 600; color: white; letter-spacing: -0.3px; }
-.header-info p  { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
-.online-dot {
-  width: 6px; height: 6px;
-  background: #4ade80;
-  border-radius: 50%;
-  display: inline-block;
-  animation: blink 2s infinite;
-}
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.header{background:linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%);padding:36px 20px 28px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;width:300px;height:300px;background:rgba(255,255,255,.06);border-radius:50%;top:-80px;right:-60px;pointer-events:none}
+.header::after{content:'';position:absolute;width:200px;height:200px;background:rgba(255,255,255,.04);border-radius:50%;bottom:-60px;left:-40px;pointer-events:none}
+.header-inner{position:relative;z-index:1}
+.clinic-avatar{width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,.2);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:32px;backdrop-filter:blur(4px)}
+.clinic-name{font-size:24px;font-weight:700;color:white;letter-spacing:-.5px;margin-bottom:6px}
+.clinic-tagline{font-size:13.5px;color:rgba(255,255,255,.8);margin-bottom:20px;line-height:1.5}
+.header-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.header-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:5px 14px;font-size:12px;color:white;backdrop-filter:blur(4px)}
 
-.chips { display: flex; gap: 7px; margin-top: 14px; flex-wrap: wrap; }
-.chip {
-  padding: 5px 12px;
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 99px;
-  font-size: 11.5px;
-  color: white;
-  cursor: pointer;
-  transition: all 0.15s;
-  backdrop-filter: blur(4px);
-  white-space: nowrap;
-}
-.chip:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+/* ── BOOK CTA ── */
+.book-cta{margin:20px 16px 0;background:white;border-radius:16px;padding:18px 20px;box-shadow:0 8px 32px rgba(14,165,233,.2);display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:all .2s;border:none;width:calc(100% - 32px);font-family:inherit}
+.book-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(14,165,233,.25)}
+.book-cta-left{text-align:left}
+.book-cta-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.book-cta-text{font-size:16px;font-weight:700;color:var(--brand)}
+.book-cta-right{width:44px;height:44px;background:var(--brand);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 
-/* ── MESSAGES ── */
-.messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 18px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  scroll-behavior: smooth;
-}
-.messages::-webkit-scrollbar { width: 4px; }
-.messages::-webkit-scrollbar-track { background: transparent; }
-.messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+/* ── SECTIONS ── */
+.container{padding:0 16px;margin-top:20px}
+.section{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+.section-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.section-count{font-size:12px;color:var(--muted)}
 
-/* ── BUBBLES ── */
-.msg-row {
-  display: flex;
-  gap: 8px;
-  animation: popIn 0.25s cubic-bezier(0.16,1,0.3,1) forwards;
-  opacity: 0;
-}
-@keyframes popIn {
-  from { opacity: 0; transform: translateY(8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-.msg-row.user-row { flex-direction: row-reverse; }
-.msg-icon {
-  width: 30px; height: 30px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.ai-icon   { background: var(--brand-soft); }
-.user-icon { background: var(--brand); }
+/* ── INFO GRID ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.info-cell{padding:14px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.info-cell:nth-child(2n){border-right:none}
+.info-cell:nth-last-child(-n+2){border-bottom:none}
+.info-cell-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.info-cell-value{font-size:13.5px;font-weight:500;line-height:1.4}
 
-.bubble {
-  max-width: 82%;
-  padding: 11px 14px;
-  border-radius: 16px;
-  font-size: 13.5px;
-  line-height: 1.55;
-}
-.ai-bubble {
-  background: var(--ai-bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-bottom-left-radius: 4px;
-}
-.user-bubble {
-  background: var(--user-bg);
-  color: var(--user-text);
-  border-bottom-right-radius: 4px;
-}
-.bubble-time {
-  font-size: 10.5px;
-  color: var(--muted);
-  margin-top: 4px;
-  text-align: right;
-  font-family: 'JetBrains Mono', monospace;
-}
-.user-row .bubble-time { color: rgba(255,255,255,0.6); }
+/* ── DOCTORS ── */
+.doctor-item{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.doctor-item:last-child{border-bottom:none}
+.doctor-avatar{width:44px;height:44px;border-radius:12px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.doctor-info{flex:1;min-width:0}
+.doctor-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.doctor-spec{font-size:12px;color:var(--brand)}
+.doctor-days{font-size:11px;color:var(--muted);margin-top:4px}
+.doctor-book{padding:6px 14px;border:1.5px solid var(--brand);border-radius:8px;background:transparent;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.doctor-book:hover{background:var(--brand);color:white}
 
-/* ── SLOT PICKER ── */
-.slot-wrapper {
-  display: flex;
-  gap: 8px;
-  animation: popIn 0.25s cubic-bezier(0.16,1,0.3,1) forwards;
-  opacity: 0;
-}
+/* ── SERVICES ── */
+.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.service-item{padding:12px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:10px}
+.service-item:nth-child(2n){border-right:none}
+.service-item:hover{background:var(--brand-soft)}
+.service-icon{font-size:18px;flex-shrink:0}
+.service-name{font-size:13px;font-weight:500}
+.service-dur{font-size:11px;color:var(--muted);margin-top:1px}
 
-.slot-card {
-  background: var(--ai-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  border-bottom-left-radius: 4px;
-  padding: 12px 14px 14px;
-  max-width: 82%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+/* ── SLOTS ── */
+.slots-dates{display:flex;gap:8px;padding:14px 16px;overflow-x:auto;border-bottom:1px solid var(--border)}
+.slots-dates::-webkit-scrollbar{display:none}
+.date-pill{padding:8px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;font-family:inherit;color:var(--text)}
+.date-pill:hover{border-color:var(--brand);color:var(--brand)}
+.date-pill.active{background:var(--brand);border-color:var(--brand);color:white}
+.date-pill small{display:block;font-size:10px;opacity:.7;margin-top:1px}
+.custom-date-row{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.custom-date-row label{font-size:12px;color:var(--muted);white-space:nowrap}
+.date-input{padding:7px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:12.5px;outline:none;color:var(--text);flex:1;transition:border-color .15s}
+.date-input:focus{border-color:var(--brand)}
+.slots-body{padding:14px 16px}
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slot-btn{padding:10px 6px;border-radius:8px;border:1.5px solid #bae6fd;background:#f0f9ff;font-family:'JetBrains Mono',monospace;font-size:12px;color:#0369a1;cursor:pointer;transition:all .15s;text-align:center;font-weight:500}
+.slot-btn:hover{background:var(--brand);border-color:var(--brand);color:white}
+.slots-msg{text-align:center;padding:20px;color:var(--muted);font-size:13.5px}
+.slots-closed{background:#fff8f0;border-radius:10px;padding:14px;text-align:center;color:#92400e;font-size:13px}
 
-.slot-label {
-  font-size: 13.5px;
-  color: var(--text);
-  line-height: 1.5;
-}
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);display:flex;padding:8px 16px;gap:8px;z-index:10;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.bottom-btn{flex:1;padding:10px;border-radius:10px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.bottom-btn-primary{background:var(--brand);color:white}
+.bottom-btn-primary:hover{background:var(--brand-dark)}
+.bottom-btn-ghost{background:var(--brand-soft);color:var(--brand)}
+.bottom-btn-ghost:hover{background:#bae6fd}
 
-.slot-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 7px;
-}
-
-.slot-btn {
-  padding: 8px 4px;
-  background: var(--slot-bg);
-  border: 1.5px solid var(--slot-border);
-  border-radius: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
-  color: #0369a1;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-align: center;
-  font-weight: 500;
-  position: relative;
-  overflow: hidden;
-}
-
-.slot-btn:hover {
-  background: var(--slot-hover);
-  border-color: var(--slot-hover);
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(14,165,233,0.25);
-}
-
-.slot-btn:active { transform: scale(0.96); }
-
-.slot-btn.selected {
-  background: var(--slot-sel);
-  border-color: var(--slot-sel);
-  color: white;
-  box-shadow: 0 4px 12px rgba(14,165,233,0.3);
-}
-
-.slot-btn.selected::after {
-  content: '✓';
-  position: absolute;
-  top: 2px; right: 5px;
-  font-size: 9px;
-  font-family: sans-serif;
-}
-
-.slot-time { font-size: 13px; }
-.slot-period { font-size: 10px; opacity: 0.75; display: block; margin-top: 1px; }
-
-.slot-bubble-time {
-  font-size: 10.5px;
-  color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-/* ── TYPING ── */
-.typing-row { display: flex; gap: 8px; align-items: flex-end; }
-.typing-bubble {
-  background: var(--ai-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  border-bottom-left-radius: 4px;
-  padding: 12px 16px;
-  display: flex; gap: 4px; align-items: center;
-}
-.dot { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; animation: bounce 1.2s infinite; }
-.dot:nth-child(2) { animation-delay: 0.2s; }
-.dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
-
-/* ── DATE DIVIDER ── */
-.date-divider {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 11px; color: var(--muted); margin: 4px 0;
-}
-.date-divider::before, .date-divider::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
-
-/* ── INPUT ── */
-.input-area { padding: 12px 14px 14px; border-top: 1px solid var(--border); background: var(--white); flex-shrink: 0; }
-.input-row {
-  display: flex; align-items: flex-end; gap: 8px;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 8px 8px 8px 14px;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.input-row:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
-textarea {
-  flex: 1; border: none; background: transparent;
-  font-family: 'Sora', sans-serif;
-  font-size: 13.5px; color: var(--text);
-  resize: none; outline: none;
-  line-height: 1.5; max-height: 100px; min-height: 22px; overflow-y: auto;
-}
-textarea::placeholder { color: var(--muted); }
-.send-btn {
-  width: 36px; height: 36px;
-  background: var(--brand); border: none; border-radius: 10px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s; flex-shrink: 0;
-}
-.send-btn:hover  { background: var(--brand-dark); transform: scale(1.05); }
-.send-btn:active { transform: scale(0.95); }
-.send-btn svg { width: 16px; height: 16px; fill: white; }
-.input-hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
-
+/* ── LOADING SKELETONS ── */
+.skeleton{background:linear-gradient(90deg,#e2e8f0 25%,#f0f4f8 50%,#e2e8f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 </style>
 </head>
 <body>
 
-<div class="wrapper">
-  <div class="card">
-
-    <!-- HEADER -->
-    <div class="header">
-      <div class="header-top">
-        <div class="avatar">🏥</div>
-        <div class="header-info">
-          <h2>ClinicAI Receptionist</h2>
-          <p><span class="online-dot"></span> Online — here to help</p>
-        </div>
-      </div>
-      <div class="chips">
-        <div class="chip" onclick="quickSend('Book an appointment')">📅 Book Appointment</div>
-        <div class="chip" onclick="quickSend('What are your clinic hours?')">🕐 Clinic Hours</div>
-        <div class="chip" onclick="quickSend('What services do you offer?')">💊 Services</div>
-        <div class="chip" onclick="window.location.href='/clinic.html'">🏥 About Us</div>
-      </div>
-    </div>
-
-    <!-- MESSAGES -->
-    <div class="messages" id="messages">
-      <div class="date-divider">Today</div>
-    </div>
-
-    <!-- INPUT -->
-    <div class="input-area">
-      <div class="input-row">
-        <textarea
-          id="msg"
-          placeholder="Type your message…"
-          rows="1"
-          oninput="autoResize(this)"
-          onkeydown="handleKey(event)"
-        ></textarea>
-        <button class="send-btn" onclick="send()">
-          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        </button>
-      </div>
-      <div class="input-hint">Press Enter to send · Shift+Enter for new line</div>
-    </div>
-
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="clinic-avatar" id="clinic-icon">🏥</div>
+    <div class="clinic-name" id="clinic-name">Loading…</div>
+    <div class="clinic-tagline" id="clinic-tagline">Quality care, easy booking</div>
+    <div class="header-badges" id="header-badges"></div>
   </div>
 </div>
 
-<script>
+<!-- BOOK CTA -->
+<button class="book-cta" onclick="openChat()">
+  <div class="book-cta-left">
+    <div class="book-cta-label">Ready to visit us?</div>
+    <div class="book-cta-text">Book an Appointment</div>
+  </div>
+  <div class="book-cta-right">📅</div>
+</button>
 
-// ── CHANGE THIS to your Render backend URL after deploying ──
+<div class="container">
+
+  <!-- CLINIC INFO -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">🏥 Clinic Info</div>
+    </div>
+    <div class="info-grid" id="clinic-info">
+      <div class="info-cell"><div class="info-cell-label">Hours</div><div class="skeleton" style="height:16px;width:80%"></div></div>
+      <div class="info-cell"><div class="info-cell-label">Open Days</div><div class="skeleton" style="height:16px;width:70%"></div></div>
+      <div class="info-cell"><div class="info-cell-label">Slot Duration</div><div class="skeleton" style="height:16px;width:60%"></div></div>
+      <div class="info-cell"><div class="info-cell-label">Max/Day</div><div class="skeleton" style="height:16px;width:50%"></div></div>
+    </div>
+  </div>
+
+  <!-- CHECK AVAILABILITY -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">📅 Available Slots</div>
+      <div class="section-count" id="slots-count"></div>
+    </div>
+    <div class="slots-dates" id="date-pills"></div>
+    <div class="custom-date-row">
+      <label>Pick date:</label>
+      <input type="date" class="date-input" id="date-custom" onchange="loadSlots(this.value,null)">
+    </div>
+    <div class="slots-body">
+      <div id="slots-container" class="slots-msg">Select a date above to see available slots</div>
+    </div>
+  </div>
+
+  <!-- DOCTORS -->
+  <div class="section" id="doctors-section">
+    <div class="section-head">
+      <div class="section-title">👨‍⚕️ Our Doctors</div>
+      <div class="section-count" id="doctors-count"></div>
+    </div>
+    <div id="doctors-list">
+      <div style="padding:20px"><div class="skeleton" style="height:60px;border-radius:10px"></div></div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="section" id="services-section">
+    <div class="section-head">
+      <div class="section-title">💊 Our Services</div>
+      <div class="section-count" id="services-count"></div>
+    </div>
+    <div class="services-grid" id="services-grid">
+      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
+      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
+      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
+      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bottom-btn bottom-btn-ghost" onclick="window.location.href='/chat-ui'">💬 Chat</button>
+  <button class="bottom-btn bottom-btn-primary" onclick="openChat('book appointment')">📅 Book Now</button>
+</div>
+
+<script>
 const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
 
-const userId     = Math.random().toString(36).substring(2)
-const messagesEl = document.getElementById('messages')
+/* ── Service icons — works for any clinic type ── */
+const ICONS = {
+  // Dental
+  'checkup':'🦷','tooth cleaning':'✨','cleaning':'✨','root canal':'🔧',
+  'braces':'😁','whitening':'⭐','extraction':'🩺','filling':'🔩','crown':'👑','implant':'🦿',
+  // General / GP
+  'consultation':'💬','general':'🩺','follow up':'📋','follow-up':'📋',
+  'blood test':'🩸','blood':'🩸','injection':'💉','vaccine':'💉','vaccination':'💉',
+  'dressing':'🩹','wound':'🩹','ecg':'❤️','ultrasound':'🔬','scan':'🔬',
+  // Eye
+  'eye test':'👁️','vision':'👁️','glasses':'👓','cataract':'💡','retina':'👁️',
+  // Skin
+  'skin':'🧴','acne':'🧴','dermatology':'🧴','facial':'💆','laser':'✨',
+  // Ortho / physio
+  'physiotherapy':'🏃','physio':'🏃','orthopedic':'🦴','fracture':'🦴','joint':'🦴',
+  'x-ray':'🔬','xray':'🔬',
+  // Default
+  'default':'💊'
+}
 
-/* ── WELCOME ── */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    addMessage('ai', 'Hello! 👋 Welcome to our clinic. I can help you book an appointment, answer questions about our services, or check available time slots.\n\nHow can I help you today?')
-
-    // Handle prefill from clinic info page
-    const params  = new URLSearchParams(window.location.search)
-    const prefill = params.get('prefill')
-    if (prefill) {
-      setTimeout(() => {
-        document.getElementById('msg').value = decodeURIComponent(prefill)
-        send()
-      }, 600)
-    }
-  }, 400)
-})
-
-/* ── TIME HELPERS ── */
-function nowTime() {
-  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+function getIcon(name) {
+  const k = (name || '').toLowerCase()
+  if (ICONS[k]) return ICONS[k]
+  const match = Object.keys(ICONS).find(key => key !== 'default' && k.includes(key))
+  return match ? ICONS[match] : ICONS.default
 }
 
 function to12hr(t) {
-  const [h, m] = t.split(':').map(Number)
-  const period = h >= 12 ? 'PM' : 'AM'
-  const h12    = h % 12 || 12
-  return { display: `${h12}:${m.toString().padStart(2,'0')}`, period }
+  if (!t) return ''
+  const [h,m] = t.split(':').map(Number)
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`
 }
 
-/* ── ADD TEXT MESSAGE ── */
-function addMessage(type, text) {
-  const row  = document.createElement('div')
-  row.className = `msg-row ${type === 'user' ? 'user-row' : ''}`
+function fmtDate(d) { return d.toISOString().split('T')[0] }
 
-  const icon = document.createElement('div')
-  icon.className = `msg-icon ${type === 'ai' ? 'ai-icon' : 'user-icon'}`
-  icon.textContent = type === 'ai' ? '🤖' : '👤'
-
-  const right  = document.createElement('div')
-  const bubble = document.createElement('div')
-  bubble.className = `bubble ${type === 'ai' ? 'ai-bubble' : 'user-bubble'}`
-  bubble.textContent = text
-
-  const timeEl = document.createElement('div')
-  timeEl.className = 'bubble-time'
-  timeEl.textContent = nowTime()
-
-  right.appendChild(bubble)
-  right.appendChild(timeEl)
-
-  if (type === 'ai') { row.appendChild(icon); row.appendChild(right) }
-  else               { row.appendChild(right); row.appendChild(icon) }
-
-  messagesEl.appendChild(row)
-  scrollBottom()
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
 }
 
-/* ── ADD SLOT PICKER ── */
-function addSlotPicker(labelText, slots, slotDate) {
-  const wrapper = document.createElement('div')
-  wrapper.className = 'slot-wrapper'
-
-  const icon = document.createElement('div')
-  icon.className = 'msg-icon ai-icon'
-  icon.textContent = '🤖'
-
-  const card = document.createElement('div')
-  card.className = 'slot-card'
-
-  const label = document.createElement('div')
-  label.className = 'slot-label'
-  label.textContent = labelText
-  card.appendChild(label)
-
-  const grid = document.createElement('div')
-  grid.className = 'slot-grid'
-
-  slots.forEach(slot => {
-    const btn = document.createElement('button')
-    btn.className = 'slot-btn'
-
-    const t = to12hr(slot)
-    btn.innerHTML = `<span class="slot-time">${t.display}</span><span class="slot-period">${t.period}</span>`
-
-    btn.onclick = () => {
-      grid.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'))
-      btn.classList.add('selected')
-      const msg = slotDate
-        ? `I'd like to book at ${slot} on ${slotDate}`
-        : slot
-      setTimeout(() => sendSlot(msg, slot), 200)
-    }
-
-    grid.appendChild(btn)
-  })
-
-  card.appendChild(grid)
-
-  const timeEl = document.createElement('div')
-  timeEl.className = 'slot-bubble-time'
-  timeEl.textContent = nowTime()
-  card.appendChild(timeEl)
-
-  wrapper.appendChild(icon)
-  wrapper.appendChild(card)
-  messagesEl.appendChild(wrapper)
-  scrollBottom()
+/* ── Open chat with optional prefill ── */
+function openChat(msg) {
+  if (msg) window.location.href = '/chat-ui?prefill=' + encodeURIComponent(msg)
+  else      window.location.href = '/chat-ui'
 }
 
-/* ── SEND SLOT SELECTION ── */
-async function sendSlot(message, displayTime) {
-  addMessage('user', `Selected: ${displayTime}`)
-  showTyping()
+/* ── Load all clinic data ── */
+async function loadClinicInfo() {
+  try {
+    const res  = await fetch(API_URL + '/public/clinic-info')
+    const data = await res.json()
+    const { config, doctors, services } = data
+
+    // Header
+    document.title = config.clinic_name || 'Our Clinic'
+    document.getElementById('clinic-name').textContent = config.clinic_name || 'Our Clinic'
+    document.getElementById('clinic-tagline').textContent = 'Quality care, easy online booking'
+
+    // Detect clinic type from services for icon
+    const allServiceNames = services.map(s => s.name.toLowerCase()).join(' ')
+    const clinicIcon = allServiceNames.includes('tooth') || allServiceNames.includes('dental') || allServiceNames.includes('checkup')
+      ? '🦷'
+      : allServiceNames.includes('eye') || allServiceNames.includes('vision')
+      ? '👁️'
+      : allServiceNames.includes('skin') || allServiceNames.includes('derma')
+      ? '🧴'
+      : allServiceNames.includes('physio') || allServiceNames.includes('ortho')
+      ? '🏥'
+      : '🏥'
+    document.getElementById('clinic-icon').textContent = clinicIcon
+
+    // Badges
+    document.getElementById('header-badges').innerHTML =
+      `<span class="header-badge">⏰ ${to12hr(String(config.open_hour).padStart(2,'0')+':00')}–${to12hr(String(config.close_hour).padStart(2,'0')+':00')}</span>` +
+      `<span class="header-badge">📅 ${config.open_days || 'Mon–Sat'}</span>` +
+      `<span class="header-badge">👨‍⚕️ ${doctors.length} Doctor${doctors.length!==1?'s':''}</span>`
+
+    // Info grid
+    document.getElementById('clinic-info').innerHTML = `
+      <div class="info-cell">
+        <div class="info-cell-label">Open Hours</div>
+        <div class="info-cell-value">${to12hr(String(config.open_hour).padStart(2,'0')+':00')} – ${to12hr(String(config.close_hour).padStart(2,'0')+':00')}</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-cell-label">Open Days</div>
+        <div class="info-cell-value">${config.open_days || 'Mon–Sat'}</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-cell-label">Slot Duration</div>
+        <div class="info-cell-value">${config.slot_duration || 30} minutes</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-cell-label">Max Per Day</div>
+        <div class="info-cell-value">${config.max_per_day || 20} appointments</div>
+      </div>`
+
+    renderDoctors(doctors)
+    renderServices(services)
+    setupDatePills()
+
+  } catch(e) {
+    document.getElementById('clinic-name').textContent = 'Could not load clinic info'
+    console.error(e)
+  }
+}
+
+/* ── DOCTORS ── */
+function renderDoctors(doctors) {
+  document.getElementById('doctors-count').textContent = doctors.length + ' available'
+  if (!doctors.length) {
+    document.getElementById('doctors-list').innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">No doctors listed yet</div>'
+    return
+  }
+  document.getElementById('doctors-list').innerHTML = doctors.map(d => {
+    const days = (d.available_days || '').split(',').map(x => x.trim()).join(' · ')
+    return `<div class="doctor-item">
+      <div class="doctor-avatar">👨‍⚕️</div>
+      <div class="doctor-info">
+        <div class="doctor-name">${esc(d.name)}</div>
+        <div class="doctor-spec">${esc(d.specialization)}</div>
+        <div class="doctor-days">Available: ${esc(days)}</div>
+      </div>
+      <button class="doctor-book" onclick="openChat('I would like to book an appointment with ${esc(d.name)}')">Book</button>
+    </div>`
+  }).join('')
+}
+
+/* ── SERVICES ── */
+function renderServices(services) {
+  document.getElementById('services-count').textContent = services.length + ' offered'
+  if (!services.length) {
+    document.getElementById('services-grid').innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center;grid-column:span 2">No services listed yet</div>'
+    return
+  }
+  document.getElementById('services-grid').innerHTML = services.map(s => `
+    <div class="service-item" onclick="openChat('I would like to book a ${esc(s.name)}')">
+      <div class="service-icon">${getIcon(s.name)}</div>
+      <div>
+        <div class="service-name">${esc(s.name)}</div>
+        <div class="service-dur">${s.duration_minutes} min</div>
+      </div>
+    </div>`).join('')
+}
+
+/* ── DATE PILLS ── */
+function setupDatePills() {
+  const today    = new Date(); today.setHours(0,0,0,0)
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+  let html = ''
+  for (let i = 0; i < 8; i++) {
+    const d     = new Date(today); d.setDate(d.getDate() + i)
+    const date  = fmtDate(d)
+    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayNames[d.getDay()]
+    html += `<button class="date-pill" data-date="${date}" onclick="loadSlots('${date}',this)">
+      ${label}<small>${d.getDate()}/${d.getMonth()+1}</small>
+    </button>`
+  }
+  document.getElementById('date-pills').innerHTML = html
+  document.getElementById('date-custom').min = fmtDate(today)
+
+  // Auto-load today
+  const firstPill = document.querySelector('.date-pill')
+  if (firstPill) loadSlots(fmtDate(today), firstPill)
+}
+
+/* ── SLOTS ── */
+async function loadSlots(date, btn) {
+  if (!date) return
+
+  // Update active pill
+  document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('active'))
+  if (btn) btn.classList.add('active')
+  document.getElementById('date-custom').value = date
+  document.getElementById('slots-container').innerHTML = '<div class="slots-msg">⏳ Loading…</div>'
+  document.getElementById('slots-count').textContent = ''
 
   try {
-    const res  = await fetch(API_URL + '/chat', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ message, userId })
-    })
+    const res  = await fetch(`${API_URL}/public/public-slots?date=${date}`)
     const data = await res.json()
-    hideTyping()
-    handleResponse(data)
-  } catch (e) {
-    hideTyping()
-    addMessage('ai', 'Sorry, could not connect to the server. Please try again.')
-  }
-}
 
-/* ── HANDLE SERVER RESPONSE ── */
-function handleResponse(data) {
-  const action = data.action || (data.slots && data.slots.length > 0 ? 'show_slots' : 'chat')
-
-  switch (action) {
-
-    case 'show_slots':
-      addSlotPicker(data.reply, data.slots, data.slotDate || null)
-      break
-
-    case 'show_summary':
-      addMessage('ai', data.reply)
-      addQuickReplies(['✅ Yes, confirm', '❌ No, change something'])
-      break
-
-    case 'confirmed':
-      addMessage('ai', data.reply)
-      addQuickReplies(['📅 Book another appointment', '🔍 Check my appointments'])
-      break
-
-    case 'cancelled':
-      addMessage('ai', data.reply)
-      addQuickReplies(['📅 Book new appointment', '🔍 Check my appointments'])
-      break
-
-    case 'ask_date':
-      addMessage('ai', data.reply)
-      addQuickReplies(['Today', 'Tomorrow', 'Next Monday', 'Next Saturday'])
-      break
-
-    case 'ask_service':
-      addMessage('ai', data.reply)
-      addQuickReplies(['Checkup', 'Tooth Cleaning', 'Consultation', 'X-Ray'])
-      break
-
-    case 'show_options':
-      addMessage('ai', data.reply)
-      if (data.options) addQuickReplies(data.options)
-      break
-
-    default:
-      addMessage('ai', data.reply)
-      break
-  }
-}
-
-/* ── TYPING INDICATOR ── */
-function showTyping() {
-  const row = document.createElement('div')
-  row.className = 'typing-row'
-  row.id = 'typing'
-
-  const icon = document.createElement('div')
-  icon.className = 'msg-icon ai-icon'
-  icon.textContent = '🤖'
-
-  const bubble = document.createElement('div')
-  bubble.className = 'typing-bubble'
-  bubble.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>'
-
-  row.appendChild(icon)
-  row.appendChild(bubble)
-  messagesEl.appendChild(row)
-  scrollBottom()
-}
-
-function hideTyping() {
-  const t = document.getElementById('typing')
-  if (t) t.remove()
-}
-
-/* ── SEND TEXT ── */
-async function send() {
-  const textarea = document.getElementById('msg')
-  const text = textarea.value.trim()
-  if (!text) return
-
-  addMessage('user', text)
-  textarea.value = ''
-  textarea.style.height = 'auto'
-  // Remove quick reply buttons when user types
-  const qr = document.getElementById('quick-replies')
-  if (qr) qr.remove()
-  showTyping()
-
-  try {
-    const res  = await fetch(API_URL + '/chat', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ message: text, userId })
-    })
-    const data = await res.json()
-    hideTyping()
-    handleResponse(data)
-  } catch (e) {
-    hideTyping()
-    addMessage('ai', 'Sorry, could not connect to the server. Please try again.')
-  }
-}
-
-function quickSend(text) {
-  document.getElementById('msg').value = text
-  send()
-}
-
-/* ── HELPERS ── */
-/* ── QUICK REPLIES ── */
-function addQuickReplies(options) {
-  // Remove any existing quick replies first
-  const existing = document.getElementById('quick-replies')
-  if (existing) existing.remove()
-
-  const wrapper = document.createElement('div')
-  wrapper.id = 'quick-replies'
-  wrapper.style.cssText = 'display:flex;flex-wrap:wrap;gap:7px;padding:4px 16px 8px;animation:popIn 0.2s cubic-bezier(0.16,1,0.3,1) forwards;opacity:0'
-
-  options.forEach(option => {
-    const btn = document.createElement('button')
-    btn.textContent = option
-    btn.style.cssText = `
-      padding: 7px 14px;
-      background: var(--brand-soft);
-      border: 1.5px solid var(--brand);
-      border-radius: 99px;
-      font-family: 'Sora', sans-serif;
-      font-size: 12.5px;
-      color: var(--brand-dark);
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-    `
-    btn.onmouseover = () => { btn.style.background = 'var(--brand)'; btn.style.color = 'white' }
-    btn.onmouseout  = () => { btn.style.background = 'var(--brand-soft)'; btn.style.color = 'var(--brand-dark)' }
-    btn.onclick = () => {
-      wrapper.remove()
-      document.getElementById('msg').value = option
-      send()
+    if (!data.open) {
+      document.getElementById('slots-container').innerHTML =
+        `<div class="slots-closed">🗓️ Clinic is closed on this date${data.reason==='holiday'?' (holiday)':''}.<br><small>Please select another date.</small></div>`
+      document.getElementById('slots-count').textContent = 'Closed'
+      return
     }
-    wrapper.appendChild(btn)
-  })
 
-  messagesEl.appendChild(wrapper)
-  scrollBottom()
+    if (!data.slots || !data.slots.length) {
+      document.getElementById('slots-container').innerHTML =
+        `<div class="slots-msg">😔 No slots available on this date.<br><small style="color:var(--muted)">Try another date or ask us via chat.</small></div>`
+      document.getElementById('slots-count').textContent = '0 available'
+      return
+    }
+
+    document.getElementById('slots-count').textContent = data.slots.length + ' available'
+    document.getElementById('slots-container').innerHTML =
+      `<div class="slots-grid">` +
+      data.slots.map(s =>
+        `<button class="slot-btn" onclick="openChat('I would like to book at ${s} on ${date}')">${to12hr(s)}</button>`
+      ).join('') +
+      `</div>`
+
+  } catch(e) {
+    document.getElementById('slots-container').innerHTML = '<div class="slots-msg">⚠️ Could not load slots</div>'
+  }
 }
 
-function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight }
-
-function autoResize(el) {
-  el.style.height = 'auto'
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px'
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
-}
-
+loadClinicInfo()
 </script>
 </body>
 </html>
