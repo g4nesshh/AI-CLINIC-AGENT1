@@ -4,16 +4,13 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "worker": "node worker.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "worker": "node worker.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "express": "^5.2.1",
     "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.9",
     "pg": "^8.11.3"
   },
-  "description": "ClinicAI — AI-powered dental clinic assistant"
+  "description": "ClinicAI — AI-powered clinic assistant"
 }

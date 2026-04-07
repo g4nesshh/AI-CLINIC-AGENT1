@@ -12,7 +12,7 @@
  *   db.serialize(fn)
  *
  * Set environment variable:
- *   DATABASE_URL = postgres://user:pass@host:5432/dbname
+ *   DATABASE_URL =
  *
  * On Render: Dashboard → your service → Environment → Add
  * On Render PostgreSQL: Dashboard → New → PostgreSQL (free)

@@ -11,16 +11,14 @@ const { getAllHolidays, addHoliday, deleteHoliday } = require('../services/slots
 const { getAnalyticsSummary, getTopServices, getDropOffPoints } = require('../utils/analytics')
 
 /* ================================================
-   EMAIL — using nodemailer
+   EMAIL — nodemailer
+   Requires: npm install nodemailer
+   For Gmail: use App Password, not your real password
+   Google Account → Security → 2-Step → App Passwords
 ================================================ */
 
-let nodemailer = null
-try {
-  nodemailer = require('nodemailer')
-  console.log('[Email] nodemailer loaded ✅')
-} catch(e) {
-  console.log('[Email] nodemailer not installed — run: npm install nodemailer')
-}
+const nodemailer = require('nodemailer')
+console.log('[Email] nodemailer loaded ✅')
 
 async function getSmtpConfig() {
   return new Promise((resolve) => {
@@ -28,56 +26,102 @@ async function getSmtpConfig() {
   })
 }
 
-async function sendEmail({ to, subject, html }) {
-  if (!nodemailer) return { ok: false, error: 'nodemailer not installed' }
+function buildTransporter(config) {
+  const host = config.smtp_host || 'smtp.gmail.com'
+  const port = parseInt(config.smtp_port) || 587
 
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,   // true only for port 465
+    auth: {
+      user: config.smtp_user,
+      pass: config.smtp_pass
+    },
+    tls: {
+      rejectUnauthorized: false   // avoids cert errors on some hosts
+    }
+  })
+}
+
+async function sendEmail({ to, subject, html }) {
   const config = await getSmtpConfig()
 
-  if (!config.smtp_user || !config.smtp_pass) {
-    return { ok: false, error: 'SMTP not configured in Settings' }
+  // Validation
+  if (!config.smtp_user || !config.smtp_user.includes('@')) {
+    return { ok: false, error: 'SMTP username not set. Go to Settings → Email and enter your Gmail address.' }
+  }
+  if (!config.smtp_pass || config.smtp_pass.length < 8) {
+    return { ok: false, error: 'SMTP password not set. Go to Settings → Email and enter your App Password.' }
+  }
+  if (!to || !to.includes('@')) {
+    return { ok: false, error: 'Invalid recipient email address.' }
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      host:   config.smtp_host || 'smtp.gmail.com',
-      port:   parseInt(config.smtp_port) || 587,
-      secure: false,
-      auth:   { user: config.smtp_user, pass: config.smtp_pass }
+    const transporter = buildTransporter(config)
+    const info = await transporter.sendMail({
+      from:    `"${config.clinic_name || 'ClinicAI'}" <${config.smtp_user}>`,
+      to,
+      subject,
+      html
     })
-
-    await transporter.verify()
-    await transporter.sendMail({
-      from: `"${config.clinic_name || 'ClinicAI'}" <${config.smtp_user}>`,
-      to, subject, html
-    })
-
-    console.log('[Email] Sent to', to)
-    return { ok: true }
+    console.log('[Email] ✅ Sent to', to, '| MessageId:', info.messageId)
+    return { ok: true, messageId: info.messageId }
 
   } catch(err) {
-    console.error('[Email] Failed:', err.message)
-    return { ok: false, error: err.message }
+    console.error('[Email] ❌ Failed:', err.message)
+
+    // Friendly error messages
+    let friendly = err.message
+    if (err.message.includes('Invalid login') || err.message.includes('Username and Password')) {
+      friendly = 'Gmail rejected the login. Make sure you are using an App Password (not your real Gmail password). Get one at: Google Account → Security → 2-Step Verification → App Passwords.'
+    } else if (err.message.includes('ECONNREFUSED') || err.message.includes('ETIMEDOUT')) {
+      friendly = `Cannot connect to ${config.smtp_host || 'smtp.gmail.com'}:${config.smtp_port || 587}. Check your SMTP host and port settings.`
+    } else if (err.message.includes('self signed') || err.message.includes('certificate')) {
+      friendly = 'SSL certificate error. Try changing SMTP port to 587.'
+    } else if (err.message.includes('getaddrinfo')) {
+      friendly = `Cannot find SMTP host "${config.smtp_host}". Check your SMTP host setting.`
+    }
+
+    return { ok: false, error: friendly }
   }
 }
 
 /* ── Test email endpoint ── */
 router.post('/test-email', async (req, res) => {
   const { to } = req.body
-  if (!to) return res.status(400).json({ error: 'email required' })
+  if (!to) return res.status(400).json({ error: 'Recipient email required' })
 
   const config = await getSmtpConfig()
   const result = await sendEmail({
     to,
-    subject: `Test email from ${config.clinic_name || 'ClinicAI'}`,
-    html: `<div style="font-family:Arial,sans-serif;padding:24px">
-      <h2 style="color:#0ea5e9">✅ Email is working!</h2>
-      <p>This is a test email from your ClinicAI admin panel.</p>
-      <p>Your SMTP configuration is correct.</p>
-    </div>`
+    subject: `✅ Test email from ${config.clinic_name || 'ClinicAI'}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:480px;padding:32px;background:#f8fafc;border-radius:12px">
+        <h2 style="color:#0ea5e9;margin-bottom:8px">✅ Email is working!</h2>
+        <p style="color:#475569;margin-bottom:16px">This is a test from your <strong>${config.clinic_name || 'ClinicAI'}</strong> admin panel.</p>
+        <p style="color:#64748b;font-size:14px">Your SMTP configuration is correct. Appointment reminders will be sent automatically.</p>
+      </div>`
   })
 
-  if (result.ok) res.json({ success: true })
-  else res.status(500).json({ error: result.error })
+  if (result.ok) {
+    res.json({ success: true, message: 'Email sent successfully!' })
+  } else {
+    res.status(500).json({ error: result.error })
+  }
+})
+
+/* ── Email status check ── */
+router.get('/email-status', async (req, res) => {
+  const config = await getSmtpConfig()
+  res.json({
+    configured: !!(config.smtp_user && config.smtp_pass),
+    smtp_host:  config.smtp_host || 'smtp.gmail.com',
+    smtp_port:  config.smtp_port || 587,
+    smtp_user:  config.smtp_user ? config.smtp_user.replace(/(.{2}).*(@.*)/, '$1***$2') : null,
+    hint: !config.smtp_user ? 'Go to Settings → Email to configure SMTP' : null
+  })
 })
 
 /* ================================================
@@ -93,27 +137,44 @@ router.get('/clinic-config', (req, res) => {
 
 router.put('/clinic-config', (req, res) => {
   const {
-    clinic_name, open_hour, close_hour, slot_duration,
-    open_days, max_per_day, clinic_email,
-    smtp_host, smtp_port, smtp_user, smtp_pass
+    clinic_name, clinic_tagline, clinic_type, clinic_icon,
+    clinic_phone, clinic_address, clinic_website, whatsapp, google_maps,
+    open_hour, close_hour, slot_duration, open_days, max_per_day,
+    clinic_email, smtp_host, smtp_port, smtp_user, smtp_pass
   } = req.body
 
   db.run(`
     UPDATE clinic_config SET
-      clinic_name   = ?,
-      open_hour     = ?,
-      close_hour    = ?,
-      slot_duration = ?,
-      open_days     = ?,
-      max_per_day   = ?,
-      clinic_email  = ?,
-      smtp_host     = ?,
-      smtp_port     = ?,
-      smtp_user     = ?,
-      smtp_pass     = ?
+      clinic_name    = ?,
+      clinic_tagline = ?,
+      clinic_type    = ?,
+      clinic_icon    = ?,
+      clinic_phone   = ?,
+      clinic_address = ?,
+      clinic_website = ?,
+      whatsapp       = ?,
+      google_maps    = ?,
+      open_hour      = ?,
+      close_hour     = ?,
+      slot_duration  = ?,
+      open_days      = ?,
+      max_per_day    = ?,
+      clinic_email   = ?,
+      smtp_host      = ?,
+      smtp_port      = ?,
+      smtp_user      = ?,
+      smtp_pass      = ?
     WHERE id = 1
   `, [
-    clinic_name    || 'ClinicAI Dental',
+    clinic_name    || 'My Clinic',
+    clinic_tagline || 'Quality care, easy booking',
+    clinic_type    || 'general',
+    clinic_icon    || '🏥',
+    clinic_phone   || '',
+    clinic_address || '',
+    clinic_website || '',
+    whatsapp       || '',
+    google_maps    || '',
     open_hour      || 10,
     close_hour     || 17,
     slot_duration  || 30,
