@@ -10,93 +10,103 @@
 :root{
   --brand:#0ea5e9;--brand-dark:#0284c7;--brand-soft:#e0f2fe;
   --bg:#f0f4f8;--white:#fff;--text:#0f172a;--muted:#64748b;
-  --border:#e2e8f0;--shadow:0 4px 24px rgba(14,165,233,.08),0 1px 4px rgba(0,0,0,.04);
+  --border:#e2e8f0;--shadow:0 2px 12px rgba(14,165,233,.07);
 }
-body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
 
-/* ── HEADER ── */
-.header{background:linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%);padding:36px 20px 28px;text-align:center;position:relative;overflow:hidden}
-.header::before{content:'';position:absolute;width:300px;height:300px;background:rgba(255,255,255,.06);border-radius:50%;top:-80px;right:-60px;pointer-events:none}
-.header::after{content:'';position:absolute;width:200px;height:200px;background:rgba(255,255,255,.04);border-radius:50%;bottom:-60px;left:-40px;pointer-events:none}
+/* HEADER */
+.header{background:linear-gradient(135deg,#0ea5e9 0%,#0284c7 100%);padding:32px 20px 24px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;width:280px;height:280px;background:rgba(255,255,255,.06);border-radius:50%;top:-60px;right:-50px;pointer-events:none}
 .header-inner{position:relative;z-index:1}
-.clinic-avatar{width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,.2);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:32px;backdrop-filter:blur(4px)}
-.clinic-name{font-size:24px;font-weight:700;color:white;letter-spacing:-.5px;margin-bottom:6px}
-.clinic-tagline{font-size:13.5px;color:rgba(255,255,255,.8);margin-bottom:20px;line-height:1.5}
-.header-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.header-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:5px 14px;font-size:12px;color:white;backdrop-filter:blur(4px)}
+.clinic-icon{width:68px;height:68px;border-radius:18px;background:rgba(255,255,255,.2);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:30px;backdrop-filter:blur(4px)}
+.clinic-name{font-size:22px;font-weight:700;color:white;letter-spacing:-.5px;margin-bottom:5px}
+.clinic-tagline{font-size:13px;color:rgba(255,255,255,.8);margin-bottom:16px;line-height:1.5}
+.header-pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.header-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:4px 12px;font-size:11.5px;color:white}
 
-/* ── BOOK CTA ── */
-.book-cta{margin:20px 16px 0;background:white;border-radius:16px;padding:18px 20px;box-shadow:0 8px 32px rgba(14,165,233,.2);display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:all .2s;border:none;width:calc(100% - 32px);font-family:inherit}
-.book-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(14,165,233,.25)}
+/* BOOK CTA */
+.book-cta{display:flex;margin:16px;background:white;border-radius:14px;padding:16px 18px;box-shadow:0 8px 28px rgba(14,165,233,.18);align-items:center;justify-content:space-between;gap:12px;cursor:pointer;border:none;width:calc(100% - 32px);font-family:inherit;transition:all .2s}
+.book-cta:hover,.book-cta:active{transform:translateY(-1px);box-shadow:0 12px 36px rgba(14,165,233,.22)}
 .book-cta-left{text-align:left}
 .book-cta-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
-.book-cta-text{font-size:16px;font-weight:700;color:var(--brand)}
-.book-cta-right{width:44px;height:44px;background:var(--brand);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.book-cta-text{font-size:15px;font-weight:700;color:var(--brand)}
+.book-cta-icon{width:42px;height:42px;background:var(--brand);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 
-/* ── SECTIONS ── */
-.container{padding:0 16px;margin-top:20px}
-.section{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
-.section-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.section-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
-.section-count{font-size:12px;color:var(--muted)}
+/* CARDS */
+.container{padding:0 14px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow)}
+.card-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px}
+.card-badge{font-size:11.5px;color:var(--muted);background:var(--bg);padding:3px 10px;border-radius:99px;border:1px solid var(--border)}
 
-/* ── INFO GRID ── */
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.info-cell{padding:14px 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+/* INFO GRID */
+.info-grid{display:grid;grid-template-columns:1fr 1fr}
+.info-cell{padding:13px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
 .info-cell:nth-child(2n){border-right:none}
 .info-cell:nth-last-child(-n+2){border-bottom:none}
-.info-cell-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.info-cell-value{font-size:13.5px;font-weight:500;line-height:1.4}
+.info-label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.info-value{font-size:13px;font-weight:500;line-height:1.4}
+.info-link{color:var(--brand);text-decoration:none;font-size:13px;font-weight:500}
+.info-link:hover{text-decoration:underline}
 
-/* ── DOCTORS ── */
-.doctor-item{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border)}
-.doctor-item:last-child{border-bottom:none}
-.doctor-avatar{width:44px;height:44px;border-radius:12px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.doctor-info{flex:1;min-width:0}
-.doctor-name{font-size:14px;font-weight:600;margin-bottom:2px}
-.doctor-spec{font-size:12px;color:var(--brand)}
-.doctor-days{font-size:11px;color:var(--muted);margin-top:4px}
-.doctor-book{padding:6px 14px;border:1.5px solid var(--brand);border-radius:8px;background:transparent;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;flex-shrink:0}
-.doctor-book:hover{background:var(--brand);color:white}
-
-/* ── SERVICES ── */
-.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.service-item{padding:12px 16px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:10px}
-.service-item:nth-child(2n){border-right:none}
-.service-item:hover{background:var(--brand-soft)}
-.service-icon{font-size:18px;flex-shrink:0}
-.service-name{font-size:13px;font-weight:500}
-.service-dur{font-size:11px;color:var(--muted);margin-top:1px}
-
-/* ── SLOTS ── */
-.slots-dates{display:flex;gap:8px;padding:14px 16px;overflow-x:auto;border-bottom:1px solid var(--border)}
-.slots-dates::-webkit-scrollbar{display:none}
-.date-pill{padding:8px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;font-family:inherit;color:var(--text)}
+/* SLOTS */
+.date-scroll{display:flex;gap:8px;padding:12px 14px;overflow-x:auto;border-bottom:1px solid var(--border)}
+.date-scroll::-webkit-scrollbar{display:none}
+.date-pill{padding:7px 13px;border-radius:9px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;color:var(--text);transition:all .15s;text-align:center;line-height:1.3}
 .date-pill:hover{border-color:var(--brand);color:var(--brand)}
 .date-pill.active{background:var(--brand);border-color:var(--brand);color:white}
-.date-pill small{display:block;font-size:10px;opacity:.7;margin-top:1px}
-.custom-date-row{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.custom-date-row label{font-size:12px;color:var(--muted);white-space:nowrap}
-.date-input{padding:7px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:12.5px;outline:none;color:var(--text);flex:1;transition:border-color .15s}
+.date-pill small{display:block;font-size:10px;opacity:.75;margin-top:1px}
+.custom-row{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.custom-row label{font-size:12px;color:var(--muted);white-space:nowrap}
+.date-input{padding:6px 11px;border-radius:7px;border:1.5px solid var(--border);font-family:inherit;font-size:12.5px;outline:none;color:var(--text);flex:1;transition:border-color .15s}
 .date-input:focus{border-color:var(--brand)}
-.slots-body{padding:14px 16px}
-.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.slot-btn{padding:10px 6px;border-radius:8px;border:1.5px solid #bae6fd;background:#f0f9ff;font-family:'JetBrains Mono',monospace;font-size:12px;color:#0369a1;cursor:pointer;transition:all .15s;text-align:center;font-weight:500}
-.slot-btn:hover{background:var(--brand);border-color:var(--brand);color:white}
-.slots-msg{text-align:center;padding:20px;color:var(--muted);font-size:13.5px}
+.slots-body{padding:14px}
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.slot-btn{padding:9px 4px;border-radius:8px;border:1.5px solid #bae6fd;background:#f0f9ff;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#0369a1;cursor:pointer;transition:all .15s;text-align:center;font-weight:500}
+.slot-btn:hover,.slot-btn:active{background:var(--brand);border-color:var(--brand);color:white}
+.slots-msg{text-align:center;padding:20px;color:var(--muted);font-size:13px;line-height:1.6}
 .slots-closed{background:#fff8f0;border-radius:10px;padding:14px;text-align:center;color:#92400e;font-size:13px}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);display:flex;padding:8px 16px;gap:8px;z-index:10;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
-.bottom-btn{flex:1;padding:10px;border-radius:10px;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
-.bottom-btn-primary{background:var(--brand);color:white}
-.bottom-btn-primary:hover{background:var(--brand-dark)}
-.bottom-btn-ghost{background:var(--brand-soft);color:var(--brand)}
-.bottom-btn-ghost:hover{background:#bae6fd}
+/* DOCTORS */
+.doctor-row{display:flex;align-items:center;gap:13px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.doctor-row:last-child{border-bottom:none}
+.doctor-av{width:42px;height:42px;border-radius:11px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.doctor-info{flex:1;min-width:0}
+.doctor-name{font-size:13.5px;font-weight:600;margin-bottom:2px}
+.doctor-spec{font-size:12px;color:var(--brand)}
+.doctor-days{font-size:11px;color:var(--muted);margin-top:3px}
+.doctor-btn{padding:6px 13px;border:1.5px solid var(--brand);border-radius:8px;background:transparent;color:var(--brand);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.doctor-btn:hover{background:var(--brand);color:white}
 
-/* ── LOADING SKELETONS ── */
-.skeleton{background:linear-gradient(90deg,#e2e8f0 25%,#f0f4f8 50%,#e2e8f0 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:8px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:1fr 1fr}
+.service-item{padding:12px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:10px}
+.service-item:nth-child(2n){border-right:none}
+.service-item:hover{background:var(--brand-soft)}
+.service-icon{font-size:17px;flex-shrink:0}
+.service-name{font-size:12.5px;font-weight:500}
+.service-dur{font-size:11px;color:var(--muted)}
+
+/* CONTACT */
+.contact-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.contact-item:last-child{border-bottom:none}
+.contact-icon{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.contact-label{font-size:11px;color:var(--muted);margin-bottom:2px}
+.contact-value{font-size:13px;font-weight:500}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);display:flex;padding:10px 14px;gap:10px;z-index:10;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.bottom-btn{flex:1;padding:11px;border-radius:10px;border:none;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.bottom-primary{background:var(--brand);color:white}
+.bottom-primary:hover{background:var(--brand-dark)}
+.bottom-ghost{background:var(--brand-soft);color:var(--brand)}
+
+/* SKELETON */
+.sk{background:linear-gradient(90deg,#e2e8f0 25%,#f0f4f8 50%,#e2e8f0 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:8px}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ERROR */
+.error-box{background:#fff1f2;border:1px solid #fecdd3;border-radius:10px;padding:16px;margin:14px;color:#9f1239;font-size:13px;text-align:center}
 </style>
 </head>
 <body>
@@ -104,284 +114,209 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-he
 <!-- HEADER -->
 <div class="header">
   <div class="header-inner">
-    <div class="clinic-avatar" id="clinic-icon">🏥</div>
+    <div class="clinic-icon" id="clinic-icon">🏥</div>
     <div class="clinic-name" id="clinic-name">Loading…</div>
-    <div class="clinic-tagline" id="clinic-tagline">Quality care, easy booking</div>
-    <div class="header-badges" id="header-badges"></div>
+    <div class="clinic-tagline" id="clinic-tagline">Please wait</div>
+    <div class="header-pills" id="header-pills"></div>
   </div>
 </div>
 
 <!-- BOOK CTA -->
-<button class="book-cta" onclick="openChat()">
+<button class="book-cta" onclick="openChat('book appointment')">
   <div class="book-cta-left">
-    <div class="book-cta-label">Ready to visit us?</div>
-    <div class="book-cta-text">Book an Appointment</div>
+    <div class="book-cta-label">Ready to visit?</div>
+    <div class="book-cta-text">Book an Appointment →</div>
   </div>
-  <div class="book-cta-right">📅</div>
+  <div class="book-cta-icon">📅</div>
 </button>
 
-<div class="container">
-
-  <!-- CLINIC INFO -->
-  <div class="section">
-    <div class="section-head">
-      <div class="section-title">🏥 Clinic Info</div>
-    </div>
-    <div class="info-grid" id="clinic-info">
-      <div class="info-cell"><div class="info-cell-label">Hours</div><div class="skeleton" style="height:16px;width:80%"></div></div>
-      <div class="info-cell"><div class="info-cell-label">Open Days</div><div class="skeleton" style="height:16px;width:70%"></div></div>
-      <div class="info-cell"><div class="info-cell-label">Slot Duration</div><div class="skeleton" style="height:16px;width:60%"></div></div>
-      <div class="info-cell"><div class="info-cell-label">Max/Day</div><div class="skeleton" style="height:16px;width:50%"></div></div>
-    </div>
-  </div>
-
-  <!-- CHECK AVAILABILITY -->
-  <div class="section">
-    <div class="section-head">
-      <div class="section-title">📅 Available Slots</div>
-      <div class="section-count" id="slots-count"></div>
-    </div>
-    <div class="slots-dates" id="date-pills"></div>
-    <div class="custom-date-row">
-      <label>Pick date:</label>
-      <input type="date" class="date-input" id="date-custom" onchange="loadSlots(this.value,null)">
-    </div>
-    <div class="slots-body">
-      <div id="slots-container" class="slots-msg">Select a date above to see available slots</div>
-    </div>
-  </div>
-
-  <!-- DOCTORS -->
-  <div class="section" id="doctors-section">
-    <div class="section-head">
-      <div class="section-title">👨‍⚕️ Our Doctors</div>
-      <div class="section-count" id="doctors-count"></div>
-    </div>
-    <div id="doctors-list">
-      <div style="padding:20px"><div class="skeleton" style="height:60px;border-radius:10px"></div></div>
-    </div>
-  </div>
-
-  <!-- SERVICES -->
-  <div class="section" id="services-section">
-    <div class="section-head">
-      <div class="section-title">💊 Our Services</div>
-      <div class="section-count" id="services-count"></div>
-    </div>
-    <div class="services-grid" id="services-grid">
-      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
-      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
-      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
-      <div style="padding:14px"><div class="skeleton" style="height:40px;border-radius:8px"></div></div>
-    </div>
-  </div>
-
+<div class="container" id="main-content">
+  <!-- skeleton while loading -->
+  <div class="card"><div style="padding:16px"><div class="sk" style="height:14px;margin-bottom:10px"></div><div class="sk" style="height:14px;width:70%"></div></div></div>
+  <div class="card"><div style="padding:16px"><div class="sk" style="height:60px;border-radius:10px"></div></div></div>
+  <div class="card"><div style="padding:16px"><div class="sk" style="height:80px;border-radius:10px"></div></div></div>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <button class="bottom-btn bottom-btn-ghost" onclick="window.location.href='/chat-ui'">💬 Chat</button>
-  <button class="bottom-btn bottom-btn-primary" onclick="openChat('book appointment')">📅 Book Now</button>
+  <button class="bottom-btn bottom-ghost" onclick="openChat()">💬 Chat with Us</button>
+  <button class="bottom-btn bottom-primary" onclick="openChat('book appointment')">📅 Book Now</button>
 </div>
 
 <script>
+// ── SET YOUR RENDER URL HERE ──────────────────────────────
 const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+// ─────────────────────────────────────────────────────────
 
-/* ── Service icons — works for any clinic type ── */
 const ICONS = {
-  // Dental
-  'checkup':'🦷','tooth cleaning':'✨','cleaning':'✨','root canal':'🔧',
-  'braces':'😁','whitening':'⭐','extraction':'🩺','filling':'🔩','crown':'👑','implant':'🦿',
-  // General / GP
+  'checkup':'🦷','tooth cleaning':'✨','cleaning':'✨','root canal':'🔧','braces':'😁',
+  'whitening':'⭐','extraction':'🩺','filling':'🔩','crown':'👑','implant':'🦿',
   'consultation':'💬','general':'🩺','follow up':'📋','follow-up':'📋',
   'blood test':'🩸','blood':'🩸','injection':'💉','vaccine':'💉','vaccination':'💉',
   'dressing':'🩹','wound':'🩹','ecg':'❤️','ultrasound':'🔬','scan':'🔬',
-  // Eye
-  'eye test':'👁️','vision':'👁️','glasses':'👓','cataract':'💡','retina':'👁️',
-  // Skin
+  'eye test':'👁️','vision':'👁️','glasses':'👓','cataract':'💡',
   'skin':'🧴','acne':'🧴','dermatology':'🧴','facial':'💆','laser':'✨',
-  // Ortho / physio
   'physiotherapy':'🏃','physio':'🏃','orthopedic':'🦴','fracture':'🦴','joint':'🦴',
-  'x-ray':'🔬','xray':'🔬',
-  // Default
-  'default':'💊'
+  'x-ray':'🔬','xray':'🔬','default':'💊'
 }
 
 function getIcon(name) {
-  const k = (name || '').toLowerCase()
-  if (ICONS[k]) return ICONS[k]
-  const match = Object.keys(ICONS).find(key => key !== 'default' && k.includes(key))
-  return match ? ICONS[match] : ICONS.default
+  const k = (name||'').toLowerCase()
+  return ICONS[k] || Object.keys(ICONS).filter(x=>x!=='default').find(key=>k.includes(key)) && ICONS[Object.keys(ICONS).filter(x=>x!=='default').find(key=>k.includes(key))] || ICONS.default
 }
 
 function to12hr(t) {
   if (!t) return ''
-  const [h,m] = t.split(':').map(Number)
-  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`
+  const [h,m] = String(t).split(':').map(Number)
+  return `${h%12||12}:${String(m||0).padStart(2,'0')} ${h>=12?'PM':'AM'}`
 }
 
 function fmtDate(d) { return d.toISOString().split('T')[0] }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') }
 
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
-}
-
-/* ── Open chat with optional prefill ── */
 function openChat(msg) {
-  if (msg) window.location.href = '/chat-ui?prefill=' + encodeURIComponent(msg)
-  else      window.location.href = '/chat-ui'
+  if (msg) window.location.href = '/chat.html?prefill=' + encodeURIComponent(msg)
+  else      window.location.href = '/chat.html'
 }
 
-/* ── Load all clinic data ── */
-async function loadClinicInfo() {
+async function loadAll() {
   try {
     const res  = await fetch(API_URL + '/public/clinic-info')
-    const data = await res.json()
-    const { config, doctors, services } = data
+    if (!res.ok) throw new Error('Server error ' + res.status)
+    const { config, doctors, services } = await res.json()
 
-    // Header
-    document.title = config.clinic_name || 'Our Clinic'
-    document.getElementById('clinic-name').textContent = config.clinic_name || 'Our Clinic'
-    document.getElementById('clinic-tagline').textContent = 'Quality care, easy online booking'
+    renderHeader(config)
+    const html =
+      renderClinicInfo(config) +
+      renderSlots() +
+      (doctors.length ? renderDoctors(doctors) : '') +
+      (services.length ? renderServices(services) : '') +
+      renderContact(config)
 
-    // Detect clinic type from services for icon
-    const allServiceNames = services.map(s => s.name.toLowerCase()).join(' ')
-    const clinicIcon = allServiceNames.includes('tooth') || allServiceNames.includes('dental') || allServiceNames.includes('checkup')
-      ? '🦷'
-      : allServiceNames.includes('eye') || allServiceNames.includes('vision')
-      ? '👁️'
-      : allServiceNames.includes('skin') || allServiceNames.includes('derma')
-      ? '🧴'
-      : allServiceNames.includes('physio') || allServiceNames.includes('ortho')
-      ? '🏥'
-      : '🏥'
-    document.getElementById('clinic-icon').textContent = clinicIcon
+    document.getElementById('main-content').innerHTML = html
 
-    // Badges
-    document.getElementById('header-badges').innerHTML =
-      `<span class="header-badge">⏰ ${to12hr(String(config.open_hour).padStart(2,'0')+':00')}–${to12hr(String(config.close_hour).padStart(2,'0')+':00')}</span>` +
-      `<span class="header-badge">📅 ${config.open_days || 'Mon–Sat'}</span>` +
-      `<span class="header-badge">👨‍⚕️ ${doctors.length} Doctor${doctors.length!==1?'s':''}</span>`
-
-    // Info grid
-    document.getElementById('clinic-info').innerHTML = `
-      <div class="info-cell">
-        <div class="info-cell-label">Open Hours</div>
-        <div class="info-cell-value">${to12hr(String(config.open_hour).padStart(2,'0')+':00')} – ${to12hr(String(config.close_hour).padStart(2,'0')+':00')}</div>
-      </div>
-      <div class="info-cell">
-        <div class="info-cell-label">Open Days</div>
-        <div class="info-cell-value">${config.open_days || 'Mon–Sat'}</div>
-      </div>
-      <div class="info-cell">
-        <div class="info-cell-label">Slot Duration</div>
-        <div class="info-cell-value">${config.slot_duration || 30} minutes</div>
-      </div>
-      <div class="info-cell">
-        <div class="info-cell-label">Max Per Day</div>
-        <div class="info-cell-value">${config.max_per_day || 20} appointments</div>
-      </div>`
-
-    renderDoctors(doctors)
-    renderServices(services)
-    setupDatePills()
+    // Wire up day chips after HTML is injected
+    setupDatePills(config)
 
   } catch(e) {
-    document.getElementById('clinic-name').textContent = 'Could not load clinic info'
-    console.error(e)
+    document.getElementById('main-content').innerHTML =
+      `<div class="error-box">
+        ⚠️ Could not load clinic info.<br>
+        <small style="opacity:.7">Please check your connection and try again.</small>
+      </div>`
+    console.error('loadAll error:', e)
   }
 }
 
-/* ── DOCTORS ── */
-function renderDoctors(doctors) {
-  document.getElementById('doctors-count').textContent = doctors.length + ' available'
-  if (!doctors.length) {
-    document.getElementById('doctors-list').innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center">No doctors listed yet</div>'
-    return
-  }
-  document.getElementById('doctors-list').innerHTML = doctors.map(d => {
-    const days = (d.available_days || '').split(',').map(x => x.trim()).join(' · ')
-    return `<div class="doctor-item">
-      <div class="doctor-avatar">👨‍⚕️</div>
-      <div class="doctor-info">
-        <div class="doctor-name">${esc(d.name)}</div>
-        <div class="doctor-spec">${esc(d.specialization)}</div>
-        <div class="doctor-days">Available: ${esc(days)}</div>
+/* ── HEADER ── */
+function renderHeader(cfg) {
+  document.title = cfg.clinic_name || 'Our Clinic'
+  document.getElementById('clinic-name').textContent    = cfg.clinic_name    || 'Our Clinic'
+  document.getElementById('clinic-tagline').textContent = cfg.clinic_tagline || 'Quality care, easy booking'
+  document.getElementById('clinic-icon').textContent    = cfg.clinic_icon    || '🏥'
+
+  const openHr  = to12hr(String(cfg.open_hour  ||10).padStart(2,'0')+':00')
+  const closeHr = to12hr(String(cfg.close_hour ||17).padStart(2,'0')+':00')
+  document.getElementById('header-pills').innerHTML =
+    `<span class="header-pill">⏰ ${openHr} – ${closeHr}</span>` +
+    `<span class="header-pill">📅 ${cfg.open_days||'Mon–Sat'}</span>`
+}
+
+/* ── CLINIC INFO CARD ── */
+function renderClinicInfo(cfg) {
+  const openHr  = to12hr(String(cfg.open_hour  ||10).padStart(2,'0')+':00')
+  const closeHr = to12hr(String(cfg.close_hour ||17).padStart(2,'0')+':00')
+  return `
+  <div class="card">
+    <div class="card-head"><div class="card-title">🏥 Clinic Information</div></div>
+    <div class="info-grid">
+      <div class="info-cell">
+        <div class="info-label">Open Hours</div>
+        <div class="info-value">${openHr} – ${closeHr}</div>
       </div>
-      <button class="doctor-book" onclick="openChat('I would like to book an appointment with ${esc(d.name)}')">Book</button>
-    </div>`
-  }).join('')
-}
-
-/* ── SERVICES ── */
-function renderServices(services) {
-  document.getElementById('services-count').textContent = services.length + ' offered'
-  if (!services.length) {
-    document.getElementById('services-grid').innerHTML = '<div style="padding:20px;color:var(--muted);text-align:center;grid-column:span 2">No services listed yet</div>'
-    return
-  }
-  document.getElementById('services-grid').innerHTML = services.map(s => `
-    <div class="service-item" onclick="openChat('I would like to book a ${esc(s.name)}')">
-      <div class="service-icon">${getIcon(s.name)}</div>
-      <div>
-        <div class="service-name">${esc(s.name)}</div>
-        <div class="service-dur">${s.duration_minutes} min</div>
+      <div class="info-cell">
+        <div class="info-label">Open Days</div>
+        <div class="info-value">${esc(cfg.open_days||'Mon–Sat')}</div>
       </div>
-    </div>`).join('')
+      <div class="info-cell">
+        <div class="info-label">Slot Duration</div>
+        <div class="info-value">${cfg.slot_duration||30} minutes</div>
+      </div>
+      <div class="info-cell">
+        <div class="info-label">Max / Day</div>
+        <div class="info-value">${cfg.max_per_day||20} appointments</div>
+      </div>
+    </div>
+  </div>`
 }
 
-/* ── DATE PILLS ── */
-function setupDatePills() {
+/* ── SLOTS CARD (shell — filled by JS) ── */
+function renderSlots() {
+  return `
+  <div class="card" id="slots-card">
+    <div class="card-head">
+      <div class="card-title">📅 Available Slots</div>
+      <div class="card-badge" id="slots-badge"></div>
+    </div>
+    <div class="date-scroll" id="date-pills"></div>
+    <div class="custom-row">
+      <label>Pick date:</label>
+      <input type="date" class="date-input" id="date-custom" onchange="loadSlots(this.value,null)">
+    </div>
+    <div class="slots-body"><div id="slots-container" class="slots-msg">Select a date to see available slots</div></div>
+  </div>`
+}
+
+/* ── SETUP DATE PILLS ── */
+function setupDatePills(cfg) {
   const today    = new Date(); today.setHours(0,0,0,0)
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
   let html = ''
   for (let i = 0; i < 8; i++) {
-    const d     = new Date(today); d.setDate(d.getDate() + i)
-    const date  = fmtDate(d)
-    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayNames[d.getDay()]
-    html += `<button class="date-pill" data-date="${date}" onclick="loadSlots('${date}',this)">
-      ${label}<small>${d.getDate()}/${d.getMonth()+1}</small>
-    </button>`
+    const d    = new Date(today); d.setDate(d.getDate() + i)
+    const date = fmtDate(d)
+    const top  = i===0 ? 'Today' : i===1 ? 'Tomorrow' : dayNames[d.getDay()]
+    html += `<button class="date-pill" data-date="${date}" onclick="loadSlots('${date}',this)">${top}<small>${d.getDate()}/${d.getMonth()+1}</small></button>`
   }
   document.getElementById('date-pills').innerHTML = html
   document.getElementById('date-custom').min = fmtDate(today)
 
-  // Auto-load today
-  const firstPill = document.querySelector('.date-pill')
-  if (firstPill) loadSlots(fmtDate(today), firstPill)
+  // auto-load today
+  const first = document.querySelector('.date-pill')
+  if (first) loadSlots(fmtDate(today), first)
 }
 
-/* ── SLOTS ── */
+/* ── LOAD SLOTS ── */
 async function loadSlots(date, btn) {
   if (!date) return
-
-  // Update active pill
-  document.querySelectorAll('.date-pill').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.date-pill').forEach(p=>p.classList.remove('active'))
   if (btn) btn.classList.add('active')
-  document.getElementById('date-custom').value = date
-  document.getElementById('slots-container').innerHTML = '<div class="slots-msg">⏳ Loading…</div>'
-  document.getElementById('slots-count').textContent = ''
+  const inp = document.getElementById('date-custom')
+  if (inp) inp.value = date
+  const container = document.getElementById('slots-container')
+  const badge     = document.getElementById('slots-badge')
+  if (!container) return
+  container.innerHTML = '<div class="slots-msg">⏳ Loading…</div>'
+  if (badge) badge.textContent = ''
 
   try {
     const res  = await fetch(`${API_URL}/public/public-slots?date=${date}`)
     const data = await res.json()
 
     if (!data.open) {
-      document.getElementById('slots-container').innerHTML =
-        `<div class="slots-closed">🗓️ Clinic is closed on this date${data.reason==='holiday'?' (holiday)':''}.<br><small>Please select another date.</small></div>`
-      document.getElementById('slots-count').textContent = 'Closed'
+      container.innerHTML = `<div class="slots-closed">🗓️ Clinic closed on this date${data.reason==='holiday'?' (holiday)':''}.<br><small>Please pick another date.</small></div>`
+      if (badge) badge.textContent = 'Closed'
       return
     }
 
-    if (!data.slots || !data.slots.length) {
-      document.getElementById('slots-container').innerHTML =
-        `<div class="slots-msg">😔 No slots available on this date.<br><small style="color:var(--muted)">Try another date or ask us via chat.</small></div>`
-      document.getElementById('slots-count').textContent = '0 available'
+    if (!data.slots||!data.slots.length) {
+      container.innerHTML = `<div class="slots-msg">😔 No available slots on this date.<br><small style="color:var(--muted)">Try another date or chat with us.</small></div>`
+      if (badge) badge.textContent = '0 available'
       return
     }
 
-    document.getElementById('slots-count').textContent = data.slots.length + ' available'
-    document.getElementById('slots-container').innerHTML =
+    if (badge) badge.textContent = data.slots.length + ' available'
+    container.innerHTML =
       `<div class="slots-grid">` +
       data.slots.map(s =>
         `<button class="slot-btn" onclick="openChat('I would like to book at ${s} on ${date}')">${to12hr(s)}</button>`
@@ -389,11 +324,80 @@ async function loadSlots(date, btn) {
       `</div>`
 
   } catch(e) {
-    document.getElementById('slots-container').innerHTML = '<div class="slots-msg">⚠️ Could not load slots</div>'
+    container.innerHTML = '<div class="slots-msg">⚠️ Could not load slots</div>'
   }
 }
 
-loadClinicInfo()
+/* ── DOCTORS CARD ── */
+function renderDoctors(doctors) {
+  const rows = doctors.map(d => {
+    const days = (d.available_days||'').split(',').map(x=>x.trim()).join(' · ')
+    return `<div class="doctor-row">
+      <div class="doctor-av">👨‍⚕️</div>
+      <div class="doctor-info">
+        <div class="doctor-name">${esc(d.name)}</div>
+        <div class="doctor-spec">${esc(d.specialization)}</div>
+        <div class="doctor-days">📅 ${esc(days)}</div>
+      </div>
+      <button class="doctor-btn" onclick="openChat('I would like to book with ${esc(d.name)}')">Book</button>
+    </div>`
+  }).join('')
+  return `
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">👨‍⚕️ Our Doctors</div>
+      <div class="card-badge">${doctors.length} available</div>
+    </div>
+    ${rows}
+  </div>`
+}
+
+/* ── SERVICES CARD ── */
+function renderServices(services) {
+  const items = services.map(s => `
+    <div class="service-item" onclick="openChat('I would like to book a ${esc(s.name)}')">
+      <div class="service-icon">${getIcon(s.name)}</div>
+      <div>
+        <div class="service-name">${esc(s.name)}</div>
+        <div class="service-dur">${s.duration_minutes} min</div>
+      </div>
+    </div>`).join('')
+  return `
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">💊 Our Services</div>
+      <div class="card-badge">${services.length} offered</div>
+    </div>
+    <div class="services-grid">${items}</div>
+  </div>`
+}
+
+/* ── CONTACT CARD ── */
+function renderContact(cfg) {
+  const items = []
+  if (cfg.clinic_phone)   items.push({ icon:'📞', label:'Phone',    value:`<a class="info-link" href="tel:${esc(cfg.clinic_phone)}">${esc(cfg.clinic_phone)}</a>` })
+  if (cfg.whatsapp)       items.push({ icon:'💬', label:'WhatsApp', value:`<a class="info-link" href="https://wa.me/${cfg.whatsapp.replace(/\D/g,'')}" target="_blank">${esc(cfg.whatsapp)}</a>` })
+  if (cfg.clinic_email)   items.push({ icon:'📧', label:'Email',    value:`<a class="info-link" href="mailto:${esc(cfg.clinic_email)}">${esc(cfg.clinic_email)}</a>` })
+  if (cfg.clinic_address) items.push({ icon:'📍', label:'Address',  value: cfg.google_maps ? `<a class="info-link" href="${esc(cfg.google_maps)}" target="_blank">${esc(cfg.clinic_address)}</a>` : esc(cfg.clinic_address) })
+  if (cfg.clinic_website) items.push({ icon:'🌐', label:'Website',  value:`<a class="info-link" href="${esc(cfg.clinic_website)}" target="_blank">${esc(cfg.clinic_website)}</a>` })
+
+  if (!items.length) return ''
+
+  return `
+  <div class="card">
+    <div class="card-head"><div class="card-title">📞 Contact Us</div></div>
+    ${items.map(i=>`
+    <div class="contact-item">
+      <div class="contact-icon">${i.icon}</div>
+      <div>
+        <div class="contact-label">${i.label}</div>
+        <div class="contact-value">${i.value}</div>
+      </div>
+    </div>`).join('')}
+  </div>`
+}
+
+loadAll()
 </script>
 </body>
 </html>

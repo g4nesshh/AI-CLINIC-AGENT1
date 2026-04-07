@@ -236,36 +236,96 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <div class="page" id="page-settings">
       <div class="topbar">
         <div><div class="topbar-sub">Configuration</div><h1>Settings</h1></div>
-        <div class="topbar-right"><button class="btn btn-primary" onclick="saveSettings()">💾 Save All</button></div>
-      </div>
-      <div class="section" style="max-width:660px">
-        <div class="section-header"><h2>🏥 Clinic Information</h2></div>
-        <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
-          <div class="form-group"><label>Clinic Name</label><input class="form-input" id="cfg-name" placeholder="ClinicAI Dental"></div>
-          <div class="form-group"><label>Clinic Email</label><input class="form-input" id="cfg-email" type="email" placeholder="clinic@example.com"></div>
-          <div class="settings-grid-3">
-            <div class="form-group"><label>Open Hour (24h)</label><input class="form-input" id="cfg-open" type="number" min="0" max="23"></div>
-            <div class="form-group"><label>Close Hour (24h)</label><input class="form-input" id="cfg-close" type="number" min="0" max="23"></div>
-            <div class="form-group"><label>Slot Duration (min)</label><input class="form-input" id="cfg-slot" type="number" min="15" max="120"></div>
-          </div>
-          <div class="settings-grid">
-            <div class="form-group"><label>Open Days</label><input class="form-input" id="cfg-days" placeholder="Mon,Tue,Wed,Thu,Fri,Sat"></div>
-            <div class="form-group"><label>Max Bookings/Day</label><input class="form-input" id="cfg-max" type="number" min="1" max="200"></div>
-          </div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost" onclick="previewClinicPage()">👁 Preview Page</button>
+          <button class="btn btn-primary" onclick="saveSettings()">💾 Save All</button>
         </div>
       </div>
-      <div class="section" style="max-width:660px;margin-top:20px">
-        <div class="section-header"><h2>📧 Email / SMTP</h2></div>
-        <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
-          <div class="info-box">For Gmail: use an <strong style="color:var(--text)">App Password</strong> (Google Account → Security → 2-Step Verification → App Passwords). SMTP: <code style="color:#93c5fd">smtp.gmail.com</code> Port: <code style="color:#93c5fd">587</code></div>
+
+      <!-- CLINIC PROFILE -->
+      <div class="section" style="max-width:700px">
+        <div class="section-header">
+          <h2>🏥 Clinic Profile</h2>
+          <span style="font-size:12px;color:var(--muted)">Everything here appears on the patient-facing landing page</span>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--muted)">
+            ✅ All fields below appear live on the clinic landing page. Patients see this when they scan the QR code.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 100px;gap:12px">
+            <div class="form-group"><label>Clinic Name *</label><input class="form-input" id="cfg-name" placeholder="e.g. Dr. Sharma Dental Clinic"></div>
+            <div class="form-group"><label>Icon (emoji)</label><input class="form-input" id="cfg-icon" placeholder="🏥" maxlength="4" style="text-align:center;font-size:20px"></div>
+          </div>
+          <div class="form-group"><label>Tagline / Description (shown below clinic name)</label><input class="form-input" id="cfg-tagline" placeholder="e.g. Quality dental care for the whole family"></div>
+          <div class="settings-grid">
+            <div class="form-group">
+              <label>Clinic Type</label>
+              <select class="form-input" id="cfg-type">
+                <option value="dental">🦷 Dental</option>
+                <option value="general">🩺 General / GP</option>
+                <option value="eye">👁️ Eye / Ophthalmology</option>
+                <option value="skin">🧴 Skin / Dermatology</option>
+                <option value="ortho">🦴 Orthopaedic</option>
+                <option value="physio">🏃 Physiotherapy</option>
+                <option value="paediatric">👶 Paediatric</option>
+                <option value="ent">👂 ENT</option>
+                <option value="other">🏥 Other</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Phone Number</label><input class="form-input" id="cfg-phone" placeholder="+91 98765 43210"></div>
+          </div>
+          <div class="form-group"><label>Address (shown on page)</label><input class="form-input" id="cfg-address" placeholder="123 Main St, City, State - 400001"></div>
+          <div class="settings-grid">
+            <div class="form-group"><label>Website URL</label><input class="form-input" id="cfg-website" placeholder="https://yourclinic.com"></div>
+            <div class="form-group"><label>WhatsApp Number</label><input class="form-input" id="cfg-whatsapp" placeholder="+91 98765 43210"></div>
+          </div>
+          <div class="form-group"><label>Google Maps Link</label><input class="form-input" id="cfg-maps" placeholder="Paste your Google Maps share link here"></div>
+        </div>
+      </div>
+
+      <!-- HOURS -->
+      <div class="section" style="max-width:700px;margin-top:20px">
+        <div class="section-header"><h2>🕐 Hours &amp; Capacity</h2></div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div class="settings-grid-3">
+            <div class="form-group"><label>Open Hour (24h)</label><input class="form-input" id="cfg-open" type="number" min="0" max="23" placeholder="10"></div>
+            <div class="form-group"><label>Close Hour (24h)</label><input class="form-input" id="cfg-close" type="number" min="0" max="23" placeholder="17"></div>
+            <div class="form-group"><label>Slot Duration (min)</label><input class="form-input" id="cfg-slot" type="number" min="15" max="120" placeholder="30"></div>
+          </div>
+          <div class="form-group">
+            <label>Open Days (click to toggle)</label>
+            <div id="cfg-days-picker" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+              <span class="day-chip active" data-day="Mon">Mon</span>
+              <span class="day-chip active" data-day="Tue">Tue</span>
+              <span class="day-chip active" data-day="Wed">Wed</span>
+              <span class="day-chip active" data-day="Thu">Thu</span>
+              <span class="day-chip active" data-day="Fri">Fri</span>
+              <span class="day-chip active" data-day="Sat">Sat</span>
+              <span class="day-chip" data-day="Sun">Sun</span>
+            </div>
+            <input type="hidden" id="cfg-days" value="Mon,Tue,Wed,Thu,Fri,Sat">
+          </div>
+          <div class="settings-grid">
+            <div class="form-group"><label>Max Bookings Per Day</label><input class="form-input" id="cfg-max" type="number" min="1" max="500" placeholder="20"></div>
+            <div class="form-group"><label>Clinic Email (contact)</label><input class="form-input" id="cfg-email" type="email" placeholder="clinic@example.com"></div>
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+      </div>
+
+      <!-- SMTP -->
+      <div class="section" style="max-width:700px;margin-top:20px">
+        <div class="section-header"><h2>📧 Email Reminders (SMTP)</h2></div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div class="info-box">For Gmail use an <strong style="color:var(--text)">App Password</strong> — Google Account → Security → 2-Step Verification → App Passwords. SMTP: <code style="color:#93c5fd">smtp.gmail.com</code> &nbsp; Port: <code style="color:#93c5fd">587</code></div>
           <div class="settings-grid">
             <div class="form-group"><label>SMTP Host</label><input class="form-input" id="cfg-smtp-host" placeholder="smtp.gmail.com"></div>
             <div class="form-group"><label>SMTP Port</label><input class="form-input" id="cfg-smtp-port" type="number" placeholder="587"></div>
           </div>
-          <div class="form-group"><label>SMTP Username (Gmail address)</label><input class="form-input" id="cfg-smtp-user" type="email" placeholder="you@gmail.com"></div>
+          <div class="form-group"><label>SMTP Username (your Gmail)</label><input class="form-input" id="cfg-smtp-user" type="email" placeholder="you@gmail.com"></div>
           <div class="form-group"><label>App Password</label><input class="form-input" id="cfg-smtp-pass" type="password" placeholder="16-character app password"></div>
-          <div style="display:flex;gap:10px">
-            <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Save All Settings</button>
             <button class="btn btn-ghost" onclick="testEmail()">📧 Send Test Email</button>
           </div>
         </div>
@@ -639,37 +699,66 @@ async function loadAnalytics() {
 async function loadSettings() {
   try {
     const cfg=await api('GET','/clinic-config')
-    document.getElementById('cfg-name').value=cfg.clinic_name||''
-    document.getElementById('cfg-email').value=cfg.clinic_email||''
-    document.getElementById('cfg-open').value=cfg.open_hour||10
-    document.getElementById('cfg-close').value=cfg.close_hour||17
-    document.getElementById('cfg-slot').value=cfg.slot_duration||30
-    document.getElementById('cfg-days').value=cfg.open_days||'Mon,Tue,Wed,Thu,Fri,Sat'
-    document.getElementById('cfg-max').value=cfg.max_per_day||20
-    document.getElementById('cfg-smtp-host').value=cfg.smtp_host||'smtp.gmail.com'
-    document.getElementById('cfg-smtp-port').value=cfg.smtp_port||587
-    document.getElementById('cfg-smtp-user').value=cfg.smtp_user||''
-    document.getElementById('cfg-smtp-pass').value=cfg.smtp_pass||''
+    document.getElementById('cfg-name').value       = cfg.clinic_name    || ''
+    document.getElementById('cfg-icon').value       = cfg.clinic_icon    || '🏥'
+    document.getElementById('cfg-tagline').value    = cfg.clinic_tagline || ''
+    document.getElementById('cfg-type').value       = cfg.clinic_type    || 'dental'
+    document.getElementById('cfg-phone').value      = cfg.clinic_phone   || ''
+    document.getElementById('cfg-address').value    = cfg.clinic_address || ''
+    document.getElementById('cfg-website').value    = cfg.clinic_website || ''
+    document.getElementById('cfg-whatsapp').value   = cfg.whatsapp       || ''
+    document.getElementById('cfg-maps').value       = cfg.google_maps    || ''
+    document.getElementById('cfg-email').value      = cfg.clinic_email   || ''
+    document.getElementById('cfg-open').value       = cfg.open_hour      || 10
+    document.getElementById('cfg-close').value      = cfg.close_hour     || 17
+    document.getElementById('cfg-slot').value       = cfg.slot_duration  || 30
+    document.getElementById('cfg-max').value        = cfg.max_per_day    || 20
+    document.getElementById('cfg-smtp-host').value  = cfg.smtp_host      || 'smtp.gmail.com'
+    document.getElementById('cfg-smtp-port').value  = cfg.smtp_port      || 587
+    document.getElementById('cfg-smtp-user').value  = cfg.smtp_user      || ''
+    document.getElementById('cfg-smtp-pass').value  = cfg.smtp_pass      || ''
+
+    // Set open days picker
+    const openDays = (cfg.open_days || 'Mon,Tue,Wed,Thu,Fri,Sat').split(',').map(d=>d.trim())
+    document.querySelectorAll('#cfg-days-picker .day-chip').forEach(c => {
+      c.classList.toggle('active', openDays.includes(c.dataset.day))
+    })
+    document.getElementById('cfg-days').value = openDays.join(',')
+
   } catch(e){toast('error','Could not load settings: '+e.message)}
 }
 
 async function saveSettings() {
+  // Collect open days from picker
+  const openDays = [...document.querySelectorAll('#cfg-days-picker .day-chip.active')].map(c=>c.dataset.day).join(',')
+  document.getElementById('cfg-days').value = openDays
+
   const body={
-    clinic_name:document.getElementById('cfg-name').value,
-    clinic_email:document.getElementById('cfg-email').value,
-    open_hour:parseInt(document.getElementById('cfg-open').value)||10,
-    close_hour:parseInt(document.getElementById('cfg-close').value)||17,
-    slot_duration:parseInt(document.getElementById('cfg-slot').value)||30,
-    open_days:document.getElementById('cfg-days').value,
-    max_per_day:parseInt(document.getElementById('cfg-max').value)||20,
-    smtp_host:document.getElementById('cfg-smtp-host').value,
-    smtp_port:parseInt(document.getElementById('cfg-smtp-port').value)||587,
-    smtp_user:document.getElementById('cfg-smtp-user').value,
-    smtp_pass:document.getElementById('cfg-smtp-pass').value
+    clinic_name:    document.getElementById('cfg-name').value,
+    clinic_icon:    document.getElementById('cfg-icon').value || '🏥',
+    clinic_tagline: document.getElementById('cfg-tagline').value,
+    clinic_type:    document.getElementById('cfg-type').value,
+    clinic_phone:   document.getElementById('cfg-phone').value,
+    clinic_address: document.getElementById('cfg-address').value,
+    clinic_website: document.getElementById('cfg-website').value,
+    whatsapp:       document.getElementById('cfg-whatsapp').value,
+    google_maps:    document.getElementById('cfg-maps').value,
+    clinic_email:   document.getElementById('cfg-email').value,
+    open_hour:      parseInt(document.getElementById('cfg-open').value)||10,
+    close_hour:     parseInt(document.getElementById('cfg-close').value)||17,
+    slot_duration:  parseInt(document.getElementById('cfg-slot').value)||30,
+    open_days:      openDays || 'Mon,Tue,Wed,Thu,Fri,Sat',
+    max_per_day:    parseInt(document.getElementById('cfg-max').value)||20,
+    smtp_host:      document.getElementById('cfg-smtp-host').value,
+    smtp_port:      parseInt(document.getElementById('cfg-smtp-port').value)||587,
+    smtp_user:      document.getElementById('cfg-smtp-user').value,
+    smtp_pass:      document.getElementById('cfg-smtp-pass').value
   }
-  try{await api('PUT','/clinic-config',body);toast('success','Settings saved ✅')}
+  try{await api('PUT','/clinic-config',body);toast('success','✅ Settings saved — clinic page updated!')}
   catch(e){toast('error','Could not save: '+e.message)}
 }
+
+function previewClinicPage() { window.open('/', '_blank') }
 
 async function testEmail() {
   const to=document.getElementById('cfg-email').value
@@ -682,6 +771,15 @@ async function testEmail() {
 // Close modals on backdrop click
 document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('show')}))
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg.show').forEach(m=>m.classList.remove('show'))})
+
+// Settings day chips toggle
+document.querySelectorAll('#cfg-days-picker .day-chip').forEach(c=>{
+  c.onclick=()=>{
+    c.classList.toggle('active')
+    const active=[...document.querySelectorAll('#cfg-days-picker .day-chip.active')].map(x=>x.dataset.day).join(',')
+    document.getElementById('cfg-days').value=active
+  }
+})
 
 loadAppointments()
 </script>
