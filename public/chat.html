@@ -334,6 +334,37 @@ textarea::placeholder { color: var(--muted); }
 .send-btn svg { width: 16px; height: 16px; fill: white; }
 .input-hint { font-size: 11px; color: var(--muted); text-align: center; margin-top: 8px; }
 
+/* ── QUICK REPLIES ── */
+.quick-replies{display:flex;flex-wrap:wrap;gap:7px;padding:6px 16px 10px;animation:popIn .2s cubic-bezier(.16,1,.3,1) forwards;opacity:0}
+.qr-btn{padding:8px 16px;background:var(--brand-soft);border:1.5px solid var(--brand);border-radius:99px;font-family:'Sora',sans-serif;font-size:12.5px;color:var(--brand-dark);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
+.qr-btn:hover{background:var(--brand);color:white;border-color:var(--brand)}
+
+/* ── DATE PICKER ── */
+.date-picker-ui{padding:10px 16px 12px;animation:popIn .2s cubic-bezier(.16,1,.3,1) forwards;opacity:0}
+.dp-pills{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.dp-pills::-webkit-scrollbar{display:none}
+.dp-pill{flex-shrink:0;padding:8px 12px;background:var(--brand-soft);border:1.5px solid var(--brand);border-radius:10px;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;border:none}
+.dp-pill:hover{background:var(--brand)}
+.dp-pill-top{font-size:12.5px;font-weight:600;color:var(--brand-dark);display:block}
+.dp-pill:hover .dp-pill-top,.dp-pill:hover .dp-pill-bot{color:white}
+.dp-pill-bot{font-size:10.5px;color:var(--muted);display:block}
+.dp-custom{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.dp-custom-label{font-size:12px;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.dp-input{flex:1;min-width:140px;padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);font-family:'Sora',sans-serif;font-size:12.5px;outline:none;color:var(--text);transition:border-color .15s}
+.dp-input:focus{border-color:var(--brand)}
+.dp-go{padding:7px 14px;background:var(--brand);color:white;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.dp-go:hover{background:var(--brand-dark)}
+
+/* ── SERVICE PICKER ── */
+.service-picker{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:6px 16px 10px;animation:popIn .2s cubic-bezier(.16,1,.3,1) forwards;opacity:0}
+.svc-btn{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--brand-soft);border:1.5px solid var(--brand);border-radius:11px;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s;text-align:left}
+.svc-btn:hover{background:var(--brand)}
+.svc-icon{font-size:18px;flex-shrink:0}
+.svc-name{font-size:12.5px;font-weight:600;color:var(--brand-dark);display:block;line-height:1.3}
+.svc-btn:hover .svc-name,.svc-btn:hover .svc-dur{color:white}
+.svc-dur{font-size:10.5px;color:var(--muted);display:block}
+
+
 </style>
 </head>
 <body>
@@ -393,17 +424,30 @@ const messagesEl = document.getElementById('messages')
 
 /* ── WELCOME ── */
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    addMessage('ai', 'Hello! 👋 Welcome to our clinic. I can help you book an appointment, answer questions about our services, or check available time slots.\n\nHow can I help you today?')
+  // Pre-fetch services so service picker is instant
+  fetch(API_URL + '/public/clinic-info')
+    .then(r => r.json())
+    .then(d => { cachedServices = d.services || [] })
+    .catch(() => {})
 
-    // Handle prefill from clinic info page
+  setTimeout(() => {
+    addMessage('ai', 'Hello! 👋 Welcome to our clinic. I can help you book an appointment, check availability, or answer any questions.\n\nWhat would you like to do?')
+    addQuickReplies([
+      { label: '📅 Book Appointment', value: 'book appointment' },
+      { label: '🕐 Clinic Hours',     value: 'What are your clinic hours?' },
+      { label: '💊 Services',         value: 'What services do you offer?' },
+      { label: '🔍 My Appointments',  value: 'check my appointment' },
+    ])
+
+    // Handle prefill from clinic page
     const params  = new URLSearchParams(window.location.search)
     const prefill = params.get('prefill')
     if (prefill) {
       setTimeout(() => {
+        removeExtras()
         document.getElementById('msg').value = decodeURIComponent(prefill)
         send()
-      }, 600)
+      }, 500)
     }
   }, 400)
 })
@@ -527,37 +571,57 @@ function handleResponse(data) {
   switch (action) {
 
     case 'show_slots':
-      addSlotPicker(data.reply, data.slots, data.slotDate || null)
+      addMessage('ai', data.reply)
+      addSlotPicker(null, data.slots, data.slotDate || null)
       break
 
     case 'show_summary':
       addMessage('ai', data.reply)
-      addQuickReplies(['✅ Yes, confirm', '❌ No, change something'])
+      addQuickReplies([
+        { label: '✅ Yes, confirm', value: 'yes' },
+        { label: '❌ No, change something', value: 'no' }
+      ])
       break
 
     case 'confirmed':
       addMessage('ai', data.reply)
-      addQuickReplies(['📅 Book another appointment', '🔍 Check my appointments'])
+      addQuickReplies([
+        { label: '📅 Book another', value: 'book appointment' },
+        { label: '🔍 Check appointments', value: 'check my appointment' }
+      ])
       break
 
     case 'cancelled':
       addMessage('ai', data.reply)
-      addQuickReplies(['📅 Book new appointment', '🔍 Check my appointments'])
+      addQuickReplies([
+        { label: '📅 Book new appointment', value: 'book appointment' },
+        { label: '🔍 Check appointments', value: 'check my appointment' }
+      ])
+      break
+
+    case 'ask_name':
+      addMessage('ai', data.reply)
+      break
+
+    case 'ask_phone':
+      addMessage('ai', data.reply)
       break
 
     case 'ask_date':
       addMessage('ai', data.reply)
-      addQuickReplies(['Today', 'Tomorrow', 'Next Monday', 'Next Saturday'])
+      addDatePicker()
       break
 
     case 'ask_service':
       addMessage('ai', data.reply)
-      addQuickReplies(['Checkup', 'Tooth Cleaning', 'Consultation', 'X-Ray'])
+      addServicePicker()
       break
 
     case 'show_options':
       addMessage('ai', data.reply)
-      if (data.options) addQuickReplies(data.options)
+      if (data.options) {
+        addQuickReplies(data.options.map(o => typeof o === 'string' ? { label: o, value: o } : o))
+      }
       break
 
     default:
@@ -566,7 +630,162 @@ function handleResponse(data) {
   }
 }
 
-/* ── TYPING INDICATOR ── */
+/* ── QUICK REPLIES ── */
+function addQuickReplies(options) {
+  removeExtras()
+
+  const wrapper = document.createElement('div')
+  wrapper.className = 'quick-replies'
+  wrapper.id = 'quick-replies'
+
+  options.forEach(opt => {
+    const label = typeof opt === 'string' ? opt : opt.label
+    const value = typeof opt === 'string' ? opt : opt.value
+
+    const btn = document.createElement('button')
+    btn.className   = 'qr-btn'
+    btn.textContent = label
+    btn.onclick = () => {
+      removeExtras()
+      document.getElementById('msg').value = value
+      send()
+    }
+    wrapper.appendChild(btn)
+  })
+
+  messagesEl.appendChild(wrapper)
+  scrollBottom()
+}
+
+/* ── DATE PICKER ── */
+function addDatePicker() {
+  removeExtras()
+
+  const today    = new Date(); today.setHours(0,0,0,0)
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+
+  const wrapper = document.createElement('div')
+  wrapper.className = 'date-picker-ui'
+  wrapper.id = 'quick-replies'
+
+  // Quick date buttons — next 6 days
+  const pillsRow = document.createElement('div')
+  pillsRow.className = 'dp-pills'
+
+  for (let i = 0; i < 6; i++) {
+    const d     = new Date(today); d.setDate(d.getDate() + i)
+    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayNames[d.getDay()]
+    const val   = i === 0 ? 'today' : i === 1 ? 'tomorrow' : `${label} ${d.getDate()}/${d.getMonth()+1}`
+    const btn   = document.createElement('button')
+    btn.className = 'dp-pill'
+    btn.innerHTML = `<span class="dp-pill-top">${label}</span><span class="dp-pill-bot">${d.getDate()}/${d.getMonth()+1}</span>`
+    btn.onclick   = () => { removeExtras(); document.getElementById('msg').value = val; send() }
+    pillsRow.appendChild(btn)
+  }
+
+  // Custom date input
+  const customRow  = document.createElement('div')
+  customRow.className = 'dp-custom'
+  const minDate    = fmtDate(today)
+  customRow.innerHTML = `
+    <span class="dp-custom-label">Or pick:</span>
+    <input type="date" class="dp-input" id="dp-custom-input" min="${minDate}">
+    <button class="dp-go" onclick="pickCustomDate()">Go →</button>`
+
+  wrapper.appendChild(pillsRow)
+  wrapper.appendChild(customRow)
+  messagesEl.appendChild(wrapper)
+  scrollBottom()
+}
+
+function pickCustomDate() {
+  const val = document.getElementById('dp-custom-input')?.value
+  if (!val) return
+  const d   = new Date(val + 'T00:00:00')
+  const fmt = d.toLocaleDateString('en-GB', { day:'numeric', month:'long' })
+  removeExtras()
+  document.getElementById('msg').value = fmt
+  send()
+}
+
+/* ── SERVICE PICKER ── */
+async function addServicePicker() {
+  removeExtras()
+
+  const wrapper = document.createElement('div')
+  wrapper.className = 'service-picker'
+  wrapper.id = 'quick-replies'
+
+  // Try to load real services from backend
+  let services = cachedServices
+  if (!services) {
+    try {
+      const res = await fetch(API_URL + '/public/clinic-info')
+      const d   = await res.json()
+      services  = d.services || []
+      cachedServices = services
+    } catch(e) {
+      services = []
+    }
+  }
+
+  // Fallback to common services if backend fails
+  if (!services.length) {
+    services = [
+      { name: 'Checkup', duration_minutes: 30 },
+      { name: 'Consultation', duration_minutes: 30 },
+      { name: 'Tooth Cleaning', duration_minutes: 45 },
+      { name: 'X-Ray', duration_minutes: 20 }
+    ]
+  }
+
+  const SERVICE_ICONS = {
+    'checkup':'🦷','tooth cleaning':'✨','cleaning':'✨','root canal':'🔧',
+    'braces':'😁','whitening':'⭐','extraction':'🩺','filling':'🔩',
+    'crown':'👑','implant':'🦿','consultation':'💬','general':'🩺',
+    'blood test':'🩸','injection':'💉','vaccine':'💉','x-ray':'🔬',
+    'xray':'🔬','eye test':'👁️','skin':'🧴','physio':'🏃','default':'💊'
+  }
+
+  function svcIcon(name) {
+    const k = name.toLowerCase()
+    return SERVICE_ICONS[k] || Object.keys(SERVICE_ICONS).filter(x=>x!=='default').find(key=>k.includes(key)) && SERVICE_ICONS[Object.keys(SERVICE_ICONS).filter(x=>x!=='default').find(key=>k.includes(key))] || SERVICE_ICONS.default
+  }
+
+  services.forEach(s => {
+    const btn = document.createElement('button')
+    btn.className = 'svc-btn'
+    btn.innerHTML = `<span class="svc-icon">${svcIcon(s.name)}</span><span class="svc-name">${esc(s.name)}</span><span class="svc-dur">${s.duration_minutes}min</span>`
+    btn.onclick   = () => { removeExtras(); document.getElementById('msg').value = s.name; send() }
+    wrapper.appendChild(btn)
+  })
+
+  messagesEl.appendChild(wrapper)
+  scrollBottom()
+}
+
+/* ── REMOVE ALL EXTRAS ── */
+function removeExtras() {
+  document.getElementById('quick-replies')?.remove()
+}
+
+/* ── HELPERS ── */
+let cachedServices = null
+
+function fmtDate(d) { return d.toISOString().split('T')[0] }
+function esc(s)     { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight }
+
+function autoResize(el) {
+  el.style.height = 'auto'
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px'
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
+}
+
 function showTyping() {
   const row = document.createElement('div')
   row.className = 'typing-row'
@@ -600,9 +819,7 @@ async function send() {
   addMessage('user', text)
   textarea.value = ''
   textarea.style.height = 'auto'
-  // Remove quick reply buttons when user types
-  const qr = document.getElementById('quick-replies')
-  if (qr) qr.remove()
+  removeExtras()
   showTyping()
 
   try {
@@ -625,56 +842,6 @@ function quickSend(text) {
   send()
 }
 
-/* ── HELPERS ── */
-/* ── QUICK REPLIES ── */
-function addQuickReplies(options) {
-  // Remove any existing quick replies first
-  const existing = document.getElementById('quick-replies')
-  if (existing) existing.remove()
-
-  const wrapper = document.createElement('div')
-  wrapper.id = 'quick-replies'
-  wrapper.style.cssText = 'display:flex;flex-wrap:wrap;gap:7px;padding:4px 16px 8px;animation:popIn 0.2s cubic-bezier(0.16,1,0.3,1) forwards;opacity:0'
-
-  options.forEach(option => {
-    const btn = document.createElement('button')
-    btn.textContent = option
-    btn.style.cssText = `
-      padding: 7px 14px;
-      background: var(--brand-soft);
-      border: 1.5px solid var(--brand);
-      border-radius: 99px;
-      font-family: 'Sora', sans-serif;
-      font-size: 12.5px;
-      color: var(--brand-dark);
-      cursor: pointer;
-      transition: all 0.15s;
-      white-space: nowrap;
-    `
-    btn.onmouseover = () => { btn.style.background = 'var(--brand)'; btn.style.color = 'white' }
-    btn.onmouseout  = () => { btn.style.background = 'var(--brand-soft)'; btn.style.color = 'var(--brand-dark)' }
-    btn.onclick = () => {
-      wrapper.remove()
-      document.getElementById('msg').value = option
-      send()
-    }
-    wrapper.appendChild(btn)
-  })
-
-  messagesEl.appendChild(wrapper)
-  scrollBottom()
-}
-
-function scrollBottom() { messagesEl.scrollTop = messagesEl.scrollHeight }
-
-function autoResize(el) {
-  el.style.height = 'auto'
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px'
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
-}
 
 </script>
 </body>
