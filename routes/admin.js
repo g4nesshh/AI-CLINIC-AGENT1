@@ -11,80 +11,63 @@ const { getAllHolidays, addHoliday, deleteHoliday } = require('../services/slots
 const { getAnalyticsSummary, getTopServices, getDropOffPoints } = require('../utils/analytics')
 
 /* ================================================
-   EMAIL — nodemailer
-   Requires: npm install nodemailer
-   For Gmail: use App Password, not your real password
-   Google Account → Security → 2-Step → App Passwords
+   EMAIL — Resend API
+   Sign up free at resend.com → get API key
+   Add to Render env vars: RESEND_API_KEY=re_xxxxx
+   Free tier: 3000 emails/month, 100/day
 ================================================ */
 
-const nodemailer = require('nodemailer')
-console.log('[Email] nodemailer loaded ✅')
-
-async function getSmtpConfig() {
+async function getClinicConfig() {
   return new Promise((resolve) => {
     db.get('SELECT * FROM clinic_config WHERE id = 1', [], (err, row) => resolve(row || {}))
   })
 }
 
-function buildTransporter(config) {
-  const host = config.smtp_host || 'smtp.gmail.com'
-  const port = parseInt(config.smtp_port) || 587
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,   // true only for port 465
-    auth: {
-      user: config.smtp_user,
-      pass: config.smtp_pass
-    },
-    tls: {
-      rejectUnauthorized: false   // avoids cert errors on some hosts
-    }
-  })
-}
-
 async function sendEmail({ to, subject, html }) {
-  const config = await getSmtpConfig()
+  const apiKey = process.env.RESEND_API_KEY
 
-  // Validation
-  if (!config.smtp_user || !config.smtp_user.includes('@')) {
-    return { ok: false, error: 'SMTP username not set. Go to Settings → Email and enter your Gmail address.' }
-  }
-  if (!config.smtp_pass || config.smtp_pass.length < 8) {
-    return { ok: false, error: 'SMTP password not set. Go to Settings → Email and enter your App Password.' }
+  if (!apiKey) {
+    return { ok: false, error: 'RESEND_API_KEY not set. Add it in Render → Environment Variables.' }
   }
   if (!to || !to.includes('@')) {
     return { ok: false, error: 'Invalid recipient email address.' }
   }
 
+  const config = await getClinicConfig()
+  const fromName = config.clinic_name || 'ClinicAI'
+
+  // Resend requires a verified domain for custom from address.
+  // Use onboarding@resend.dev for testing, or your verified domain.
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+
   try {
-    const transporter = buildTransporter(config)
-    const info = await transporter.sendMail({
-      from:    `"${config.clinic_name || 'ClinicAI'}" <${config.smtp_user}>`,
-      to,
-      subject,
-      html
+    const res = await fetch('https://api.resend.com/emails', {
+      method:  'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type':  'application/json'
+      },
+      body: JSON.stringify({
+        from:    `${fromName} <${fromEmail}>`,
+        to:      [to],
+        subject,
+        html
+      })
     })
-    console.log('[Email] ✅ Sent to', to, '| MessageId:', info.messageId)
-    return { ok: true, messageId: info.messageId }
 
-  } catch(err) {
-    console.error('[Email] ❌ Failed:', err.message)
+    const data = await res.json()
 
-    // Friendly error messages
-    let friendly = err.message
-    if (err.message.includes('Invalid login') || err.message.includes('Username and Password')) {
-      friendly = 'Gmail rejected the login. Make sure you are using an App Password (not your real Gmail password). Get one at: Google Account → Security → 2-Step Verification → App Passwords.'
-    } else if (err.message.includes('ECONNREFUSED') || err.message.includes('ETIMEDOUT')) {
-      friendly = `Cannot connect to ${config.smtp_host || 'smtp.gmail.com'}:${config.smtp_port || 587}. Check your SMTP host and port settings.`
-    } else if (err.message.includes('self signed') || err.message.includes('certificate')) {
-      friendly = 'SSL certificate error. Try changing SMTP port to 587.'
-    } else if (err.message.includes('getaddrinfo')) {
-      friendly = `Cannot find SMTP host "${config.smtp_host}". Check your SMTP host setting.`
+    if (!res.ok) {
+      console.error('[Email] ❌ Resend error:', data)
+      return { ok: false, error: data.message || 'Resend API error' }
     }
 
-    return { ok: false, error: friendly }
+    console.log('[Email] ✅ Sent to', to, '| ID:', data.id)
+    return { ok: true, id: data.id }
+
+  } catch(err) {
+    console.error('[Email] ❌ Network error:', err.message)
+    return { ok: false, error: 'Network error: ' + err.message }
   }
 }
 
@@ -93,7 +76,7 @@ router.post('/test-email', async (req, res) => {
   const { to } = req.body
   if (!to) return res.status(400).json({ error: 'Recipient email required' })
 
-  const config = await getSmtpConfig()
+  const config = await getClinicConfig()
   const result = await sendEmail({
     to,
     subject: `✅ Test email from ${config.clinic_name || 'ClinicAI'}`,
@@ -101,26 +84,22 @@ router.post('/test-email', async (req, res) => {
       <div style="font-family:Arial,sans-serif;max-width:480px;padding:32px;background:#f8fafc;border-radius:12px">
         <h2 style="color:#0ea5e9;margin-bottom:8px">✅ Email is working!</h2>
         <p style="color:#475569;margin-bottom:16px">This is a test from your <strong>${config.clinic_name || 'ClinicAI'}</strong> admin panel.</p>
-        <p style="color:#64748b;font-size:14px">Your SMTP configuration is correct. Appointment reminders will be sent automatically.</p>
+        <p style="color:#64748b;font-size:14px">Resend is configured correctly. Appointment reminders will now be sent automatically.</p>
       </div>`
   })
 
-  if (result.ok) {
-    res.json({ success: true, message: 'Email sent successfully!' })
-  } else {
-    res.status(500).json({ error: result.error })
-  }
+  if (result.ok) res.json({ success: true, message: 'Email sent! Check your inbox.' })
+  else res.status(500).json({ error: result.error })
 })
 
 /* ── Email status check ── */
 router.get('/email-status', async (req, res) => {
-  const config = await getSmtpConfig()
+  const hasKey = !!process.env.RESEND_API_KEY
   res.json({
-    configured: !!(config.smtp_user && config.smtp_pass),
-    smtp_host:  config.smtp_host || 'smtp.gmail.com',
-    smtp_port:  config.smtp_port || 587,
-    smtp_user:  config.smtp_user ? config.smtp_user.replace(/(.{2}).*(@.*)/, '$1***$2') : null,
-    hint: !config.smtp_user ? 'Go to Settings → Email to configure SMTP' : null
+    configured:  hasKey,
+    provider:    'Resend',
+    from_email:  process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+    hint:        !hasKey ? 'Add RESEND_API_KEY to Render Environment Variables' : null
   })
 })
 

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — ClinicAI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--surface:#181c27;--border:#262d3d;
+  --accent:#3b82f6;--text:#e2e8f0;--muted:#64748b;
+  --danger:#ef4444;--card:#1e2435;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.4)}
+
+.logo{text-align:center;margin-bottom:32px}
+.logo-icon{width:56px;height:56px;border-radius:16px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px}
+.logo-name{font-size:18px;font-weight:600;letter-spacing:-.3px}
+.logo-sub{font-size:13px;color:var(--muted);margin-top:3px}
+
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;font-weight:500}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--muted)}
+
+.btn{width:100%;padding:12px;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:8px}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:#2563eb}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed}
+
+.error-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:12px 14px;font-size:13px;color:#fca5a5;margin-bottom:16px;display:none}
+.error-box.show{display:block}
+
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:20px;line-height:1.5}
+.hint a{color:var(--accent);text-decoration:none}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">🏥</div>
+    <div class="logo-name">ClinicAI</div>
+    <div class="logo-sub">Admin Panel</div>
+  </div>
+
+  <div class="error-box" id="error-box"></div>
+
+  <div class="form-group">
+    <label>Username</label>
+    <input class="form-input" id="username" type="text" placeholder="admin" autocomplete="username" autofocus>
+  </div>
+
+  <div class="form-group">
+    <label>Password</label>
+    <input class="form-input" id="password" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+  </div>
+
+  <button class="btn btn-primary" id="login-btn" onclick="login()">Sign In</button>
+
+  <div class="hint">
+    Forgot password? Contact your system administrator.<br>
+    <a href="/">← Back to clinic page</a>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+
+// If already logged in, redirect to admin
+const token = localStorage.getItem('clinic_token')
+if (token) {
+  fetch(API_URL + '/auth/verify', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  }).then(r => {
+    if (r.ok) window.location.href = '/admin.html'
+  }).catch(() => {})
+}
+
+async function login() {
+  const username = document.getElementById('username').value.trim()
+  const password = document.getElementById('password').value
+  const btn      = document.getElementById('login-btn')
+  const errorBox = document.getElementById('error-box')
+
+  errorBox.classList.remove('show')
+
+  if (!username || !password) {
+    errorBox.textContent = 'Please enter username and password'
+    errorBox.classList.add('show')
+    return
+  }
+
+  btn.disabled     = true
+  btn.innerHTML    = '<span class="spinner"></span>Signing in…'
+
+  try {
+    const res  = await fetch(API_URL + '/auth/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ username, password })
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      errorBox.textContent = data.error || 'Login failed'
+      errorBox.classList.add('show')
+      btn.disabled  = false
+      btn.innerHTML = 'Sign In'
+      return
+    }
+
+    // Save token and redirect
+    localStorage.setItem('clinic_token',    data.token)
+    localStorage.setItem('clinic_username', data.username)
+    window.location.href = '/admin.html'
+
+  } catch(e) {
+    errorBox.textContent = 'Could not connect to server. Please try again.'
+    errorBox.classList.add('show')
+    btn.disabled  = false
+    btn.innerHTML = 'Sign In'
+  }
+}
+</script>
+</body>
+</html>
