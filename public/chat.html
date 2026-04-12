@@ -367,6 +367,14 @@ textarea::placeholder { color: var(--muted); }
 
 </style>
 </head>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    // Ask for push permission after first booking confirmed
+    window._swReg = reg
+  }).catch(() => {})
+}
+</script>
 <body>
 
 <div class="wrapper">
@@ -404,11 +412,14 @@ textarea::placeholder { color: var(--muted); }
           oninput="autoResize(this)"
           onkeydown="handleKey(event)"
         ></textarea>
+        <button class="send-btn" id="mic-btn" onclick="toggleVoice()" title="Voice input" style="background:var(--brand-soft);margin-right:4px">
+          <svg viewBox="0 0 24 24" style="fill:var(--brand);width:16px;height:16px"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.94-.49-7-3.85-7-7.93h2c0 3.31 2.69 6 6 6s6-2.69 6-6h2c0 4.08-3.06 7.44-7 7.93V22h-2v-4.07z"/></svg>
+        </button>
         <button class="send-btn" onclick="send()">
           <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
       </div>
-      <div class="input-hint">Press Enter to send · Shift+Enter for new line</div>
+      <div class="input-hint" id="input-hint">Press Enter to send · Shift+Enter for new line</div>
     </div>
 
   </div>
@@ -842,6 +853,84 @@ function quickSend(text) {
   send()
 }
 
+/* ── VOICE INPUT ── */
+let recognition = null
+let isListening = false
+
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    addMessage('ai', "Sorry, voice input isn't supported in your browser. Try Chrome or Safari.")
+    return
+  }
+
+  if (isListening) {
+    stopVoice()
+    return
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+  recognition = new SpeechRecognition()
+  recognition.continuous     = false
+  recognition.interimResults = true
+  recognition.maxAlternatives = 1
+
+  // Detect language from session (set by server) — default to en-IN for India
+  const lang = document.documentElement.lang || 'en-IN'
+  recognition.lang = lang === 'hi' ? 'hi-IN'
+    : lang === 'mr' ? 'mr-IN'
+    : lang === 'gu' ? 'gu-IN'
+    : 'en-IN'
+
+  recognition.onstart = () => {
+    isListening = true
+    const btn  = document.getElementById('mic-btn')
+    const hint = document.getElementById('input-hint')
+    btn.style.background   = '#ef4444'
+    btn.style.animation    = 'pulse 1s infinite'
+    btn.querySelector('svg').style.fill = 'white'
+    hint.textContent       = '🎤 Listening… tap mic to stop'
+    hint.style.color       = '#ef4444'
+  }
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript
+    const isFinal    = event.results[0].isFinal
+    document.getElementById('msg').value = transcript
+    autoResize(document.getElementById('msg'))
+
+    if (isFinal) {
+      stopVoice()
+      setTimeout(() => send(), 300)
+    }
+  }
+
+  recognition.onerror = (e) => {
+    stopVoice()
+    if (e.error !== 'no-speech' && e.error !== 'aborted') {
+      addMessage('ai', `Voice error: ${e.error}. Try typing instead.`)
+    }
+  }
+
+  recognition.onend = () => stopVoice()
+
+  recognition.start()
+}
+
+function stopVoice() {
+  isListening = false
+  if (recognition) { try { recognition.stop() } catch(e) {} }
+  const btn  = document.getElementById('mic-btn')
+  const hint = document.getElementById('input-hint')
+  if (btn) {
+    btn.style.background = 'var(--brand-soft)'
+    btn.style.animation  = 'none'
+    btn.querySelector('svg').style.fill = 'var(--brand)'
+  }
+  if (hint) {
+    hint.textContent  = 'Press Enter to send · Shift+Enter for new line'
+    hint.style.color  = ''
+  }
+}
 
 </script>
 </body>

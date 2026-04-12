@@ -109,14 +109,14 @@ User message: "${message}"`
    GENERAL CHAT
 ================================================ */
 
-async function chatReply(message, history) {
+async function chatReply(message, history, lang) {
+  const { getLanguageInstruction } = require('./language')
+  const langInstruction = getLanguageInstruction(lang || 'en')
+
   const systemPrompt =
-    `You are a smart, friendly receptionist at a dental clinic called ClinicAI.\n` +
+    langInstruction +
+    `You are a smart, friendly receptionist at a clinic.\n` +
     `Answer patient questions clearly and helpfully. Keep replies short and warm.\n\n` +
-    `CLINIC INFO:\n` +
-    `- Services: checkup, tooth cleaning, root canal, consultation, x-ray, braces, whitening\n` +
-    `- Hours: Monday to Saturday, 10am to 5pm (closed Sundays)\n` +
-    `- Slots: every 30 minutes from 10:00 to 16:30\n\n` +
     `RULES:\n` +
     `- To book say "book appointment"\n` +
     `- To check booking say "check my appointment" with phone number\n` +

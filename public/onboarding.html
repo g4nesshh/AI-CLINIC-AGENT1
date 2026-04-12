@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setup — ClinicAI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f1117;--surface:#181c27;--border:#262d3d;--accent:#3b82f6;--accent2:#10b981;--text:#e2e8f0;--muted:#64748b;--card:#1e2435;--danger:#ef4444}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 16px 60px}
+
+.wizard{width:100%;max-width:560px}
+.wizard-header{text-align:center;margin-bottom:36px}
+.wizard-logo{font-size:40px;margin-bottom:12px}
+.wizard-title{font-size:24px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px}
+.wizard-sub{font-size:14px;color:var(--muted)}
+
+/* PROGRESS BAR */
+.progress-bar{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:36px}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid var(--border);background:var(--surface);color:var(--muted);transition:all .3s;flex-shrink:0;position:relative;z-index:1}
+.step-dot.active{border-color:var(--accent);color:var(--accent);background:rgba(59,130,246,.1)}
+.step-dot.done{border-color:var(--accent2);background:var(--accent2);color:white}
+.step-line{height:2px;flex:1;background:var(--border);max-width:60px;transition:background .3s}
+.step-line.done{background:var(--accent2)}
+
+/* STEP CARD */
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;display:none}
+.step-card.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-num{font-size:12px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.step-title{font-size:18px;font-weight:600;margin-bottom:4px;letter-spacing:-.3px}
+.step-desc{font-size:13.5px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+
+/* FORM */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--accent)}
+select.form-input{cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5}
+
+/* DAY CHIPS */
+.day-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.day-chip{padding:6px 12px;border-radius:7px;border:1.5px solid var(--border);background:var(--bg);font-size:12.5px;cursor:pointer;transition:all .15s;color:var(--muted);font-family:inherit}
+.day-chip.active{background:var(--accent);border-color:var(--accent);color:white}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
+.btn{padding:10px 22px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:white}.btn-primary:hover{background:#2563eb}
+.btn-ghost{background:var(--border);color:var(--text)}.btn-ghost:hover{background:#2e3650}
+.btn-success{background:var(--accent2);color:white}.btn-success:hover{background:#059669}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* INFO BOX */
+.info-box{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:9px;padding:12px 16px;font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.info-box strong{color:var(--text)}
+
+/* SUMMARY */
+.summary-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px}
+.summary-item:last-child{border-bottom:none}
+.summary-label{color:var(--muted)}
+.summary-value{font-weight:500;text-align:right;max-width:60%}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13.5px;display:none;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.toast.show{display:flex;align-items:center;gap:10px}
+.toast.success{border-left:3px solid var(--accent2)}
+.toast.error{border-left:3px solid var(--danger)}
+</style>
+</head>
+<body>
+
+<div class="wizard">
+  <div class="wizard-header">
+    <div class="wizard-logo">🏥</div>
+    <div class="wizard-title">Set up ClinicAI</div>
+    <div class="wizard-sub">Takes about 3 minutes. You can change anything later from the admin panel.</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar">
+    <div class="step-dot active" id="dot-1">1</div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step-dot" id="dot-2">2</div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step-dot" id="dot-3">3</div>
+    <div class="step-line" id="line-3"></div>
+    <div class="step-dot" id="dot-4">4</div>
+    <div class="step-line" id="line-4"></div>
+    <div class="step-dot" id="dot-5">5</div>
+  </div>
+
+  <!-- STEP 1: Clinic Identity -->
+  <div class="step-card active" id="step-1">
+    <div class="step-num">Step 1 of 5</div>
+    <div class="step-title">Clinic Identity</div>
+    <div class="step-desc">This appears on your public booking page and in emails to patients.</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Clinic Name *</label>
+        <input class="form-input" id="clinic_name" placeholder="e.g. Dr. Sharma Dental">
+      </div>
+      <div class="form-group">
+        <label>Icon (emoji)</label>
+        <input class="form-input" id="clinic_icon" placeholder="🏥" maxlength="4" style="text-align:center;font-size:20px">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Tagline</label>
+      <input class="form-input" id="clinic_tagline" placeholder="e.g. Quality care for your whole family">
+    </div>
+    <div class="form-group">
+      <label>Clinic Type</label>
+      <select class="form-input" id="clinic_type">
+        <option value="dental">🦷 Dental</option>
+        <option value="general">🩺 General / GP</option>
+        <option value="eye">👁️ Eye Clinic</option>
+        <option value="skin">🧴 Dermatology / Skin</option>
+        <option value="ortho">🦴 Orthopaedic</option>
+        <option value="physio">🏃 Physiotherapy</option>
+        <option value="pediatric">👶 Pediatric</option>
+        <option value="ent">👂 ENT</option>
+        <option value="other">🏥 Other</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="nextStep(1)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Hours & Capacity -->
+  <div class="step-card" id="step-2">
+    <div class="step-num">Step 2 of 5</div>
+    <div class="step-title">Clinic Hours</div>
+    <div class="step-desc">When are you open? Patients can only book during these hours.</div>
+
+    <div class="form-group">
+      <label>Open Days</label>
+      <div class="day-chips" id="day-chips">
+        <button class="day-chip active" data-day="Mon">Mon</button>
+        <button class="day-chip active" data-day="Tue">Tue</button>
+        <button class="day-chip active" data-day="Wed">Wed</button>
+        <button class="day-chip active" data-day="Thu">Thu</button>
+        <button class="day-chip active" data-day="Fri">Fri</button>
+        <button class="day-chip active" data-day="Sat">Sat</button>
+        <button class="day-chip" data-day="Sun">Sun</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Opening Hour</label>
+        <select class="form-input" id="open_hour">
+          <option value="8">8:00 AM</option>
+          <option value="9">9:00 AM</option>
+          <option value="10" selected>10:00 AM</option>
+          <option value="11">11:00 AM</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Closing Hour</label>
+        <select class="form-input" id="close_hour">
+          <option value="16">4:00 PM</option>
+          <option value="17" selected>5:00 PM</option>
+          <option value="18">6:00 PM</option>
+          <option value="19">7:00 PM</option>
+          <option value="20">8:00 PM</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Slot Duration</label>
+        <select class="form-input" id="slot_duration">
+          <option value="15">15 minutes</option>
+          <option value="20">20 minutes</option>
+          <option value="30" selected>30 minutes</option>
+          <option value="45">45 minutes</option>
+          <option value="60">60 minutes</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Max Bookings / Day</label>
+        <input class="form-input" id="max_per_day" type="number" value="20" min="1" max="200">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="prevStep(2)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Contact Info -->
+  <div class="step-card" id="step-3">
+    <div class="step-num">Step 3 of 5</div>
+    <div class="step-title">Contact & Location</div>
+    <div class="step-desc">Shown on the patient booking page. All fields are optional.</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input class="form-input" id="clinic_phone" placeholder="+91 98765 43210">
+      </div>
+      <div class="form-group">
+        <label>WhatsApp Number</label>
+        <input class="form-input" id="whatsapp" placeholder="+91 98765 43210">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <input class="form-input" id="clinic_address" placeholder="123 Main St, City, State - 400001">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Website</label>
+        <input class="form-input" id="clinic_website" placeholder="https://yourclinic.com">
+      </div>
+      <div class="form-group">
+        <label>Google Maps Link</label>
+        <input class="form-input" id="google_maps" placeholder="Paste Maps share link">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="prevStep(3)">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Email Setup -->
+  <div class="step-card" id="step-4">
+    <div class="step-num">Step 4 of 5</div>
+    <div class="step-title">Email Reminders</div>
+    <div class="step-desc">Set up Resend to send appointment reminders to patients automatically.</div>
+
+    <div class="info-box">
+      <strong>Get your free Resend API key:</strong><br>
+      1. Go to <a href="https://resend.com" target="_blank" style="color:#93c5fd">resend.com</a> → Sign up free<br>
+      2. Dashboard → API Keys → Create API Key<br>
+      3. Paste it below. Free tier: 3,000 emails/month.
+    </div>
+
+    <div class="form-group">
+      <label>Resend API Key</label>
+      <input class="form-input" id="resend_key" placeholder="re_xxxxxxxxxxxxxxxx" type="password">
+      <div class="form-hint">Add this to Render → Environment Variables as <strong style="color:var(--text)">RESEND_API_KEY</strong></div>
+    </div>
+    <div class="form-group">
+      <label>Clinic Email (sender address)</label>
+      <input class="form-input" id="clinic_email" type="email" placeholder="clinic@gmail.com">
+    </div>
+    <div class="form-hint" style="margin-top:-8px;margin-bottom:12px">You can skip this step and add it later from Settings.</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="prevStep(4)">← Back</button>
+      <button class="btn btn-ghost" onclick="nextStep(4)">Skip →</button>
+      <button class="btn btn-primary" onclick="nextStep(4)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Review & Save -->
+  <div class="step-card" id="step-5">
+    <div class="step-num">Step 5 of 5</div>
+    <div class="step-title">Review & Launch 🚀</div>
+    <div class="step-desc">Everything looks good? Click Save to apply your settings.</div>
+
+    <div id="summary"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="prevStep(5)">← Back</button>
+      <button class="btn btn-success" id="save-btn" onclick="saveAll()">💾 Save & Launch</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+
+let currentStep = 1
+const totalSteps = 5
+
+// Day chip toggles
+document.querySelectorAll('.day-chip').forEach(chip => {
+  chip.onclick = () => chip.classList.toggle('active')
+})
+
+function getOpenDays() {
+  return [...document.querySelectorAll('.day-chip.active')].map(c => c.dataset.day).join(',')
+}
+
+function toast(type, msg) {
+  const t = document.getElementById('toast')
+  t.textContent = msg; t.className = `toast show ${type}`
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 4000)
+}
+
+function validate(step) {
+  if (step === 1) {
+    const name = document.getElementById('clinic_name').value.trim()
+    if (!name) { toast('error', 'Please enter your clinic name'); return false }
+  }
+  if (step === 2) {
+    const days = getOpenDays()
+    if (!days) { toast('error', 'Please select at least one open day'); return false }
+  }
+  return true
+}
+
+function nextStep(from) {
+  if (!validate(from)) return
+  if (from === 5) return saveAll()
+  setStep(from + 1)
+  if (from + 1 === 5) buildSummary()
+}
+
+function prevStep(from) { setStep(from - 1) }
+
+function setStep(step) {
+  currentStep = step
+  document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'))
+  document.getElementById('step-' + step).classList.add('active')
+
+  for (let i = 1; i <= totalSteps; i++) {
+    const dot  = document.getElementById('dot-' + i)
+    const line = document.getElementById('line-' + i)
+    dot.classList.remove('active', 'done')
+    if (line) line.classList.remove('done')
+
+    if (i < step)  { dot.classList.add('done'); dot.textContent = '✓' }
+    if (i === step){ dot.classList.add('active'); dot.textContent = i }
+    if (i > step)  { dot.textContent = i }
+    if (line && i < step) line.classList.add('done')
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function buildSummary() {
+  const rows = [
+    { label: 'Clinic Name',  value: document.getElementById('clinic_name').value    || '—' },
+    { label: 'Icon',         value: document.getElementById('clinic_icon').value     || '🏥' },
+    { label: 'Tagline',      value: document.getElementById('clinic_tagline').value  || '—' },
+    { label: 'Type',         value: document.getElementById('clinic_type').value     || '—' },
+    { label: 'Open Days',    value: getOpenDays()                                    || '—' },
+    { label: 'Hours',        value: `${document.getElementById('open_hour').options[document.getElementById('open_hour').selectedIndex].text} – ${document.getElementById('close_hour').options[document.getElementById('close_hour').selectedIndex].text}` },
+    { label: 'Slot Duration',value: document.getElementById('slot_duration').options[document.getElementById('slot_duration').selectedIndex].text },
+    { label: 'Max / Day',    value: document.getElementById('max_per_day').value + ' appointments' },
+    { label: 'Phone',        value: document.getElementById('clinic_phone').value    || '—' },
+    { label: 'Address',      value: document.getElementById('clinic_address').value  || '—' },
+    { label: 'Email',        value: document.getElementById('clinic_email').value    || '—' },
+  ]
+  document.getElementById('summary').innerHTML = rows.map(r =>
+    `<div class="summary-item"><span class="summary-label">${r.label}</span><span class="summary-value">${r.value}</span></div>`
+  ).join('')
+}
+
+async function getToken() {
+  const token = localStorage.getItem('clinic_token')
+  if (token) return token
+
+  // If first time setup — use default admin credentials
+  try {
+    const res  = await fetch(API_URL + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'admin', password: localStorage.getItem('onboard_pass') || 'admin123' })
+    })
+    const data = await res.json()
+    if (data.token) { localStorage.setItem('clinic_token', data.token); return data.token }
+  } catch(e) {}
+  return null
+}
+
+async function saveAll() {
+  const btn = document.getElementById('save-btn')
+  btn.disabled = true; btn.textContent = 'Saving…'
+
+  const token = await getToken()
+  if (!token) {
+    toast('error', 'Not logged in — please log in first')
+    btn.disabled = false; btn.textContent = '💾 Save & Launch'
+    return
+  }
+
+  const body = {
+    clinic_name:    document.getElementById('clinic_name').value.trim(),
+    clinic_icon:    document.getElementById('clinic_icon').value    || '🏥',
+    clinic_tagline: document.getElementById('clinic_tagline').value,
+    clinic_type:    document.getElementById('clinic_type').value,
+    open_days:      getOpenDays(),
+    open_hour:      parseInt(document.getElementById('open_hour').value),
+    close_hour:     parseInt(document.getElementById('close_hour').value),
+    slot_duration:  parseInt(document.getElementById('slot_duration').value),
+    max_per_day:    parseInt(document.getElementById('max_per_day').value) || 20,
+    clinic_phone:   document.getElementById('clinic_phone').value,
+    whatsapp:       document.getElementById('whatsapp').value,
+    clinic_address: document.getElementById('clinic_address').value,
+    clinic_website: document.getElementById('clinic_website').value,
+    google_maps:    document.getElementById('google_maps').value,
+    clinic_email:   document.getElementById('clinic_email').value,
+  }
+
+  try {
+    const res  = await fetch(API_URL + '/clinic-config', {
+      method:  'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body:    JSON.stringify(body)
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Save failed')
+
+    // Show success
+    document.getElementById('step-5').innerHTML = `
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:64px;margin-bottom:16px">🎉</div>
+        <div style="font-size:22px;font-weight:600;margin-bottom:8px">ClinicAI is ready!</div>
+        <div style="font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.7">
+          Your clinic is now live. Patients can scan your QR code to book appointments.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto">
+          <a href="/" style="display:block;padding:11px;background:var(--accent2);color:white;text-decoration:none;border-radius:9px;font-weight:600;font-size:14px">🏥 View Clinic Page</a>
+          <a href="/admin.html" style="display:block;padding:11px;background:var(--accent);color:white;text-decoration:none;border-radius:9px;font-weight:600;font-size:14px">⚙️ Go to Admin Panel</a>
+          <a href="/chat.html" style="display:block;padding:11px;background:var(--border);color:var(--text);text-decoration:none;border-radius:9px;font-weight:600;font-size:14px">💬 Test the Chat</a>
+        </div>
+      </div>`
+    document.getElementById('step-5').classList.add('active')
+
+  } catch(e) {
+    toast('error', e.message)
+    btn.disabled = false; btn.textContent = '💾 Save & Launch'
+  }
+}
+</script>
+</body>
+</html>

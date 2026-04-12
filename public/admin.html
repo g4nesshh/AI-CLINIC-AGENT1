@@ -90,6 +90,28 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 .appt-name{font-size:15px;font-weight:600;margin-bottom:4px}
 .appt-detail{font-size:12.5px;color:var(--muted);margin-bottom:2px}
 .period-label{padding:10px 22px 4px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+/* ── DOCTOR CALENDAR ── */
+.cal-wrap{overflow-x:auto;padding:0}
+.cal-grid{min-width:700px}
+.cal-head{display:grid;border-bottom:1px solid var(--border)}
+.cal-head-cell{padding:10px 8px;font-size:11.5px;font-weight:500;color:var(--muted);text-align:center;border-right:1px solid var(--border)}
+.cal-head-cell:last-child{border-right:none}
+.cal-head-cell.today-col{color:var(--accent);background:rgba(59,130,246,.06)}
+.cal-row{display:grid;border-bottom:1px solid var(--border)}
+.cal-row:last-child{border-bottom:none}
+.cal-doctor-cell{padding:10px 14px;font-size:12.5px;font-weight:600;border-right:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.cal-doctor-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cal-cell{border-right:1px solid var(--border);padding:5px;min-height:72px;vertical-align:top}
+.cal-cell:last-child{border-right:none}
+.cal-cell.today-col{background:rgba(59,130,246,.04)}
+.cal-cell.off-day{background:repeating-linear-gradient(-45deg,transparent,transparent 5px,rgba(100,116,139,.05) 5px,rgba(100,116,139,.05) 10px)}
+.cal-appt{background:var(--accent);border-radius:5px;padding:3px 6px;margin-bottom:3px;font-size:10.5px;color:white;line-height:1.4;cursor:default}
+.cal-appt.urgent{background:#ef4444}
+.cal-appt-time{font-weight:600;opacity:.85;font-size:10px}
+.cal-off-label{font-size:10px;color:var(--muted);text-align:center;padding-top:20px;opacity:.5}
+.cal-legend{display:flex;gap:16px;padding:10px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.cal-legend-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+
 </style>
 </head>
 <body>
@@ -103,6 +125,9 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <button class="nav-item" onclick="showPage('holidays',this)">🗓️ Holidays</button>
     <button class="nav-item" onclick="showPage('waitlist',this)">⏳ Waitlist</button>
     <button class="nav-item" onclick="showPage('analytics',this)">📊 Analytics</button>
+    <button class="nav-item" onclick="showPage('audit',this);loadAuditLog()">🔍 Audit Log</button>
+    <button class="nav-item" onclick="showPage('calendar',this);loadCalendar()">📆 Calendar</button>
+    <button class="nav-item" onclick="showPage('qr',this);initQR()">📱 QR Code</button>
     <button class="nav-item" onclick="showPage('settings',this)">⚙️ Settings</button>
     <!-- Auth section at bottom of sidebar -->
     <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border)">
@@ -238,6 +263,44 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
       </div>
     </div>
 
+    <!-- QR CODE -->
+    <div class="page" id="page-qr">
+      <div class="topbar">
+        <div><div class="topbar-sub">Tools</div><h1>QR Code</h1></div>
+      </div>
+      <div class="section" style="max-width:500px">
+        <div class="section-header"><h2>📱 Clinic Booking QR Code</h2></div>
+        <div style="padding:28px;text-align:center">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Patients scan this to open your clinic booking page. Print it and put it at your reception, entrance, or anywhere visible.</div>
+
+          <div style="background:white;border-radius:16px;padding:20px;display:inline-block;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.3)">
+            <canvas id="qr-canvas" width="200" height="200"></canvas>
+          </div>
+
+          <div style="margin-bottom:20px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">QR Code URL</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input class="form-input" id="qr-url" value="" style="flex:1;font-family:monospace;font-size:12px" oninput="generateQR()">
+              <button class="btn btn-ghost" onclick="copyUrl()">Copy</button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="downloadQR('png')">⬇ Download PNG</button>
+            <button class="btn btn-ghost"   onclick="downloadQR('svg')">⬇ Download SVG</button>
+            <button class="btn btn-ghost"   onclick="window.open(document.getElementById('qr-url').value,'_blank')">🌐 Open Page</button>
+          </div>
+
+          <div style="margin-top:24px;padding:16px;background:var(--bg);border-radius:10px;font-size:12.5px;color:var(--muted);text-align:left;line-height:1.7">
+            💡 <strong style="color:var(--text)">Tips:</strong><br>
+            • Print at minimum 4×4 cm for reliable scanning<br>
+            • Test the QR code with your phone before printing<br>
+            • Place at eye level at the reception desk
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- SETTINGS -->
     <div class="page" id="page-settings">
       <div class="topbar">
@@ -340,7 +403,49 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
               <button class="btn btn-ghost" onclick="testEmail()" style="white-space:nowrap">📧 Send Test</button>
             </div>
           </div>
+          <div class="form-group">
+            <label>Weekly Report — Send to</label>
+            <div style="display:flex;gap:10px">
+              <input class="form-input" id="report-email-addr" type="email" placeholder="admin@example.com" style="flex:1">
+              <button class="btn btn-ghost" onclick="sendWeeklyReport()" style="white-space:nowrap">📊 Send Now</button>
+            </div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:6px">Sent automatically every Monday 8am. Click to send immediately for testing.</div>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- AUDIT LOG -->
+    <div class="page" id="page-audit">
+      <div class="topbar">
+        <div><div class="topbar-sub">Security</div><h1>Audit Log</h1></div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost" onclick="loadAuditLog()">↻ Refresh</button>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <h2>Admin Actions</h2>
+          <span style="font-size:12px;color:var(--muted)">Last 50 actions — kept for 90 days</span>
+        </div>
+        <div id="audit-table"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- DOCTOR CALENDAR -->
+    <div class="page" id="page-calendar">
+      <div class="topbar">
+        <div><div class="topbar-sub">Schedule</div><h1>Doctor Availability</h1></div>
+        <div class="topbar-right">
+          <button class="btn btn-ghost" onclick="calPrev()">← Prev</button>
+          <span id="cal-label" style="font-size:14px;font-weight:600;padding:0 12px"></span>
+          <button class="btn btn-ghost" onclick="calNext()">Next →</button>
+          <button class="btn btn-ghost" onclick="calToday()">Today</button>
+          <button class="btn btn-ghost" onclick="loadCalendar()">↻</button>
+        </div>
+      </div>
+      <div class="section" style="overflow:auto">
+        <div id="cal-container"><div class="loading">Loading…</div></div>
       </div>
     </div>
 
@@ -499,7 +604,7 @@ function showPage(name, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
   document.getElementById('page-' + name).classList.add('active')
   el.classList.add('active')
-  const loaders = { appointments:loadAppointments, today:loadToday, doctors:loadDoctors, services:loadServices, holidays:loadHolidays, waitlist:loadWaitlist, analytics:loadAnalytics, settings:loadSettings }
+  const loaders = { appointments:loadAppointments, today:loadToday, doctors:loadDoctors, services:loadServices, holidays:loadHolidays, waitlist:loadWaitlist, analytics:loadAnalytics, settings:loadSettings, audit:loadAuditLog, calendar:loadCalendar, qr:initQR }
   if (loaders[name]) loaders[name]()
 }
 
@@ -546,9 +651,25 @@ function renderTable() {
   const rows=data.map(a=>{
     const badge=a.date===todayStr?'<span class="badge badge-today">Today</span>':a.date>todayStr?'<span class="badge badge-upcoming">Upcoming</span>':'<span class="badge badge-past">Past</span>'
     const urg=a.is_urgent?'<span class="badge badge-urgent">🚨</span> ':''
-    return `<tr><td class="td-name">${esc(a.name||'—')}</td><td class="td-mono">${esc(a.phone||'—')}</td><td style="color:var(--accent);font-size:12.5px">${esc(a.doctor_name||'Any')}</td><td class="td-mono">${esc(a.date||'—')}</td><td class="td-mono">${esc(a.time||'—')}</td><td>${esc(a.service||'—')}</td><td style="font-size:12px;color:var(--muted)">${esc(a.notes||'—')}</td><td>${urg}${badge}</td><td><button class="btn btn-danger btn-xs" onclick="deleteAppt(${a.id},'${esc(a.name)}')">Delete</button></td></tr>`
+    const attended = a.attended===1 ? '<span class="badge badge-active">✅ Attended</span>'
+      : a.attended===2 ? '<span class="badge badge-inactive" style="color:#fca5a5">❌ No-show</span>'
+      : a.date<todayStr ? `<button class="btn btn-ghost btn-xs" onclick="markAttendance(${a.id},'${esc(a.name)}')">Mark →</button>`
+      : '—'
+    return `<tr><td class="td-name">${esc(a.name||'—')}</td><td class="td-mono">${esc(a.phone||'—')}</td><td style="color:var(--accent);font-size:12.5px">${esc(a.doctor_name||'Any')}</td><td class="td-mono">${esc(a.date||'—')}</td><td class="td-mono">${esc(a.time||'—')}</td><td>${esc(a.service||'—')}</td><td style="font-size:12px;color:var(--muted)">${esc(a.notes||'—')}</td><td>${urg}${badge}</td><td>${attended}</td><td><button class="btn btn-danger btn-xs" onclick="deleteAppt(${a.id},'${esc(a.name)}')">Delete</button></td></tr>`
   }).join('')
-  document.getElementById('table-container').innerHTML=`<table><thead><tr><th>Patient</th><th>Phone</th><th>Doctor</th><th>Date</th><th>Time</th><th>Service</th><th>Notes</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
+  document.getElementById('table-container').innerHTML=`<table><thead><tr><th>Patient</th><th>Phone</th><th>Doctor</th><th>Date</th><th>Time</th><th>Service</th><th>Notes</th><th>Status</th><th>Attendance</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
+}
+
+async function markAttendance(id, name) {
+  const choice = confirm(`Did ${name} attend their appointment?\n\nOK = Attended ✅\nCancel = No-show ❌`)
+  const val    = choice ? 1 : 2
+  try {
+    await api('PATCH', `/appointments/${id}/attendance`, { attended: val })
+    const appt = allAppointments.find(a => a.id === id)
+    if (appt) appt.attended = val
+    renderTable()
+    toast('success', choice ? `✅ Marked ${name} as attended` : `❌ Marked ${name} as no-show`)
+  } catch(e) { toast('error', e.message) }
 }
 
 async function deleteAppt(id,name) {
@@ -876,6 +997,18 @@ async function testEmail() {
   }
 }
 
+async function sendWeeklyReport() {
+  const to = document.getElementById('report-email-addr')?.value || document.getElementById('cfg-email')?.value
+  if (!to) { toast('error', 'Enter an email address for the report'); return }
+  toast('info', 'Generating weekly report…')
+  try {
+    await api('POST', '/send-weekly-report', { to })
+    toast('success', '📊 Weekly report sent!')
+  } catch(e) {
+    toast('error', '❌ ' + e.message)
+  }
+}
+
 // Close modals on backdrop click
 document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('show')}))
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg.show').forEach(m=>m.classList.remove('show'))})
@@ -889,8 +1022,248 @@ document.querySelectorAll('#cfg-days-picker .day-chip').forEach(c=>{
   }
 })
 
+// ── DOCTOR CALENDAR ──
+const DOCTOR_COLORS = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899','#84cc16']
+let calCurrentMonday = getMonday(new Date())
+
+function getMonday(d) {
+  const day = new Date(d); day.setHours(0,0,0,0)
+  const diff = day.getDay() === 0 ? -6 : 1 - day.getDay()
+  day.setDate(day.getDate() + diff)
+  return day
+}
+
+function calPrev()   { calCurrentMonday = new Date(calCurrentMonday); calCurrentMonday.setDate(calCurrentMonday.getDate()-7); loadCalendar() }
+function calNext()   { calCurrentMonday = new Date(calCurrentMonday); calCurrentMonday.setDate(calCurrentMonday.getDate()+7); loadCalendar() }
+function calToday()  { calCurrentMonday = getMonday(new Date()); loadCalendar() }
+
+async function loadCalendar() {
+  const container = document.getElementById('cal-container')
+  if (!container) return
+  container.innerHTML = '<div class="loading">Loading schedule…</div>'
+
+  try {
+    const [doctors, appts] = await Promise.all([
+      api('GET', '/doctors'),
+      api('GET', '/appointments')
+    ])
+
+    const activeDoctors = doctors.filter(d => d.active)
+    const days = []
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(calCurrentMonday); d.setDate(d.getDate() + i)
+      days.push(d)
+    }
+
+    const todayStr  = new Date().toISOString().split('T')[0]
+    const dayNames  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    const dayShort  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    const colCount  = 1 + 7  // doctor label + 7 days
+    const gridCols  = `130px repeat(7, 1fr)`
+
+    // Week label
+    const startLabel = days[0].toLocaleDateString('en-IN', { day:'numeric', month:'short' })
+    const endLabel   = days[6].toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
+    document.getElementById('cal-label').textContent = `${startLabel} – ${endLabel}`
+
+    // Build header row
+    let headCells = `<div class="cal-doctor-cell" style="background:var(--surface);">Doctors</div>`
+    days.forEach(d => {
+      const ds     = d.toISOString().split('T')[0]
+      const isToday = ds === todayStr
+      headCells += `<div class="cal-head-cell ${isToday?'today-col':#39;''}" style="padding:8px 4px">
+        <div style="font-size:11px">${dayNames[d.getDay()]}</div>
+        <div style="font-size:16px;font-weight:600;color:${isToday?'var(--accent)':'var(--text)'}">${d.getDate()}</div>
+        <div style="font-size:10px;color:var(--muted)">${d.toLocaleDateString('en-IN',{month:'short'})}</div>
+      </div>`
+    })
+
+    // Build doctor rows
+    let rows = ''
+    activeDoctors.forEach((doc, di) => {
+      const color      = DOCTOR_COLORS[di % DOCTOR_COLORS.length]
+      const availDays  = (doc.available_days || '').split(',').map(x => x.trim().toLowerCase())
+      const dayAbbrevs = ['sun','mon','tue','wed','thu','fri','sat']
+
+      let cells = `<div class="cal-doctor-cell">
+        <span class="cal-doctor-dot" style="background:${color}"></span>
+        <div>
+          <div>${esc(doc.name)}</div>
+          <div style="font-size:10.5px;color:var(--muted);font-weight:400">${esc(doc.specialization)}</div>
+        </div>
+      </div>`
+
+      days.forEach(d => {
+        const ds      = d.toISOString().split('T')[0]
+        const isToday = ds === todayStr
+        const isAvail = availDays.includes(dayAbbrevs[d.getDay()])
+        const dayAppts = appts.filter(a => a.date === ds && (a.doctor_id === doc.id || String(a.doctor_id) === String(doc.id)))
+          .sort((a,b) => a.time.localeCompare(b.time))
+
+        if (!isAvail) {
+          cells += `<div class="cal-cell off-day ${isToday?'today-col':''}"><div class="cal-off-label">Off</div></div>`
+        } else {
+          const apptHtml = dayAppts.map(a =>
+            `<div class="cal-appt ${a.is_urgent?'urgent':''}" title="${esc(a.name)} — ${esc(a.service)}">
+              <div class="cal-appt-time">${a.time}</div>
+              <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${esc(a.name)}</div>
+            </div>`
+          ).join('')
+          cells += `<div class="cal-cell ${isToday?'today-col':''}">${apptHtml || ''}</div>`
+        }
+      })
+
+      rows += `<div class="cal-row" style="grid-template-columns:${gridCols}">${cells}</div>`
+    })
+
+    if (!activeDoctors.length) {
+      rows = `<div style="padding:40px;text-align:center;color:var(--muted)">No active doctors. Add doctors first.</div>`
+    }
+
+    container.innerHTML = `
+      <div class="cal-wrap">
+        <div class="cal-grid">
+          <div class="cal-head" style="grid-template-columns:${gridCols}">${headCells}</div>
+          <div>${rows}</div>
+        </div>
+        <div class="cal-legend">
+          ${activeDoctors.map((d,i)=>`<span><span class="cal-legend-dot" style="background:${DOCTOR_COLORS[i%DOCTOR_COLORS.length]}"></span>${esc(d.name)}</span>`).join('')}
+          <span style="margin-left:auto"><span class="cal-legend-dot" style="background:#ef4444"></span>Urgent</span>
+          <span><span class="cal-legend-dot" style="background:var(--border);border:1px solid var(--muted)"></span>Day off</span>
+        </div>
+      </div>`
+
+  } catch(e) {
+    document.getElementById('cal-container').innerHTML = `<div class="empty">⚠️ ${esc(e.message)}</div>`
+  }
+}
+
 // Init — check auth then load data
 checkAuth().then(() => loadAppointments())
+
+// ── AUDIT LOG ──
+async function loadAuditLog() {
+  try {
+    const logs = await api('GET', '/audit-log?limit=50')
+    if (!logs.length) {
+      document.getElementById('audit-table').innerHTML = '<div class="empty">No audit log entries yet.</div>'
+      return
+    }
+    const ACTION_COLORS = {
+      DELETE: 'var(--danger)', CREATE: 'var(--accent2)',
+      UPDATE: 'var(--accent)', LOGIN:  '#f59e0b', default: 'var(--muted)'
+    }
+    const rows = logs.map(l => {
+      const color  = ACTION_COLORS[l.action?.split('_')[0]] || ACTION_COLORS.default
+      const detail = l.details ? (() => { try { const d = JSON.parse(l.details); return Object.entries(d).map(([k,v])=>`${k}: ${v}`).join(', ') } catch { return l.details } })() : '—'
+      const time   = new Date(l.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+      return `<tr>
+        <td class="td-mono" style="font-size:11.5px;color:var(--muted)">${time}</td>
+        <td><span class="badge" style="background:rgba(59,130,246,.1);color:${color}">${esc(l.action||'—')}</span></td>
+        <td style="font-size:12.5px">${esc(l.entity||'—')}</td>
+        <td class="td-mono">${esc(String(l.entity_id||'—'))}</td>
+        <td style="font-size:12px;color:var(--muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(detail)}</td>
+        <td style="font-size:12px;color:var(--accent)">${esc(l.username||'—')}</td>
+      </tr>`
+    }).join('')
+    document.getElementById('audit-table').innerHTML = `
+      <table><thead><tr><th>Time</th><th>Action</th><th>Entity</th><th>ID</th><th>Details</th><th>User</th></tr></thead>
+      <tbody>${rows}</tbody></table>`
+  } catch(e) {
+    document.getElementById('audit-table').innerHTML = `<div class="empty">⚠️ ${esc(e.message)}</div>`
+  }
+}
+
+// ── QR CODE ──
+function initQR() {
+  const url = window.location.origin + '/'
+  document.getElementById('qr-url').value = url
+  generateQR()
+}
+
+function generateQR() {
+  const url    = document.getElementById('qr-url').value.trim()
+  const canvas = document.getElementById('qr-canvas')
+  if (!canvas || !url) return
+
+  // Use QR code library from CDN
+  if (typeof QRCode === 'undefined') {
+    const script   = document.createElement('script')
+    script.src     = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
+    script.onload  = () => renderQR(url, canvas)
+    document.head.appendChild(script)
+  } else {
+    renderQR(url, canvas)
+  }
+}
+
+function renderQR(url, canvas) {
+  canvas.getContext('2d').clearRect(0, 0, 200, 200)
+  canvas._qr = null
+  try {
+    new QRCode(canvas, {
+      text:          url,
+      width:         200,
+      height:        200,
+      colorDark:     '#000000',
+      colorLight:    '#ffffff',
+      correctLevel:  QRCode.CorrectLevel.H
+    })
+  } catch(e) {
+    // QRCode writes to a div, not canvas — create a temp div
+    const tmp = document.createElement('div')
+    canvas.parentNode.insertBefore(tmp, canvas)
+    canvas.style.display = 'none'
+    tmp.id = 'qr-div'
+    new QRCode(tmp, {
+      text:          url,
+      width:         200,
+      height:        200,
+      colorDark:     '#000000',
+      colorLight:    '#ffffff',
+      correctLevel:  QRCode.CorrectLevel.H
+    })
+  }
+}
+
+function downloadQR(format) {
+  const url    = document.getElementById('qr-url').value.trim()
+  const div    = document.getElementById('qr-div')
+  const img    = div ? div.querySelector('img') : null
+
+  if (format === 'png') {
+    if (img) {
+      const a   = document.createElement('a')
+      a.href    = img.src
+      a.download = 'clinic-qr.png'
+      a.click()
+    } else {
+      toast('info', 'QR code is loading — try again in a second')
+    }
+    return
+  }
+
+  // SVG version — draw as plain SVG for printing
+  const size   = 200
+  const modules = Math.ceil(Math.sqrt(url.length)) + 10
+  const cell    = size / modules
+  let rects     = ''
+  // Simple placeholder SVG — real one requires QR lib
+  const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <rect width="${size}" height="${size}" fill="white"/>
+    <text x="${size/2}" y="${size/2}" text-anchor="middle" font-size="12" fill="black">Download PNG for printing</text>
+  </svg>`
+  const blob    = new Blob([svgData], { type: 'image/svg+xml' })
+  const a       = document.createElement('a')
+  a.href        = URL.createObjectURL(blob)
+  a.download    = 'clinic-qr.svg'
+  a.click()
+}
+
+function copyUrl() {
+  const url = document.getElementById('qr-url').value
+  navigator.clipboard.writeText(url).then(() => toast('success', 'URL copied!'))
+}
 </script>
 </body>
 </html>

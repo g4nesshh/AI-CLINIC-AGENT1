@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starting up — ClinicAI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
+.icon{font-size:64px;margin-bottom:20px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.title{font-size:22px;font-weight:600;margin-bottom:8px}
+.sub{font-size:14px;color:#64748b;margin-bottom:8px;line-height:1.6}
+.hint{font-size:13px;color:#3b82f6;margin-bottom:32px}
+.progress{width:220px;height:4px;background:#1e2435;border-radius:99px;margin:0 auto 28px;overflow:hidden}
+.bar{height:100%;width:0%;background:#3b82f6;border-radius:99px;animation:fill 28s linear forwards}
+@keyframes fill{to{width:100%}}
+.btn{display:inline-block;padding:11px 28px;border-radius:9px;background:#3b82f6;color:white;text-decoration:none;font-size:14px;font-weight:500}
+</style>
+</head>
+<body>
+<div>
+  <div class="icon">⏳</div>
+  <div class="title">Server is starting up…</div>
+  <div class="sub">Our server takes about 30 seconds to wake up on the free plan.</div>
+  <div class="hint">This only happens after a period of inactivity.</div>
+  <div class="progress"><div class="bar"></div></div>
+  <a class="btn" href="javascript:location.reload()">🔄 Try Again</a>
+</div>
+<script>
+// Auto-refresh after 32 seconds
+setTimeout(() => location.reload(), 32000)
+</script>
+</body>
+</html>

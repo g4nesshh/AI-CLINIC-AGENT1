@@ -210,6 +210,127 @@ router.delete('/appointments/:id', (req, res) => {
   })
 })
 
+/* ── No-show tracking ── */
+router.patch('/appointments/:id/attendance', (req, res) => {
+  const { attended } = req.body
+  if (![1, 2].includes(attended)) return res.status(400).json({ error: 'attended must be 1 (attended) or 2 (no-show)' })
+
+  // Add attended column if it doesn't exist
+  db.run(`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS attended INTEGER DEFAULT 0`, () => {
+    db.run('UPDATE appointments SET attended = ? WHERE id = ?', [attended, req.params.id], function(err) {
+      if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
+      if (this.changes === 0) return res.status(404).json({ error: 'Appointment not found' })
+      res.json({ success: true })
+    })
+  })
+})
+
+/* ── No-show stats ── */
+router.get('/appointments/noshows', (req, res) => {
+  db.all(`
+    SELECT phone, name, COUNT(*) as noshow_count,
+           MAX(date) as last_noshow
+    FROM appointments
+    WHERE attended = 2
+    GROUP BY phone, name
+    ORDER BY noshow_count DESC
+  `, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
+    res.json(rows || [])
+  })
+})
+
+/* ── Weekly report email ── */
+router.post('/send-weekly-report', async (req, res) => {
+  const { to } = req.body
+  if (!to) return res.status(400).json({ error: 'Recipient email required' })
+
+  const config = await getClinicConfig()
+  const today  = new Date()
+  const monday = new Date(today)
+  monday.setDate(today.getDate() - today.getDay() + 1)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+
+  const fmt    = d => d.toISOString().split('T')[0]
+  const weekStart = fmt(monday)
+  const weekEnd   = fmt(sunday)
+
+  // Gather stats
+  const stats = await new Promise((resolve) => {
+    db.all(`
+      SELECT
+        COUNT(*) as total,
+        SUM(CASE WHEN attended = 1 THEN 1 ELSE 0 END) as attended,
+        SUM(CASE WHEN attended = 2 THEN 1 ELSE 0 END) as noshows,
+        SUM(CASE WHEN is_urgent = 1 THEN 1 ELSE 0 END) as urgent
+      FROM appointments
+      WHERE date >= ? AND date <= ?
+    `, [weekStart, weekEnd], (err, rows) => resolve(rows?.[0] || {}))
+  })
+
+  const topService = await new Promise((resolve) => {
+    db.get(`
+      SELECT service, COUNT(*) as count
+      FROM appointments
+      WHERE date >= ? AND date <= ?
+      GROUP BY service ORDER BY count DESC LIMIT 1
+    `, [weekStart, weekEnd], (err, row) => resolve(row))
+  })
+
+  const dayOfWeek = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+  const busiest   = await new Promise((resolve) => {
+    db.get(`
+      SELECT date, COUNT(*) as count
+      FROM appointments
+      WHERE date >= ? AND date <= ?
+      GROUP BY date ORDER BY count DESC LIMIT 1
+    `, [weekStart, weekEnd], (err, row) => resolve(row))
+  })
+
+  const result = await sendEmail({
+    to,
+    subject: `📊 Weekly Report — ${config.clinic_name || 'ClinicAI'} (${weekStart} to ${weekEnd})`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:28px">
+        <h2 style="color:#0ea5e9;margin-bottom:4px">Weekly Report</h2>
+        <p style="color:#64748b;margin-bottom:24px">${weekStart} to ${weekEnd} — ${config.clinic_name || 'ClinicAI'}</p>
+
+        <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
+          <tr style="background:#f0f9ff">
+            <td style="padding:14px;border-radius:8px;text-align:center">
+              <div style="font-size:32px;font-weight:700;color:#0ea5e9">${stats.total || 0}</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">Total Appointments</div>
+            </td>
+            <td style="padding:14px;border-radius:8px;text-align:center">
+              <div style="font-size:32px;font-weight:700;color:#10b981">${stats.attended || 0}</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">Attended</div>
+            </td>
+            <td style="padding:14px;border-radius:8px;text-align:center">
+              <div style="font-size:32px;font-weight:700;color:#ef4444">${stats.noshows || 0}</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">No-shows</div>
+            </td>
+            <td style="padding:14px;border-radius:8px;text-align:center">
+              <div style="font-size:32px;font-weight:700;color:#f59e0b">${stats.urgent || 0}</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px">Urgent</div>
+            </td>
+          </tr>
+        </table>
+
+        ${topService ? `<p style="color:#475569;margin-bottom:8px">🏆 <strong>Top service this week:</strong> ${topService.service} (${topService.count} bookings)</p>` : ''}
+        ${busiest    ? `<p style="color:#475569;margin-bottom:24px">📅 <strong>Busiest day:</strong> ${busiest.date} (${busiest.count} appointments)</p>` : ''}
+        ${(!topService && !busiest) ? '<p style="color:#64748b">No appointments this week.</p>' : ''}
+
+        <div style="background:#f8fafc;border-radius:10px;padding:16px;margin-top:16px">
+          <p style="font-size:12px;color:#94a3b8;margin:0">Generated by ClinicAI • <a href="${process.env.CLINIC_URL || '#'}" style="color:#0ea5e9">View Admin Panel</a></p>
+        </div>
+      </div>`
+  })
+
+  if (result.ok) res.json({ success: true, message: 'Weekly report sent!' })
+  else res.status(500).json({ error: result.error })
+})
+
 /* ================================================
    DOCTORS — full CRUD with hard delete
 ================================================ */
@@ -398,4 +519,56 @@ router.get('/analytics', async (req, res) => {
   }
 })
 
-module.exports = router
+/* ================================================
+   AUDIT LOG
+   Tracks every admin action permanently
+================================================ */
+
+// Create audit_log table on startup
+db.run(`
+  CREATE TABLE IF NOT EXISTS audit_log (
+    id         SERIAL PRIMARY KEY,
+    action     TEXT NOT NULL,
+    entity     TEXT,
+    entity_id  TEXT,
+    details    TEXT,
+    username   TEXT DEFAULT 'admin',
+    ip         TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )
+`, (err) => { if (err) console.error('[Audit] Table error:', err.message) })
+
+function auditLog(req, action, entity, entityId, details) {
+  const username = req.admin?.username || 'unknown'
+  const ip       = req.ip || 'unknown'
+  const meta     = details ? JSON.stringify(details) : null
+  db.run(
+    'INSERT INTO audit_log (action, entity, entity_id, details, username, ip) VALUES (?, ?, ?, ?, ?, ?)',
+    [action, entity, String(entityId || ''), meta, username, ip],
+    (err) => { if (err) console.error('[Audit] Log error:', err.message) }
+  )
+}
+
+router.get('/audit-log', (req, res) => {
+  const limit  = Math.min(parseInt(req.query.limit) || 50, 200)
+  const offset = parseInt(req.query.offset) || 0
+  db.all(`
+    SELECT * FROM audit_log
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
+  `, [limit, offset], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
+    res.json(rows || [])
+  })
+})
+
+router.delete('/audit-log', (req, res) => {
+  // Only clear logs older than 90 days
+  db.run(`DELETE FROM audit_log WHERE created_at < CURRENT_DATE - INTERVAL '90 days'`,
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message })
+      res.json({ success: true, deleted: this.changes })
+    })
+})
+
+module.exports = { router, auditLog }

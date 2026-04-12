@@ -5,6 +5,8 @@ const router  = express.Router()
 
 const { extractDetails, chatReply }           = require('../nlp/extract')
 const { decideNextStep, applyDecision }        = require('../nlp/reasoning')
+const { triageSymptoms, buildTriageReply, shouldTriage } = require('../nlp/triage')
+const { detectLanguage, getTranslatedPrompt }  = require('../nlp/language')
 const { detectIntent, detectCorrection }       = require('../nlp/intent')
 const { parseDate, parseTime, parsePhone, isSimpleMessage } = require('../nlp/parser')
 const { getAvailableSlots, formatSlots, isClinicOpen, isDailyCapReached } = require('../services/slots')
@@ -90,6 +92,11 @@ router.post('/', async (req, res) => {
 
   touchSession(userId)
 
+  // ── Detect language — stored in state for whole session ──
+  const detectedLang = detectLanguage(message)
+  if (detectedLang !== 'en') state._lang = detectedLang
+  const lang = state._lang || 'en'
+
   // ── NLP: run AI extraction + local parsers in parallel ──
   const simple = isSimpleMessage(message)
   const [aiDetails, localPhone, localDate, localTime, localIntent] = await Promise.all([
@@ -119,6 +126,40 @@ router.post('/', async (req, res) => {
   // ── Log incoming intent ──
   if (merged.intent) {
     logEvent({ event: 'intent_detected', userId, intent: merged.intent, service: state.service })
+  }
+
+  // ── AI TRIAGE ──
+  // Fires when patient describes symptoms before booking starts
+  if (shouldTriage(message, state) && !merged.intent) {
+    try {
+      const { getAllServices } = require('../services/booking')
+      const services  = await getAllServices()
+      const triage    = await triageSymptoms(message, services)
+      const triageMsg = buildTriageReply(triage, state)
+
+      if (triageMsg) {
+        logEvent({ event: 'triage_used', userId, service: triage.suggested_service, metadata: { urgency: triage.urgency } })
+
+        // For emergencies, fast-track to urgent booking
+        if (triage.urgency === 'emergency') {
+          state.intent    = 'urgent'
+          state.is_urgent = true
+          return res.json({ reply: triageMsg, action: 'chat' })
+        }
+
+        // For others, suggest the service and start booking
+        state.intent = 'book'
+        state.step   = 'collecting'
+        return res.json({
+          reply:   triageMsg + '\n\nWould you like to book this now?',
+          action:  'show_options',
+          options: ['Yes, book now', 'Tell me more first', 'Different service']
+        })
+      }
+    } catch(e) {
+      console.error('[Triage] Error:', e.message)
+      // Fall through to normal flow if triage fails
+    }
   }
 
   // ── Mid-flow field correction ──
@@ -155,6 +196,9 @@ router.post('/', async (req, res) => {
       if (id) {
         const msg = `✅ Appointment confirmed!\n\n  Ref #   : ${id}\n  Name    : ${state.name}\n  Doctor  : ${state.doctor_name||'Any available'}\n  Date    : ${state.date}\n  Time    : ${state.time}\n  Service : ${state.service}\n  Notes   : ${state.notes && state.notes !== '__asking__' ? state.notes : 'None'}\n\nPlease arrive 10 minutes early. See you! 😊`
         logEvent({ event: 'booking_confirmed', userId, intent: 'book', service: state.service, doctor: state.doctor_name, success: true, metadata: { refId: id, date: state.date, time: state.time } })
+        // Sync to Google Calendar — fire and forget
+        const { addCalendarEvent } = require('../services/calendar')
+        addCalendarEvent({ ...state, id }).catch(() => {})
         resetState(userId)
         return respond(res, { reply: msg, action: 'confirmed' })
       } else {
@@ -230,9 +274,14 @@ router.post('/', async (req, res) => {
     if (!state.date)  return res.json({ reply: "Which date is the appointment you want to cancel?" })
     if (!state.time)  return res.json({ reply: "What time is the appointment?" })
     const result = await cancelAppointment(state)
+    const cancelledDate = state.date
+    const cancelledTime = state.time
+    const cancelledDoc  = state.doctor_id
     resetState(userId)
     if (result === 'cancelled') {
       logEvent({ event: 'appointment_cancelled', userId, intent: 'cancel', success: true })
+      // Auto-notify waitlist — fire and forget
+      notifyWaitlistOnCancel(cancelledDate, cancelledTime, cancelledDoc).catch(() => {})
       return res.json({ reply: "✅ Your appointment has been successfully cancelled." })
     }
     if (result === 'not_found') return res.json({ reply: "❌ No appointment found with those details. Please check the date and time." })
@@ -476,7 +525,7 @@ router.post('/', async (req, res) => {
   }
 
   // ── GENERAL CHAT ──
-  const aiReply    = await chatReply(message, history)
+  const aiReply    = await chatReply(message, history, lang)
   const finalReply = aiReply || "I'm here to help! Say 'book appointment' to get started or ask me anything about the clinic. 😊"
 
   history.push({ role: 'assistant', content: finalReply })
