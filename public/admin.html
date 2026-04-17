@@ -112,9 +112,50 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 .cal-legend{display:flex;gap:16px;padding:10px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);flex-wrap:wrap}
 .cal-legend-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
 
+/* ── MOBILE RESPONSIVE ── */
+.hamburger{display:none;position:fixed;top:14px;left:14px;z-index:200;width:40px;height:40px;border-radius:10px;background:var(--surface);border:1px solid var(--border);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:8px}
+.hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all .25s}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:149}
+@media(max-width:768px){
+  .hamburger{display:flex}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:150}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.show{display:block}
+  .main{margin-left:0;padding:20px 14px 80px}
+  .topbar{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:18px;padding-top:48px}
+  .topbar-right{width:100%;flex-wrap:wrap;gap:8px}
+  .topbar-right .btn{flex:1;min-width:120px;justify-content:center}
+  .stats{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+  .stat-card{padding:14px}
+  .stat-value{font-size:22px}
+  .doctor-grid{grid-template-columns:1fr}
+  .services-grid,.settings-grid,.settings-grid-3{grid-template-columns:1fr}
+  .section-header{flex-direction:column;align-items:flex-start;gap:8px}
+  .section-controls{width:100%;flex-wrap:wrap}
+  .search-input{width:100% !important}
+  .modal{width:calc(100vw - 32px);margin:16px}
+  table{font-size:12px}
+  thead th{padding:8px 10px;font-size:10px}
+  tbody td{padding:10px;font-size:12px}
+  .td-actions{flex-wrap:wrap}
+  .btn-xs{padding:4px 8px}
+  .today-grid{grid-template-columns:1fr}
+  .revenue-grid{grid-template-columns:1fr 1fr !important}
+  .rev-chart-row{flex-direction:column}
+}
+@media(max-width:480px){
+  .stats{grid-template-columns:1fr}
+  .revenue-grid{grid-template-columns:1fr !important}
+}
+
 </style>
 </head>
 <body>
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <div class="layout">
   <aside class="sidebar">
     <div class="logo"><span></span>ClinicAI Admin</div>
@@ -125,6 +166,7 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <button class="nav-item" onclick="showPage('holidays',this)">🗓️ Holidays</button>
     <button class="nav-item" onclick="showPage('waitlist',this)">⏳ Waitlist</button>
     <button class="nav-item" onclick="showPage('analytics',this)">📊 Analytics</button>
+    <button class="nav-item" onclick="showPage('revenue',this);loadRevenue()">💰 Revenue</button>
     <button class="nav-item" onclick="showPage('audit',this);loadAuditLog()">🔍 Audit Log</button>
     <button class="nav-item" onclick="showPage('calendar',this);loadCalendar()">📆 Calendar</button>
     <button class="nav-item" onclick="showPage('qr',this);initQR()">📱 QR Code</button>
@@ -265,6 +307,59 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 
     <!-- QR CODE -->
     <div class="page" id="page-qr">
+
+    <!-- REVENUE DASHBOARD -->
+    <div class="page" id="page-revenue">
+      <div class="topbar">
+        <div><div class="topbar-sub">Finance</div><h1>Revenue Dashboard</h1></div>
+        <div class="topbar-right">
+          <select id="rev-period" class="search-input" style="width:140px" onchange="loadRevenue()">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+          <button class="btn btn-ghost" onclick="loadRevenue()">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="stats revenue-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value green" id="rev-total">—</div></div>
+        <div class="stat-card"><div class="stat-label">Appointments</div><div class="stat-value blue" id="rev-count">—</div></div>
+        <div class="stat-card"><div class="stat-label">Avg per Visit</div><div class="stat-value warn" id="rev-avg">—</div></div>
+        <div class="stat-card"><div class="stat-label">Top Service</div><div class="stat-value" id="rev-top" style="font-size:16px;color:var(--muted)">—</div></div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="rev-chart-row" style="display:flex;gap:16px;margin-bottom:16px">
+        <div class="section" style="flex:2">
+          <div class="section-header"><h2>Daily Revenue</h2></div>
+          <div style="padding:20px">
+            <canvas id="rev-bar-chart" style="width:100%;height:220px"></canvas>
+          </div>
+        </div>
+        <div class="section" style="flex:1">
+          <div class="section-header"><h2>By Service</h2></div>
+          <div id="rev-service-list" style="padding:0"><div class="loading">Loading…</div></div>
+        </div>
+      </div>
+
+      <!-- RECENT REVENUE TABLE -->
+      <div class="section">
+        <div class="section-header"><h2>Recent Appointments with Revenue</h2>
+          <span style="font-size:12px;color:var(--muted)">Based on service prices set below</span>
+        </div>
+        <div id="rev-table"><div class="loading">Loading…</div></div>
+      </div>
+
+      <!-- SET PRICES -->
+      <div class="section" style="margin-top:16px">
+        <div class="section-header"><h2>💰 Service Prices</h2>
+          <button class="btn btn-primary btn-sm" onclick="savePrices()">Save Prices</button>
+        </div>
+        <div id="price-table"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
       <div class="topbar">
         <div><div class="topbar-sub">Tools</div><h1>QR Code</h1></div>
       </div>
@@ -379,6 +474,33 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
             <div class="form-group"><label>Clinic Email (contact)</label><input class="form-input" id="cfg-email" type="email" placeholder="clinic@example.com"></div>
           </div>
           <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+      </div>
+
+      <!-- RAZORPAY -->
+      <div class="section" style="max-width:700px;margin-top:16px">
+        <div class="section-header"><h2>💳 Razorpay Deposit</h2></div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
+          <div class="info-box">
+            Collect a refundable deposit when patients confirm their booking. Reduces no-shows significantly.<br>
+            Add <code style="color:#93c5fd">RAZORPAY_KEY_ID</code> and <code style="color:#93c5fd">RAZORPAY_KEY_SECRET</code> to Render → Environment Variables.
+            Get keys at <a href="https://razorpay.com" target="_blank" style="color:#93c5fd">razorpay.com</a> (free account).
+          </div>
+          <div class="settings-grid">
+            <div class="form-group">
+              <label>Enable Deposit</label>
+              <select class="form-input" id="cfg-deposit-enabled">
+                <option value="0">Disabled</option>
+                <option value="1">Enabled</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Deposit Amount (₹)</label>
+              <input class="form-input" id="cfg-deposit-amount" type="number" min="0" placeholder="e.g. 200">
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">Patients see the payment option after booking. They can pay or skip — booking is confirmed either way.</div>
+          <button class="btn btn-primary" onclick="saveSettings()">💾 Save Deposit Settings</button>
         </div>
       </div>
 
@@ -505,6 +627,40 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 </div>
 
 <!-- CHANGE PASSWORD MODAL -->
+<!-- PRESCRIPTION MODAL -->
+<div class="modal-bg" id="rx-modal">
+  <div class="modal" style="width:560px;max-width:100%">
+    <h3>📋 Prescription &amp; Notes</h3>
+    <input type="hidden" id="rx-appt-id">
+    <input type="hidden" id="rx-appt-email">
+
+    <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px" id="rx-appt-info"></div>
+
+    <div class="form-group">
+      <label>Doctor's Notes / Diagnosis</label>
+      <textarea class="form-input" id="rx-notes" rows="4" placeholder="e.g. Patient presented with tooth sensitivity in upper left molar. Cavity detected on X-ray..." style="resize:vertical;min-height:90px"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Prescription</label>
+      <textarea class="form-input" id="rx-prescription" rows="5" placeholder="e.g. 1. Amoxicillin 500mg — 3 times daily for 5 days&#10;2. Ibuprofen 400mg — after meals for pain&#10;3. Chlorhexidine mouthwash — twice daily" style="resize:vertical;min-height:110px;font-family:monospace"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Follow-up Date (optional)</label>
+      <input type="date" class="form-input" id="rx-followup">
+    </div>
+
+    <div id="rx-status" style="font-size:12.5px;min-height:18px;margin-bottom:8px"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('rx-modal').classList.remove('show')">Cancel</button>
+      <button class="btn btn-ghost" onclick="saveRx(false)">💾 Save Notes</button>
+      <button class="btn btn-primary" onclick="saveRx(true)" id="rx-send-btn">📧 Save &amp; Email Patient</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="cp-modal">
   <div class="modal">
     <h3>🔑 Change Password</h3>
@@ -604,7 +760,7 @@ function showPage(name, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
   document.getElementById('page-' + name).classList.add('active')
   el.classList.add('active')
-  const loaders = { appointments:loadAppointments, today:loadToday, doctors:loadDoctors, services:loadServices, holidays:loadHolidays, waitlist:loadWaitlist, analytics:loadAnalytics, settings:loadSettings, audit:loadAuditLog, calendar:loadCalendar, qr:initQR }
+  const loaders = { appointments:loadAppointments, today:loadToday, doctors:loadDoctors, services:loadServices, holidays:loadHolidays, waitlist:loadWaitlist, analytics:loadAnalytics, settings:loadSettings, audit:loadAuditLog, calendar:loadCalendar, qr:initQR, revenue:loadRevenue }
   if (loaders[name]) loaders[name]()
 }
 
@@ -655,7 +811,7 @@ function renderTable() {
       : a.attended===2 ? '<span class="badge badge-inactive" style="color:#fca5a5">❌ No-show</span>'
       : a.date<todayStr ? `<button class="btn btn-ghost btn-xs" onclick="markAttendance(${a.id},'${esc(a.name)}')">Mark →</button>`
       : '—'
-    return `<tr><td class="td-name">${esc(a.name||'—')}</td><td class="td-mono">${esc(a.phone||'—')}</td><td style="color:var(--accent);font-size:12.5px">${esc(a.doctor_name||'Any')}</td><td class="td-mono">${esc(a.date||'—')}</td><td class="td-mono">${esc(a.time||'—')}</td><td>${esc(a.service||'—')}</td><td style="font-size:12px;color:var(--muted)">${esc(a.notes||'—')}</td><td>${urg}${badge}</td><td>${attended}</td><td><button class="btn btn-danger btn-xs" onclick="deleteAppt(${a.id},'${esc(a.name)}')">Delete</button></td></tr>`
+    return `<tr><td class="td-name">${esc(a.name||'—')}</td><td class="td-mono">${esc(a.phone||'—')}</td><td style="color:var(--accent);font-size:12.5px">${esc(a.doctor_name||'Any')}</td><td class="td-mono">${esc(a.date||'—')}</td><td class="td-mono">${esc(a.time||'—')}</td><td>${esc(a.service||'—')}</td><td style="font-size:12px;color:var(--muted)">${esc(a.notes||'—')}</td><td>${urg}${badge}</td><td>${attended}</td><td><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openRx(${a.id},'${esc(a.name)}','${esc(a.email||'')}','${esc(a.date)}','${esc(a.service)}','${esc(a.doctor_name||'')}','${esc(a.notes||'')}','${esc(a.prescription||'')}','${esc(a.follow_up_date||'')}')">📋 Notes</button><button class="btn btn-danger btn-xs" onclick="deleteAppt(${a.id},'${esc(a.name)}')">Delete</button></div></td></tr>`
   }).join('')
   document.getElementById('table-container').innerHTML=`<table><thead><tr><th>Patient</th><th>Phone</th><th>Doctor</th><th>Date</th><th>Time</th><th>Service</th><th>Notes</th><th>Status</th><th>Attendance</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
 }
@@ -930,6 +1086,9 @@ async function loadSettings() {
     })
     document.getElementById('cfg-days').value = openDays.join(',')
 
+    document.getElementById('cfg-deposit-enabled').value = cfg.deposit_enabled || 0
+    document.getElementById('cfg-deposit-amount').value  = cfg.deposit_amount  || ''
+
     // Load email status from server
     loadEmailStatus()
 
@@ -974,7 +1133,9 @@ async function saveSettings() {
     close_hour:     parseInt(document.getElementById('cfg-close').value) || 17,
     slot_duration:  parseInt(document.getElementById('cfg-slot').value)  || 30,
     open_days:      openDays || 'Mon,Tue,Wed,Thu,Fri,Sat',
-    max_per_day:    parseInt(document.getElementById('cfg-max').value)   || 20
+    max_per_day:     parseInt(document.getElementById('cfg-max').value)            || 20,
+    deposit_enabled: parseInt(document.getElementById('cfg-deposit-enabled')?.value) || 0,
+    deposit_amount:  parseInt(document.getElementById('cfg-deposit-amount')?.value)  || 0
   }
 
   try {
@@ -1139,6 +1300,217 @@ async function loadCalendar() {
 }
 
 // Init — check auth then load data
+// ── PRESCRIPTION / NOTES ──
+function openRx(id, name, email, date, service, doctor, notes, prescription, followUp) {
+  document.getElementById('rx-appt-id').value    = id
+  document.getElementById('rx-appt-email').value  = email
+  document.getElementById('rx-appt-info').innerHTML =
+    `<strong style="color:var(--text)">${esc(name)}</strong> &nbsp;·&nbsp; ${esc(date)} &nbsp;·&nbsp; ${esc(service)}` +
+    (doctor ? ` &nbsp;·&nbsp; <span style="color:var(--accent)">${esc(doctor)}</span>` : '') +
+    (email  ? `` : ` &nbsp;·&nbsp; <span style="color:var(--danger)">⚠️ No email — cannot send</span>`)
+  document.getElementById('rx-notes').value        = notes        || ''
+  document.getElementById('rx-prescription').value = prescription || ''
+  document.getElementById('rx-followup').value     = followUp     || ''
+  document.getElementById('rx-status').textContent = ''
+  const sendBtn = document.getElementById('rx-send-btn')
+  sendBtn.disabled = !email
+  sendBtn.title    = !email ? 'Patient has no email address' : ''
+  document.getElementById('rx-modal').classList.add('show')
+  document.getElementById('rx-notes').focus()
+}
+
+async function saveRx(sendEmail) {
+  const id           = document.getElementById('rx-appt-id').value
+  const notes        = document.getElementById('rx-notes').value.trim()
+  const prescription = document.getElementById('rx-prescription').value.trim()
+  const followUp     = document.getElementById('rx-followup').value
+  const statusEl     = document.getElementById('rx-status')
+
+  statusEl.textContent      = 'Saving…'
+  statusEl.style.color      = 'var(--muted)'
+
+  try {
+    // Save notes
+    await api('PATCH', `/appointments/${id}/notes`, { notes, prescription, follow_up_date: followUp })
+
+    if (sendEmail) {
+      statusEl.textContent = 'Sending prescription email…'
+      await api('POST', `/appointments/${id}/send-prescription`)
+      statusEl.textContent = '✅ Prescription emailed to patient!'
+      statusEl.style.color = 'var(--accent2)'
+      setTimeout(() => { document.getElementById('rx-modal').classList.remove('show'); loadAppointments() }, 2000)
+    } else {
+      statusEl.textContent = '✅ Notes saved successfully'
+      statusEl.style.color = 'var(--accent2)'
+      // Update local data
+      const appt = allAppointments.find(a => a.id === parseInt(id))
+      if (appt) { appt.notes = notes; appt.prescription = prescription; appt.follow_up_date = followUp }
+      setTimeout(() => { document.getElementById('rx-modal').classList.remove('show') }, 1500)
+    }
+  } catch(e) {
+    statusEl.textContent = '❌ ' + e.message
+    statusEl.style.color = 'var(--danger)'
+  }
+}
+
+// ── MOBILE SIDEBAR ──
+function toggleSidebar() {
+  document.querySelector('.sidebar').classList.toggle('open')
+  document.getElementById('sidebar-overlay').classList.toggle('show')
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open')
+  document.getElementById('sidebar-overlay').classList.remove('show')
+}
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => { if (window.innerWidth <= 768) closeSidebar() })
+})
+
+// ── REVENUE DASHBOARD ──
+const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN')
+let servicePrices = {}
+
+async function loadRevenue() {
+  const days = parseInt(document.getElementById('rev-period')?.value) || 30
+  try {
+    const [appts, svcs] = await Promise.all([api('GET','/appointments'), api('GET','/services')])
+    const savedPrices   = JSON.parse(localStorage.getItem('service_prices') || '{}')
+    servicePrices       = savedPrices
+    const priceMap      = {}
+    svcs.forEach(s => { priceMap[s.name?.toLowerCase()] = savedPrices[s.id] || 0 })
+    const cutoff    = new Date(); cutoff.setDate(cutoff.getDate() - days)
+    const cutoffStr = cutoff.toISOString().split('T')[0]
+    const filtered  = appts.filter(a => a.date >= cutoffStr)
+    const withRev   = filtered.map(a => ({ ...a, price: priceMap[a.service?.toLowerCase()] || 0 }))
+    const totalRev  = withRev.reduce((s,a) => s+a.price, 0)
+    const avgRev    = withRev.length ? Math.round(totalRev/withRev.length) : 0
+    const byService = {}
+    withRev.forEach(a => { byService[a.service] = (byService[a.service]||0)+a.price })
+    const topSvc = Object.entries(byService).sort((a,b)=>b[1]-a[1])[0]
+    document.getElementById('rev-total').textContent = fmt(totalRev)
+    document.getElementById('rev-count').textContent = filtered.length
+    document.getElementById('rev-avg').textContent   = fmt(avgRev)
+    document.getElementById('rev-top').textContent   = topSvc ? topSvc[0] : '—'
+    renderBarChart(withRev, days)
+    renderServiceBreakdown(byService, totalRev)
+    renderRevenueTable(withRev.slice(0,20))
+    renderPriceTable(svcs, savedPrices)
+  } catch(e) { console.error('Revenue error:', e.message) }
+}
+
+function renderBarChart(appts, days) {
+  const canvas = document.getElementById('rev-bar-chart')
+  if (!canvas) return
+  const ctx   = canvas.getContext('2d')
+  canvas.width  = canvas.parentElement?.offsetWidth - 40 || 400
+  canvas.height = 200
+  const byDate = {}
+  const today  = new Date()
+  for (let i = days-1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate()-i)
+    byDate[d.toISOString().split('T')[0]] = 0
+  }
+  appts.forEach(a => { if (byDate.hasOwnProperty(a.date)) byDate[a.date] += a.price })
+  const dates  = Object.keys(byDate)
+  const values = Object.values(byDate)
+  const maxVal = Math.max(...values, 1)
+  const W = canvas.width, H = canvas.height
+  const pad = { top:16, right:8, bottom:28, left:48 }
+  const cW  = W-pad.left-pad.right, cH = H-pad.top-pad.bottom
+  const bW  = Math.max(2, (cW/dates.length)-2)
+  ctx.clearRect(0,0,W,H)
+  for (let i=0;i<=4;i++) {
+    const y   = pad.top+(cH/4)*i
+    ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke()
+    const v   = Math.round(maxVal-(maxVal/4)*i)
+    ctx.fillStyle='#64748b'; ctx.font='9px DM Sans'; ctx.textAlign='right'
+    ctx.fillText(v>0?'₹'+v:'0', pad.left-4, y+4)
+  }
+  dates.forEach((date,i) => {
+    const val = values[i], barH = (val/maxVal)*cH
+    const x   = pad.left + i*(cW/dates.length)
+    ctx.fillStyle = val>0 ? '#3b82f6' : 'rgba(59,130,246,.12)'
+    ctx.beginPath()
+    if (ctx.roundRect) ctx.roundRect(x+1, pad.top+cH-barH, bW, barH, [2,2,0,0])
+    else               ctx.rect(x+1, pad.top+cH-barH, bW, barH)
+    ctx.fill()
+    if (days<=14 || i%Math.ceil(days/8)===0) {
+      const d = new Date(date)
+      ctx.fillStyle='#64748b'; ctx.font='9px DM Sans'; ctx.textAlign='center'
+      ctx.fillText(`${d.getDate()}/${d.getMonth()+1}`, x+bW/2, H-6)
+    }
+  })
+}
+
+function renderServiceBreakdown(byService, total) {
+  const el = document.getElementById('rev-service-list')
+  if (!el) return
+  const entries = Object.entries(byService).sort((a,b)=>b[1]-a[1])
+  if (!entries.length || !total) {
+    el.innerHTML='<div class="empty" style="padding:28px;font-size:13px">No revenue yet.<br><small>Set service prices below.</small></div>'
+    return
+  }
+  el.innerHTML = entries.map(([svc,rev]) => {
+    const pct = Math.round((rev/total)*100)
+    return `<div style="padding:11px 18px;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
+        <span>${esc(svc)}</span><span style="font-weight:600;color:var(--accent2)">${fmt(rev)}</span>
+      </div>
+      <div style="height:3px;background:var(--border);border-radius:2px">
+        <div style="height:3px;width:${pct}%;background:var(--accent2);border-radius:2px"></div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function renderRevenueTable(appts) {
+  const el = document.getElementById('rev-table')
+  if (!el) return
+  if (!appts.length) { el.innerHTML='<div class="empty">No appointments in this period.</div>'; return }
+  const rows = appts.map(a=>`<tr>
+    <td class="td-name">${esc(a.name||'—')}</td>
+    <td class="td-mono">${esc(a.date||'—')}</td>
+    <td>${esc(a.service||'—')}</td>
+    <td style="color:var(--accent);font-size:12.5px">${esc(a.doctor_name||'Any')}</td>
+    <td style="font-weight:600;color:${a.price>0?'var(--accent2)':'var(--muted)'}">
+      ${a.price>0?fmt(a.price):'<span style="opacity:.35">—</span>'}
+    </td>
+  </tr>`).join('')
+  el.innerHTML=`<table><thead><tr><th>Patient</th><th>Date</th><th>Service</th><th>Doctor</th><th>Revenue</th></tr></thead><tbody>${rows}</tbody></table>`
+}
+
+function renderPriceTable(svcs, saved) {
+  const el = document.getElementById('price-table')
+  if (!el) return
+  const active = svcs.filter(s=>s.active)
+  if (!active.length) { el.innerHTML='<div class="empty">No active services.</div>'; return }
+  const rows = active.map(s=>`<tr>
+    <td class="td-name">${esc(s.name)}</td>
+    <td style="color:var(--muted);font-size:12px">${s.duration_minutes} min</td>
+    <td style="width:160px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="color:var(--muted)">₹</span>
+        <input type="number" class="form-input" data-svc-id="${s.id}"
+          value="${saved[s.id]||''}" placeholder="0" min="0" step="50"
+          style="width:110px;padding:6px 10px;font-size:13px">
+      </div>
+    </td>
+  </tr>`).join('')
+  el.innerHTML=`<table><thead><tr><th>Service</th><th>Duration</th><th>Price (₹)</th></tr></thead><tbody>${rows}</tbody></table>
+    <div style="padding:12px 22px;font-size:12px;color:var(--muted)">Prices are saved locally in your browser for revenue calculations.</div>`
+}
+
+function savePrices() {
+  const inputs = document.querySelectorAll('input[data-svc-id]')
+  const prices = {}
+  inputs.forEach(inp => { if(inp.dataset.svcId) prices[inp.dataset.svcId] = parseInt(inp.value)||0 })
+  localStorage.setItem('service_prices', JSON.stringify(prices))
+  servicePrices = prices
+  toast('success', '💰 Prices saved!')
+  loadRevenue()
+}
+
 checkAuth().then(() => loadAppointments())
 
 // ── AUDIT LOG ──

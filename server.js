@@ -25,9 +25,13 @@ app.get('/onboarding', (req, res) => res.sendFile(path.join(__dirname, 'public',
 app.use(express.static(path.join(__dirname, 'public')))
 
 /* ── Public API routes (no auth) ── */
-app.use('/auth',   require('./routes/auth'))
-app.use('/chat',   require('./routes/chat'))
-app.use('/public', require('./routes/public'))
+app.use('/auth',    require('./routes/auth'))
+app.use('/chat',    require('./routes/chat'))
+app.use('/public',  require('./routes/public'))
+app.use('/patient', require('./routes/patient'))
+app.use('/payment', require('./routes/payment'))
+
+app.get('/portal', (req, res) => res.sendFile(path.join(__dirname, 'public', 'portal.html')))
 
 /* ── Protected admin routes (JWT required) ── */
 const { verifyToken } = require('./middleware/auth')
