@@ -123,10 +123,125 @@ async function runWeeklyReport() {
   }
 }
 
+/* ================================================
+   AI FOLLOW-UP JOB
+   3 days after appointment → email patient asking
+   how they feel + any concerns.
+   Requires: RESEND_API_KEY, GROQ_API_KEY, CLINIC_URL
+================================================ */
+
+async function generateFollowUpMessage(patientName, service, clinicName) {
+  if (!process.env.GROQ_API_KEY) return null
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{
+          role:    'user',
+          content: `Write a warm, short follow-up message from ${clinicName} to patient ${patientName} who had a ${service} 3 days ago.
+
+Rules:
+- 2-3 sentences only
+- Ask how they are feeling
+- Mention they can contact us if they have concerns
+- Warm and caring tone
+- Do NOT use generic phrases like "hope this message finds you well"
+- End with the clinic name
+- No subject line, just the message body`
+        }],
+        max_tokens: 150
+      })
+    })
+    const data = await res.json()
+    return data.choices?.[0]?.message?.content?.trim() || null
+  } catch(e) {
+    console.error('[FollowUp] AI error:', e.message)
+    return null
+  }
+}
+
+async function runFollowUpJob() {
+  if (!process.env.RESEND_API_KEY) return
+
+  const config   = await getConfig()
+  const apiKey   = process.env.RESEND_API_KEY
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+  const clinicName = config.clinic_name || 'ClinicAI'
+  const bookingUrl = process.env.CLINIC_URL || '#'
+
+  // Find appointments from exactly 3 days ago with email, not yet followed up
+  const threeDaysAgo = new Date()
+  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
+  const targetDate = threeDaysAgo.toISOString().split('T')[0]
+
+  db.all(`
+    SELECT * FROM appointments
+    WHERE date = ?
+    AND email != '' AND email IS NOT NULL
+    AND (follow_up_sent IS NULL OR follow_up_sent = 0)
+    AND attended != 2
+  `, [targetDate], async (err, rows) => {
+    if (err || !rows || !rows.length) return
+    console.log(`[FollowUp] Found ${rows.length} patient(s) to follow up with`)
+
+    // Add column if not exists
+    db.run(`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS follow_up_sent INTEGER DEFAULT 0`, () => {})
+
+    for (const appt of rows) {
+      const message = await generateFollowUpMessage(appt.name, appt.service, clinicName)
+
+      const body = message || `Hi ${appt.name}, we hope your ${appt.service} went well! How are you feeling? Please don't hesitate to reach out if you have any questions or concerns. — ${clinicName}`
+
+      try {
+        const res = await fetch('https://api.resend.com/emails', {
+          method:  'POST',
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from:    `${clinicName} <${fromEmail}>`,
+            to:      [appt.email],
+            subject: `Following up on your visit — ${clinicName}`,
+            html: `
+              <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:28px">
+                <div style="font-size:28px;margin-bottom:16px">👋</div>
+                <h2 style="color:#0ea5e9;margin-bottom:16px">How are you feeling?</h2>
+                <p style="color:#475569;font-size:15px;line-height:1.7;margin-bottom:20px">${body.replace(/\n/g, '<br>')}</p>
+                <div style="background:#f0f9ff;border-radius:10px;padding:16px;margin-bottom:20px">
+                  <div style="font-size:12px;color:#64748b;margin-bottom:8px">Your visit details</div>
+                  <div style="font-size:13px;color:#1e293b">
+                    <strong>Date:</strong> ${appt.date}<br>
+                    <strong>Service:</strong> ${appt.service}<br>
+                    ${appt.doctor_name ? `<strong>Doctor:</strong> ${appt.doctor_name}<br>` : ''}
+                  </div>
+                </div>
+                <a href="${bookingUrl}" style="display:inline-block;background:#0ea5e9;color:white;text-decoration:none;padding:11px 24px;border-radius:9px;font-weight:600;font-size:14px">📅 Book Next Visit</a>
+                <p style="color:#94a3b8;font-size:12px;margin-top:24px">This is an automated follow-up from ${clinicName}.</p>
+              </div>`
+          })
+        })
+
+        if (res.ok) {
+          console.log(`[FollowUp] ✅ Sent to ${appt.email}`)
+          db.run('UPDATE appointments SET follow_up_sent = 1 WHERE id = ?', [appt.id])
+        }
+      } catch(e) {
+        console.error(`[FollowUp] ❌ Failed for ${appt.email}:`, e.message)
+      }
+    }
+  })
+}
+
 setTimeout(runReminderJob,  8000)
 setTimeout(runCleanupJob,   15000)
+setTimeout(runFollowUpJob,  20000)
 setInterval(runReminderJob,  15 * 60 * 1000)
 setInterval(runCleanupJob,   24 * 60 * 60 * 1000)
-setInterval(runWeeklyReport, 60 * 60 * 1000)   // check every hour
+setInterval(runWeeklyReport, 60 * 60 * 1000)
+setInterval(runFollowUpJob,  6 * 60 * 60 * 1000)  // check every 6 hours
 
-console.log('[Worker] Ready — reminders every 15 min, weekly report Mondays 8am')
+console.log('[Worker] Ready — reminders 15min, follow-ups every 6hrs, weekly report Mondays 8am')

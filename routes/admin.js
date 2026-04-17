@@ -119,54 +119,75 @@ router.put('/clinic-config', (req, res) => {
     clinic_name, clinic_tagline, clinic_type, clinic_icon,
     clinic_phone, clinic_address, clinic_website, whatsapp, google_maps,
     open_hour, close_hour, slot_duration, open_days, max_per_day,
-    clinic_email, smtp_host, smtp_port, smtp_user, smtp_pass
+    clinic_email, smtp_host, smtp_port, smtp_user, smtp_pass,
+    deposit_enabled, deposit_amount
   } = req.body
 
-  db.run(`
-    UPDATE clinic_config SET
-      clinic_name    = ?,
-      clinic_tagline = ?,
-      clinic_type    = ?,
-      clinic_icon    = ?,
-      clinic_phone   = ?,
-      clinic_address = ?,
-      clinic_website = ?,
-      whatsapp       = ?,
-      google_maps    = ?,
-      open_hour      = ?,
-      close_hour     = ?,
-      slot_duration  = ?,
-      open_days      = ?,
-      max_per_day    = ?,
-      clinic_email   = ?,
-      smtp_host      = ?,
-      smtp_port      = ?,
-      smtp_user      = ?,
-      smtp_pass      = ?
-    WHERE id = 1
-  `, [
-    clinic_name    || 'My Clinic',
-    clinic_tagline || 'Quality care, easy booking',
-    clinic_type    || 'general',
-    clinic_icon    || '🏥',
-    clinic_phone   || '',
-    clinic_address || '',
-    clinic_website || '',
-    whatsapp       || '',
-    google_maps    || '',
-    open_hour      || 10,
-    close_hour     || 17,
-    slot_duration  || 30,
-    open_days      || 'Mon,Tue,Wed,Thu,Fri,Sat',
-    max_per_day    || 20,
-    clinic_email   || '',
-    smtp_host      || 'smtp.gmail.com',
-    smtp_port      || 587,
-    smtp_user      || '',
-    smtp_pass      || ''
-  ], function(err) {
-    if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
-    res.json({ success: true })
+  // Add deposit columns if missing
+  const addCols = [
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS deposit_enabled INTEGER DEFAULT 0`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS deposit_amount  INTEGER DEFAULT 0`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_tagline  TEXT DEFAULT ''`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_type     TEXT DEFAULT 'general'`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_icon     TEXT DEFAULT '🏥'`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_phone    TEXT DEFAULT ''`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_address  TEXT DEFAULT ''`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_website  TEXT DEFAULT ''`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS whatsapp        TEXT DEFAULT ''`,
+    `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS google_maps     TEXT DEFAULT ''`
+  ]
+
+  Promise.all(addCols.map(sql => new Promise(r => db.run(sql, r)))).then(() => {
+    db.run(`
+      UPDATE clinic_config SET
+        clinic_name     = ?,
+        clinic_tagline  = ?,
+        clinic_type     = ?,
+        clinic_icon     = ?,
+        clinic_phone    = ?,
+        clinic_address  = ?,
+        clinic_website  = ?,
+        whatsapp        = ?,
+        google_maps     = ?,
+        open_hour       = ?,
+        close_hour      = ?,
+        slot_duration   = ?,
+        open_days       = ?,
+        max_per_day     = ?,
+        clinic_email    = ?,
+        smtp_host       = ?,
+        smtp_port       = ?,
+        smtp_user       = ?,
+        smtp_pass       = ?,
+        deposit_enabled = ?,
+        deposit_amount  = ?
+      WHERE id = 1
+    `, [
+      clinic_name     || 'My Clinic',
+      clinic_tagline  || '',
+      clinic_type     || 'general',
+      clinic_icon     || '🏥',
+      clinic_phone    || '',
+      clinic_address  || '',
+      clinic_website  || '',
+      whatsapp        || '',
+      google_maps     || '',
+      open_hour       || 10,
+      close_hour      || 17,
+      slot_duration   || 30,
+      open_days       || 'Mon,Tue,Wed,Thu,Fri,Sat',
+      max_per_day     || 20,
+      clinic_email    || '',
+      smtp_host       || 'smtp.gmail.com',
+      smtp_port       || 587,
+      smtp_user       || '',
+      smtp_pass       || '',
+      deposit_enabled || 0,
+      deposit_amount  || 0
+    ], function(err) {
+      if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
+      res.json({ success: true })
+    })
   })
 })
 
@@ -238,6 +259,162 @@ router.get('/appointments/noshows', (req, res) => {
     if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
     res.json(rows || [])
   })
+})
+
+router.get('/appointments/noshows', (req, res) => {
+  db.all(`
+    SELECT phone, name, COUNT(*) as noshow_count,
+           MAX(date) as last_noshow
+    FROM appointments
+    WHERE attended = 2
+    GROUP BY phone, name
+    ORDER BY noshow_count DESC
+  `, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
+    res.json(rows || [])
+  })
+})
+
+/* ── Save prescription/notes for appointment ── */
+router.patch('/appointments/:id/notes', (req, res) => {
+  const { notes, prescription, follow_up_date } = req.body
+
+  // Add columns if they don't exist
+  const addCols = [
+    `ALTER TABLE appointments ADD COLUMN IF NOT EXISTS prescription TEXT DEFAULT ''`,
+    `ALTER TABLE appointments ADD COLUMN IF NOT EXISTS follow_up_date TEXT DEFAULT ''`,
+    `ALTER TABLE appointments ADD COLUMN IF NOT EXISTS prescription_sent INTEGER DEFAULT 0`
+  ]
+
+  Promise.all(addCols.map(sql => new Promise(r => db.run(sql, r)))).then(() => {
+    db.run(`
+      UPDATE appointments SET
+        notes             = ?,
+        prescription      = ?,
+        follow_up_date    = ?
+      WHERE id = ?
+    `, [notes || '', prescription || '', follow_up_date || '', req.params.id],
+    function(err) {
+      if (err) return res.status(500).json({ error: 'DB error: ' + err.message })
+      if (this.changes === 0) return res.status(404).json({ error: 'Appointment not found' })
+      res.json({ success: true })
+    })
+  })
+})
+
+/* ── Generate + email prescription PDF ── */
+router.post('/appointments/:id/send-prescription', async (req, res) => {
+  const id = req.params.id
+
+  // Get appointment
+  const appt = await new Promise((resolve) => {
+    db.get('SELECT * FROM appointments WHERE id = ?', [id], (err, row) => resolve(row || null))
+  })
+
+  if (!appt) return res.status(404).json({ error: 'Appointment not found' })
+  if (!appt.email) return res.status(400).json({ error: 'Patient has no email address on file' })
+
+  const config    = await getClinicConfig()
+  const clinicName = config.clinic_name || 'ClinicAI Clinic'
+
+  // Format date nicely
+  const apptDate = new Date(appt.date + 'T00:00:00').toLocaleDateString('en-IN', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  })
+
+  // Build prescription HTML (renders as PDF-like email)
+  const prescriptionHtml = `
+    <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;padding:0;background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+
+      <!-- HEADER -->
+      <div style="background:linear-gradient(135deg,#0ea5e9,#0284c7);padding:28px 32px;color:white">
+        <div style="font-size:22px;font-weight:700;margin-bottom:4px">${clinicName}</div>
+        <div style="font-size:13px;opacity:.85">Patient Prescription &amp; Visit Summary</div>
+      </div>
+
+      <!-- PATIENT INFO -->
+      <div style="padding:24px 32px;border-bottom:1px solid #e2e8f0">
+        <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Patient Details</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tr>
+            <td style="padding:6px 0;color:#64748b;width:140px;font-size:13px">Patient Name</td>
+            <td style="padding:6px 0;font-weight:600;font-size:14px">${appt.name}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;color:#64748b;font-size:13px">Phone</td>
+            <td style="padding:6px 0;font-size:13px">${appt.phone}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;color:#64748b;font-size:13px">Visit Date</td>
+            <td style="padding:6px 0;font-size:13px">${apptDate}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;color:#64748b;font-size:13px">Time</td>
+            <td style="padding:6px 0;font-size:13px">${appt.time}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;color:#64748b;font-size:13px">Service</td>
+            <td style="padding:6px 0;font-size:13px">${appt.service}</td>
+          </tr>
+          ${appt.doctor_name ? `<tr>
+            <td style="padding:6px 0;color:#64748b;font-size:13px">Doctor</td>
+            <td style="padding:6px 0;font-size:13px">${appt.doctor_name}</td>
+          </tr>` : ''}
+          <tr>
+            <td style="padding:6px 0;color:#64748b;font-size:13px">Ref #</td>
+            <td style="padding:6px 0;font-size:13px;color:#94a3b8">${appt.id}</td>
+          </tr>
+        </table>
+      </div>
+
+      ${appt.notes ? `
+      <!-- DIAGNOSIS / NOTES -->
+      <div style="padding:24px 32px;border-bottom:1px solid #e2e8f0">
+        <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Doctor's Notes</div>
+        <div style="font-size:14px;color:#1e293b;line-height:1.7;white-space:pre-wrap">${appt.notes}</div>
+      </div>` : ''}
+
+      ${appt.prescription ? `
+      <!-- PRESCRIPTION -->
+      <div style="padding:24px 32px;border-bottom:1px solid #e2e8f0;background:#f8fafc">
+        <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Prescription</div>
+        <div style="font-size:14px;color:#1e293b;line-height:1.8;white-space:pre-wrap;font-family:'Courier New',monospace">${appt.prescription}</div>
+      </div>` : ''}
+
+      ${appt.follow_up_date ? `
+      <!-- FOLLOW UP -->
+      <div style="padding:20px 32px;border-bottom:1px solid #e2e8f0;background:#eff6ff">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:22px">📅</div>
+          <div>
+            <div style="font-size:12px;color:#3b82f6;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Follow-up Appointment</div>
+            <div style="font-size:15px;font-weight:600;color:#1e293b;margin-top:2px">${appt.follow_up_date}</div>
+          </div>
+        </div>
+      </div>` : ''}
+
+      <!-- FOOTER -->
+      <div style="padding:20px 32px;text-align:center;background:#f8fafc">
+        <div style="font-size:12px;color:#94a3b8;line-height:1.6">
+          This is an official document from ${clinicName}.<br>
+          Please keep it for your records. For queries, contact the clinic directly.
+        </div>
+      </div>
+
+    </div>`
+
+  const result = await sendEmail({
+    to:      appt.email,
+    subject: `Your prescription from ${clinicName} — ${appt.date}`,
+    html:    prescriptionHtml
+  })
+
+  if (!result.ok) return res.status(500).json({ error: result.error })
+
+  // Mark as sent
+  db.run('UPDATE appointments SET prescription_sent = 1 WHERE id = ?', [id])
+
+  res.json({ success: true, message: 'Prescription emailed to ' + appt.email })
 })
 
 /* ── Weekly report email ── */
