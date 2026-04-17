@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Appointments</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--brand:#0ea5e9;--brand-dark:#0284c7;--brand-soft:#e0f2fe;--bg:#f0f4f8;--white:#fff;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--shadow:0 2px 12px rgba(14,165,233,.07);--danger:#ef4444;--green:#10b981}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
+
+/* HEADER */
+.header{background:var(--brand);padding:20px 20px 16px;display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:17px;font-weight:700;color:white}
+.header-sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:2px}
+.logout-btn{padding:6px 14px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:white;font-size:12.5px;cursor:pointer;font-family:inherit;transition:all .15s}
+.logout-btn:hover{background:rgba(255,255,255,.25)}
+
+/* CONTAINER */
+.container{padding:0 14px;margin-top:16px;max-width:600px;margin-left:auto;margin-right:auto}
+
+/* LOGIN CARD */
+.login-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px 24px;box-shadow:var(--shadow);max-width:400px;margin:40px auto}
+.login-title{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.4px}
+.login-sub{font-size:13.5px;color:var(--muted);margin-bottom:28px;line-height:1.5}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.form-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Sora',sans-serif;font-size:14px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--brand)}
+.otp-input{letter-spacing:8px;font-size:20px;font-family:'JetBrains Mono',monospace;text-align:center}
+.btn{width:100%;padding:12px;border-radius:10px;border:none;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:4px}
+.btn-primary{background:var(--brand);color:white}.btn-primary:hover{background:var(--brand-dark)}
+.btn-ghost{background:var(--bg);color:var(--muted);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.error-msg{font-size:12.5px;color:var(--danger);margin-top:8px;min-height:18px}
+.success-msg{font-size:12.5px;color:var(--green);margin-top:8px}
+.hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+/* TABS */
+.tabs{display:flex;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:16px;box-shadow:var(--shadow)}
+.tab{flex:1;padding:9px;border-radius:9px;border:none;font-family:'Sora',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);background:transparent;transition:all .15s}
+.tab.active{background:var(--brand);color:white;font-weight:600}
+
+/* APPOINTMENT CARD */
+.appt-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:var(--shadow);transition:border-color .2s}
+.appt-card:hover{border-color:var(--brand)}
+.appt-card.past{opacity:.7}
+.appt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.appt-date{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--brand);font-weight:500}
+.appt-badge{padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:500}
+.badge-upcoming{background:rgba(16,185,129,.1);color:#059669}
+.badge-today{background:rgba(14,165,233,.12);color:var(--brand)}
+.badge-past{background:var(--bg);color:var(--muted)}
+.badge-urgent{background:rgba(239,68,68,.1);color:var(--danger)}
+.appt-service{font-size:16px;font-weight:600;margin-bottom:4px}
+.appt-detail{font-size:13px;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.appt-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.appt-btn{padding:7px 16px;border-radius:8px;font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.appt-btn-ghost{background:var(--bg);color:var(--muted);border:1.5px solid var(--border)}.appt-btn-ghost:hover{border-color:var(--brand);color:var(--brand)}
+.appt-btn-danger{background:rgba(239,68,68,.08);color:var(--danger);border:1.5px solid rgba(239,68,68,.2)}.appt-btn-danger:hover{background:rgba(239,68,68,.15)}
+
+/* PRESCRIPTION SECTION */
+.rx-section{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.rx-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.rx-text{font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap}
+.rx-pill{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;color:var(--text)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-text{font-size:14px;margin-bottom:16px;line-height:1.6}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:12px;margin-bottom:16px}
+.stat-pill{flex:1;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;box-shadow:var(--shadow)}
+.stat-num{font-size:22px;font-weight:700;color:var(--brand)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--border);display:flex;padding:10px 14px;gap:10px;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.bnav-btn{flex:1;padding:11px;border-radius:10px;border:none;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.bnav-ghost{background:var(--brand-soft);color:var(--brand)}
+.bnav-primary{background:var(--brand);color:white}
+
+/* SPINNER */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(14,165,233,.3);border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CONFIRM DIALOG */
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.show{display:flex}
+.confirm-box{background:var(--white);border-radius:16px;padding:28px;max-width:340px;width:100%;text-align:center}
+.confirm-title{font-size:17px;font-weight:700;margin-bottom:8px}
+.confirm-sub{font-size:13.5px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-btn{flex:1;padding:10px;border-radius:9px;border:none;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div style="background:var(--brand);padding:32px 20px;text-align:center">
+    <div style="font-size:40px;margin-bottom:10px">🏥</div>
+    <div style="font-size:20px;font-weight:700;color:white;margin-bottom:4px" id="portal-clinic-name">ClinicAI</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.75)">Patient Portal</div>
+  </div>
+
+  <!-- STEP 1: Phone -->
+  <div class="container">
+    <div class="login-card" id="phone-step">
+      <div class="login-title">Welcome back 👋</div>
+      <div class="login-sub">Enter your phone number to view and manage your appointments.</div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input class="form-input" id="portal-phone" type="tel" placeholder="10-digit mobile number"
+          maxlength="10" inputmode="numeric" onkeydown="if(event.key==='Enter')sendOTP()">
+      </div>
+      <div class="error-msg" id="phone-error"></div>
+      <button class="btn btn-primary" id="send-otp-btn" onclick="sendOTP()" style="margin-top:12px">
+        Send OTP →
+      </button>
+      <div class="hint">We'll send a 6-digit code to verify your identity.</div>
+    </div>
+
+    <!-- STEP 2: OTP -->
+    <div class="login-card" id="otp-step" style="display:none">
+      <div class="login-title">Enter OTP 🔐</div>
+      <div class="login-sub" id="otp-hint">Enter the 6-digit code we sent you.</div>
+
+      <div class="form-group">
+        <label>One-Time Password</label>
+        <input class="form-input otp-input" id="portal-otp" type="text" placeholder="000000"
+          maxlength="6" inputmode="numeric" onkeydown="if(event.key==='Enter')verifyOTP()">
+      </div>
+      <div class="error-msg" id="otp-error"></div>
+      <button class="btn btn-primary" id="verify-otp-btn" onclick="verifyOTP()" style="margin-top:12px">
+        Verify →
+      </button>
+      <button class="btn btn-ghost" onclick="backToPhone()" style="margin-top:8px">← Change number</button>
+      <div class="success-msg" id="otp-resend-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PORTAL SCREEN -->
+<div id="portal-screen" style="display:none">
+  <div class="header">
+    <div>
+      <div class="header-title" id="portal-greeting">My Appointments</div>
+      <div class="header-sub" id="portal-phone-display"></div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container" style="margin-top:16px">
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat-pill"><div class="stat-num" id="stat-upcoming">—</div><div class="stat-label">Upcoming</div></div>
+      <div class="stat-pill"><div class="stat-num" id="stat-past">—</div><div class="stat-label">Past visits</div></div>
+      <div class="stat-pill"><div class="stat-num" id="stat-total">—</div><div class="stat-label">Total</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" id="tab-upcoming" onclick="showTab('upcoming')">📅 Upcoming</button>
+      <button class="tab" id="tab-past"     onclick="showTab('past')">🕐 Past Visits</button>
+    </div>
+
+    <!-- APPOINTMENT LISTS -->
+    <div id="list-upcoming"><div class="empty"><div class="spinner"></div></div></div>
+    <div id="list-past" style="display:none"><div class="empty"><div class="spinner"></div></div></div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <a class="bnav-btn bnav-ghost" href="/">🏥 Clinic</a>
+    <a class="bnav-btn bnav-primary" href="/chat.html?prefill=book%20appointment">📅 Book New</a>
+  </div>
+</div>
+
+<!-- CANCEL CONFIRM DIALOG -->
+<div class="confirm-overlay" id="cancel-confirm">
+  <div class="confirm-box">
+    <div style="font-size:40px;margin-bottom:12px">🗑️</div>
+    <div class="confirm-title">Cancel appointment?</div>
+    <div class="confirm-sub" id="cancel-confirm-text">This will permanently cancel your appointment.</div>
+    <div class="confirm-btns">
+      <button class="confirm-btn" onclick="closeCancelConfirm()" style="background:var(--bg);color:var(--muted)">Keep it</button>
+      <button class="confirm-btn" id="confirm-cancel-btn" style="background:var(--danger);color:white">Yes, cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+
+let portalToken = localStorage.getItem('patient_token')
+let patientPhone = ''
+let appointments = { upcoming: [], past: [] }
+let cancelApptId = null
+let activeTab = 'upcoming'
+
+// Load clinic name
+fetch(API_URL + '/public/clinic-info')
+  .then(r => r.json())
+  .then(d => {
+    const name = d.config?.clinic_name || 'ClinicAI'
+    document.getElementById('portal-clinic-name').textContent = name
+    document.title = `My Appointments — ${name}`
+  }).catch(() => {})
+
+// Check if already logged in
+if (portalToken) {
+  fetch(API_URL + '/patient/profile', { headers: { 'Authorization': 'Bearer ' + portalToken } })
+    .then(r => { if (r.ok) return r.json(); throw new Error('expired') })
+    .then(data => { showPortal(data.name, data.phone || ''); loadAppointments() })
+    .catch(() => { localStorage.removeItem('patient_token'); portalToken = null })
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+function to12hr(t) {
+  if (!t) return ''
+  const [h,m] = t.split(':').map(Number)
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`
+}
+
+/* ── PHASE 1: Send OTP ── */
+async function sendOTP() {
+  const phone = document.getElementById('portal-phone').value.trim()
+  document.getElementById('phone-error').textContent = ''
+  if (!phone || phone.replace(/\D/g,'').length !== 10) {
+    document.getElementById('phone-error').textContent = 'Please enter a valid 10-digit phone number'
+    return
+  }
+  const btn = document.getElementById('send-otp-btn')
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Sending…'
+
+  try {
+    const res  = await fetch(API_URL + '/patient/send-otp', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ phone })
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Failed to send OTP')
+
+    patientPhone = phone
+    document.getElementById('otp-hint').textContent = data.hint || 'Enter the 6-digit OTP code'
+
+    // Show OTP in field if returned (dev mode)
+    if (data.otp) {
+      document.getElementById('portal-otp').value = data.otp
+      document.getElementById('otp-hint').textContent = `Dev mode — OTP pre-filled: ${data.otp}`
+    }
+
+    document.getElementById('phone-step').style.display = 'none'
+    document.getElementById('otp-step').style.display   = 'block'
+    document.getElementById('portal-otp').focus()
+
+  } catch(e) {
+    document.getElementById('phone-error').textContent = e.message
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Send OTP →'
+  }
+}
+
+function backToPhone() {
+  document.getElementById('otp-step').style.display   = 'none'
+  document.getElementById('phone-step').style.display = 'block'
+  document.getElementById('otp-error').textContent    = ''
+}
+
+/* ── PHASE 2: Verify OTP ── */
+async function verifyOTP() {
+  const otp = document.getElementById('portal-otp').value.trim()
+  document.getElementById('otp-error').textContent = ''
+
+  if (!otp || otp.length < 6) {
+    document.getElementById('otp-error').textContent = 'Please enter the 6-digit OTP'
+    return
+  }
+
+  const btn = document.getElementById('verify-otp-btn')
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Verifying…'
+
+  try {
+    const res  = await fetch(API_URL + '/patient/verify-otp', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ phone: patientPhone, otp })
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Verification failed')
+
+    localStorage.setItem('patient_token', data.token)
+    portalToken = data.token
+
+    showPortal(data.name, patientPhone)
+    loadAppointments()
+
+  } catch(e) {
+    document.getElementById('otp-error').textContent = e.message
+    btn.disabled = false; btn.innerHTML = 'Verify →'
+  }
+}
+
+/* ── SHOW PORTAL ── */
+function showPortal(name, phone) {
+  document.getElementById('login-screen').style.display  = 'none'
+  document.getElementById('portal-screen').style.display = 'block'
+  document.getElementById('portal-greeting').textContent = `Hello, ${name.split(' ')[0]} 👋`
+  document.getElementById('portal-phone-display').textContent = phone.replace(/(\d{5})(\d{5})/, '$1 $2')
+}
+
+/* ── LOAD APPOINTMENTS ── */
+async function loadAppointments() {
+  try {
+    const res  = await fetch(API_URL + '/patient/appointments', {
+      headers: { 'Authorization': 'Bearer ' + portalToken }
+    })
+    if (res.status === 401) { logout(); return }
+    const data = await res.json()
+
+    appointments = data
+    document.getElementById('stat-upcoming').textContent = data.upcoming?.length || 0
+    document.getElementById('stat-past').textContent     = data.past?.length     || 0
+    document.getElementById('stat-total').textContent    = data.total            || 0
+
+    renderList('upcoming', data.upcoming || [])
+    renderList('past',     data.past     || [])
+  } catch(e) {
+    document.getElementById('list-upcoming').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Could not load appointments.<br>Please try again.</div></div>'
+  }
+}
+
+/* ── RENDER LIST ── */
+function renderList(type, appts) {
+  const el     = document.getElementById('list-' + type)
+  const today  = new Date().toISOString().split('T')[0]
+
+  if (!appts.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-icon">${type === 'upcoming' ? '📅' : '🕐'}</div>
+      <div class="empty-text">${type === 'upcoming'
+        ? 'No upcoming appointments.<br>Book one via chat!'
+        : 'No past visits yet.'
+      }</div>
+      ${type === 'upcoming' ? '<a href="/chat.html?prefill=book%20appointment" style="display:inline-block;padding:10px 24px;background:var(--brand);color:white;border-radius:9px;text-decoration:none;font-weight:600;font-size:13.5px">📅 Book Appointment</a>' : ''}
+    </div>`
+    return
+  }
+
+  el.innerHTML = appts.map(a => {
+    const isPast = a.date < today
+    const isToday = a.date === today
+
+    const badge = isToday ? '<span class="appt-badge badge-today">Today</span>'
+      : isPast ? '<span class="appt-badge badge-past">Past</span>'
+      : a.is_urgent ? '<span class="appt-badge badge-urgent">Urgent</span>'
+      : '<span class="appt-badge badge-upcoming">Upcoming</span>'
+
+    const dDate  = new Date(a.date + 'T00:00:00').toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
+
+    const actions = isPast
+      ? `<button class="appt-btn appt-btn-ghost" onclick="window.location.href='/chat.html?prefill=${encodeURIComponent('book ' + a.service)}'">📅 Book Again</button>`
+      : `<button class="appt-btn appt-btn-ghost" onclick="window.location.href='/chat.html?prefill=${encodeURIComponent('reschedule appointment')}'">🔄 Reschedule</button>
+         <button class="appt-btn appt-btn-danger" onclick="showCancelConfirm(${a.id},'${esc(a.service)}','${esc(a.date)}')">❌ Cancel</button>`
+
+    const rxSection = (a.notes || a.prescription) ? `
+      <div class="rx-section">
+        ${a.notes ? `<div class="rx-label">Doctor's notes</div><div class="rx-text">${esc(a.notes)}</div>` : ''}
+        ${a.prescription ? `<div class="rx-label" style="margin-top:10px">Prescription</div><div class="rx-pill">${esc(a.prescription)}</div>` : ''}
+        ${a.follow_up_date ? `<div style="margin-top:10px;font-size:12.5px;color:var(--brand)">📅 Follow-up: ${esc(a.follow_up_date)}</div>` : ''}
+      </div>` : ''
+
+    return `<div class="appt-card ${isPast?'past':''}">
+      <div class="appt-header">
+        <div class="appt-date">${esc(a.date)} · ${to12hr(a.time)}</div>
+        ${badge}
+      </div>
+      <div class="appt-service">${esc(a.service)}</div>
+      <div class="appt-detail">👨‍⚕️ ${esc(a.doctor_name || a.doctor_name_live || 'Any available doctor')}</div>
+      <div class="appt-detail">📅 ${dDate}</div>
+      ${a.is_urgent ? '<div class="appt-detail" style="color:var(--danger)">🚨 Urgent appointment</div>' : ''}
+      ${rxSection}
+      <div class="appt-actions">${actions}</div>
+    </div>`
+  }).join('')
+}
+
+/* ── TABS ── */
+function showTab(tab) {
+  activeTab = tab
+  document.getElementById('list-upcoming').style.display = tab === 'upcoming' ? 'block' : 'none'
+  document.getElementById('list-past').style.display     = tab === 'past'     ? 'block' : 'none'
+  document.getElementById('tab-upcoming').classList.toggle('active', tab === 'upcoming')
+  document.getElementById('tab-past').classList.toggle('active',     tab === 'past')
+}
+
+/* ── CANCEL ── */
+function showCancelConfirm(id, service, date) {
+  cancelApptId = id
+  document.getElementById('cancel-confirm-text').textContent = `Cancel your ${service} on ${date}?`
+  document.getElementById('confirm-cancel-btn').onclick = () => cancelAppt(id)
+  document.getElementById('cancel-confirm').classList.add('show')
+}
+
+function closeCancelConfirm() {
+  document.getElementById('cancel-confirm').classList.remove('show')
+  cancelApptId = null
+}
+
+async function cancelAppt(id) {
+  const btn = document.getElementById('confirm-cancel-btn')
+  btn.disabled = true; btn.textContent = 'Cancelling…'
+  try {
+    const res = await fetch(API_URL + '/patient/appointments/' + id, {
+      method:  'DELETE',
+      headers: { 'Authorization': 'Bearer ' + portalToken }
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Could not cancel')
+    closeCancelConfirm()
+    loadAppointments()
+  } catch(e) {
+    alert(e.message)
+  } finally {
+    btn.disabled = false; btn.textContent = 'Yes, cancel'
+  }
+}
+
+/* ── LOGOUT ── */
+function logout() {
+  localStorage.removeItem('patient_token')
+  portalToken = null
+  document.getElementById('portal-screen').style.display = 'none'
+  document.getElementById('login-screen').style.display  = 'block'
+  document.getElementById('portal-phone').value = ''
+  document.getElementById('portal-otp').value   = ''
+  document.getElementById('phone-step').style.display = 'block'
+  document.getElementById('otp-step').style.display   = 'none'
+}
+</script>
+</body>
+</html>

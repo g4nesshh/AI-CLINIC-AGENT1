@@ -596,6 +596,8 @@ function handleResponse(data) {
 
     case 'confirmed':
       addMessage('ai', data.reply)
+      // Check if deposit payment is required
+      checkAndShowPayment(data)
       addQuickReplies([
         { label: '📅 Book another', value: 'book appointment' },
         { label: '🔍 Check appointments', value: 'check my appointment' }
@@ -929,6 +931,137 @@ function stopVoice() {
   if (hint) {
     hint.textContent  = 'Press Enter to send · Shift+Enter for new line'
     hint.style.color  = ''
+  }
+}
+/* ── RAZORPAY PAYMENT ── */
+let depositConfig = null
+
+// Load deposit config on startup
+fetch(API_URL + '/payment/deposit-amount')
+  .then(r => r.json())
+  .then(d => { depositConfig = d })
+  .catch(() => {})
+
+async function checkAndShowPayment(data) {
+  if (!depositConfig?.enabled || !depositConfig?.amount || !depositConfig?.configured) return
+
+  // Extract ref ID from the booking confirmation message
+  const refMatch = data.reply?.match(/Ref #\s*:\s*(\d+)/)
+  const refId    = refMatch ? refMatch[1] : null
+
+  // Show payment card
+  showPaymentCard(depositConfig.amount, refId, data)
+}
+
+function showPaymentCard(amount, refId, bookingData) {
+  removeExtras()
+  const card = document.createElement('div')
+  card.id = 'payment-card'
+  card.style.cssText = `
+    margin: 6px 16px 10px;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    border-radius: 14px;
+    padding: 18px 20px;
+    color: white;
+    animation: popIn .25s cubic-bezier(.16,1,.3,1) forwards;
+    opacity: 0;
+  `
+  card.innerHTML = `
+    <div style="font-size:12px;opacity:.8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Secure your booking</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:4px">Pay ₹${amount} deposit</div>
+    <div style="font-size:12.5px;opacity:.85;margin-bottom:16px;line-height:1.5">
+      A refundable deposit secures your appointment slot and reduces wait times.
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="startPayment(${amount},'${refId || ''}',this)" style="flex:1;padding:10px;background:white;color:#0ea5e9;border:none;border-radius:9px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;min-width:120px">
+        💳 Pay Now
+      </button>
+      <button onclick="this.closest('#payment-card').remove()" style="padding:10px 16px;background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);border-radius:9px;font-family:inherit;font-size:13px;cursor:pointer">
+        Skip
+      </button>
+    </div>
+    <div id="payment-status" style="font-size:12px;margin-top:10px;min-height:16px;opacity:.85"></div>
+  `
+  messagesEl.appendChild(card)
+  scrollBottom()
+}
+
+async function startPayment(amount, refId, btn) {
+  btn.disabled = true
+  btn.textContent = 'Loading…'
+  const statusEl = document.getElementById('payment-status')
+
+  try {
+    // Create Razorpay order
+    const res  = await fetch(API_URL + '/payment/create-order', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ amount, booking_ref: refId })
+    })
+    const order = await res.json()
+    if (!res.ok) throw new Error(order.error || 'Could not create order')
+
+    // Load Razorpay script
+    if (!window.Razorpay) {
+      await new Promise((resolve, reject) => {
+        const s    = document.createElement('script')
+        s.src      = 'https://checkout.razorpay.com/v1/checkout.js'
+        s.onload   = resolve
+        s.onerror  = reject
+        document.head.appendChild(s)
+      })
+    }
+
+    // Open Razorpay checkout
+    const rzp = new window.Razorpay({
+      key:         order.key_id,
+      amount:      order.amount,
+      currency:    order.currency,
+      order_id:    order.order_id,
+      name:        document.title || 'ClinicAI',
+      description: 'Appointment Deposit',
+      theme:       { color: '#0ea5e9' },
+      handler: async (response) => {
+        statusEl.textContent = '⏳ Verifying payment…'
+
+        const verifyRes = await fetch(API_URL + '/payment/verify', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({
+            razorpay_order_id:   response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature:  response.razorpay_signature,
+            appointment_id:      refId
+          })
+        })
+        const verifyData = await verifyRes.json()
+
+        if (verifyData.success) {
+          statusEl.textContent = '✅ Payment successful! Your slot is confirmed.'
+          statusEl.style.color = '#6ee7b7'
+          btn.textContent      = '✅ Paid'
+          btn.style.background = '#6ee7b7'
+          btn.style.color      = '#065f46'
+        } else {
+          statusEl.textContent = '❌ Verification failed. Please contact the clinic.'
+          btn.disabled         = false
+          btn.textContent      = '💳 Retry'
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          btn.disabled    = false
+          btn.textContent = '💳 Pay Now'
+        }
+      }
+    })
+
+    rzp.open()
+
+  } catch(e) {
+    if (statusEl) statusEl.textContent = '❌ ' + e.message
+    btn.disabled    = false
+    btn.textContent = '💳 Try Again'
   }
 }
 
