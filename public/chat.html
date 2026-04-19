@@ -428,7 +428,7 @@ if ('serviceWorker' in navigator) {
 <script>
 
 // ── CHANGE THIS to your Render backend URL after deploying ──
-const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+const API_URL = ''  // Same server — works on any domain
 
 const userId     = Math.random().toString(36).substring(2)
 const messagesEl = document.getElementById('messages')
@@ -442,7 +442,7 @@ window.addEventListener('load', () => {
     .catch(() => {})
 
   setTimeout(() => {
-    addMessage('ai', 'Hello! 👋 Welcome to our clinic. I can help you book an appointment, check availability, or answer any questions.\n\nWhat would you like to do?')
+    addMessage('ai', 'Hello! 👋 I\'m your clinic assistant. I can help with:\n\n📅 Book, cancel or reschedule appointments\n🏥 Clinic info — hours, doctors, services\n💊 Medical questions — symptoms, treatments, medicines\n💬 General health advice\n\nAsk me anything!')
     addQuickReplies([
       { label: '📅 Book Appointment', value: 'book appointment' },
       { label: '🕐 Clinic Hours',     value: 'What are your clinic hours?' },

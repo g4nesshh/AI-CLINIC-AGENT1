@@ -708,7 +708,7 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 <div class="toast" id="toast"></div>
 
 <script>
-const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+const API_URL = ''  // Same server — works on any domain
 
 let allAppointments = [], allDoctors = [], allSvcs = []
 let activeFilter = 'all'
@@ -721,13 +721,13 @@ function getToken() { return localStorage.getItem('clinic_token') }
 function logout() {
   localStorage.removeItem('clinic_token')
   localStorage.removeItem('clinic_username')
-  window.location.href = '/login.html'
+  window.location.href = '/login'
 }
 
 // Redirect to login if not authenticated
 async function checkAuth() {
   const token = getToken()
-  if (!token) { window.location.href = '/login.html'; return }
+  if (!token) { window.location.href = '/login'; return }
   try {
     const controller = new AbortController()
     const timeout    = setTimeout(() => controller.abort(), 10000)
@@ -738,7 +738,7 @@ async function checkAuth() {
     clearTimeout(timeout)
     if (r.status === 401) {
       localStorage.removeItem('clinic_token')
-      window.location.href = '/login.html'
+      window.location.href = '/login'
       return
     }
     if (!r.ok) throw new Error('Server error ' + r.status)
@@ -778,7 +778,7 @@ async function api(method, path, body) {
   }
   if (r.status === 401) {
     localStorage.removeItem('clinic_token')
-    window.location.href = '/login.html'
+    window.location.href = '/login'
     return
   }
   if (!r.ok) throw new Error(data.error || 'Request failed')

@@ -132,7 +132,7 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <!-- BOOK CTA -->
-<a class="book-cta" id="book-cta" href="/chat.html?prefill=book%20appointment">
+<a class="book-cta" id="book-cta" href="/chat?prefill=book%20appointment">
   <div class="book-cta-left">
     <div class="book-cta-sublabel">Ready to visit?</div>
     <div class="book-cta-text">Book an Appointment →</div>
@@ -154,14 +154,14 @@ if ('serviceWorker' in navigator) {
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <a class="bnav-btn bnav-ghost" href="/chat.html">💬 Chat</a>
-  <a class="bnav-btn bnav-ghost" href="/portal.html">👤 My Appointments</a>
-  <a class="bnav-btn bnav-primary" href="/chat.html?prefill=book%20appointment">📅 Book Now</a>
+  <a class="bnav-btn bnav-ghost" href="/chat">💬 Chat</a>
+  <a class="bnav-btn bnav-ghost" href="/portal">👤 My Appointments</a>
+  <a class="bnav-btn bnav-primary" href="/chat?prefill=book%20appointment">📅 Book Now</a>
 </div>
 
 <script>
 /* ── CONFIG ── */
-const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+const API_URL = ''  // Same server — works on any domain
 
 /* ── SERVICE ICONS — works for any clinic type ── */
 const ICONS = {

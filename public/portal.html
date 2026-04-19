@@ -179,7 +179,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-he
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
     <a class="bnav-btn bnav-ghost" href="/">🏥 Clinic</a>
-    <a class="bnav-btn bnav-primary" href="/chat.html?prefill=book%20appointment">📅 Book New</a>
+    <a class="bnav-btn bnav-primary" href="/chat?prefill=book%20appointment">📅 Book New</a>
   </div>
 </div>
 
@@ -197,7 +197,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-he
 </div>
 
 <script>
-const API_URL = 'https://ai-clinic-backend-xe19.onrender.com'
+const API_URL = ''  // Same server — works on any domain
 
 let portalToken = localStorage.getItem('patient_token')
 let patientPhone = ''
@@ -351,7 +351,7 @@ function renderList(type, appts) {
         ? 'No upcoming appointments.<br>Book one via chat!'
         : 'No past visits yet.'
       }</div>
-      ${type === 'upcoming' ? '<a href="/chat.html?prefill=book%20appointment" style="display:inline-block;padding:10px 24px;background:var(--brand);color:white;border-radius:9px;text-decoration:none;font-weight:600;font-size:13.5px">📅 Book Appointment</a>' : ''}
+      ${type === 'upcoming' ? '<a href="/chat?prefill=book%20appointment" style="display:inline-block;padding:10px 24px;background:var(--brand);color:white;border-radius:9px;text-decoration:none;font-weight:600;font-size:13.5px">📅 Book Appointment</a>' : ''}
     </div>`
     return
   }
@@ -368,8 +368,8 @@ function renderList(type, appts) {
     const dDate  = new Date(a.date + 'T00:00:00').toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short', year:'numeric' })
 
     const actions = isPast
-      ? `<button class="appt-btn appt-btn-ghost" onclick="window.location.href='/chat.html?prefill=${encodeURIComponent('book ' + a.service)}'">📅 Book Again</button>`
-      : `<button class="appt-btn appt-btn-ghost" onclick="window.location.href='/chat.html?prefill=${encodeURIComponent('reschedule appointment')}'">🔄 Reschedule</button>
+      ? `<button class="appt-btn appt-btn-ghost" onclick="window.location.href='/chat?prefill=${encodeURIComponent('book ' + a.service)}'">📅 Book Again</button>`
+      : `<button class="appt-btn appt-btn-ghost" onclick="window.location.href='/chat?prefill=${encodeURIComponent('reschedule appointment')}'">🔄 Reschedule</button>
          <button class="appt-btn appt-btn-danger" onclick="showCancelConfirm(${a.id},'${esc(a.service)}','${esc(a.date)}')">❌ Cancel</button>`
 
     const rxSection = (a.notes || a.prescription) ? `
