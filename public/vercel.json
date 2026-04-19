@@ -1,8 +1,9 @@
 {
   "rewrites": [
-    { "source": "/chat-ui", "destination": "/chat.html" },
-    { "source": "/chat",    "destination": "/chat.html" }
+    { "source": "/chat-ui",    "destination": "/chat.html" },
+    { "source": "/chat",       "destination": "/chat.html" },
+    { "source": "/login",      "destination": "/login.html" },
+    { "source": "/portal",     "destination": "/portal.html" },
+    { "source": "/onboarding", "destination": "/onboarding.html" }
   ]
 }
-
-

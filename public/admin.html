@@ -729,16 +729,33 @@ async function checkAuth() {
   const token = getToken()
   if (!token) { window.location.href = '/login.html'; return }
   try {
+    const controller = new AbortController()
+    const timeout    = setTimeout(() => controller.abort(), 10000)
     const r = await fetch(API_URL + '/auth/verify', {
-      headers: { 'Authorization': 'Bearer ' + token }
+      headers: { 'Authorization': 'Bearer ' + token },
+      signal:  controller.signal
     })
-    if (!r.ok) { window.location.href = '/login.html'; return }
+    clearTimeout(timeout)
+    if (r.status === 401) {
+      localStorage.removeItem('clinic_token')
+      window.location.href = '/login.html'
+      return
+    }
+    if (!r.ok) throw new Error('Server error ' + r.status)
     const data = await r.json()
-    // Show username in sidebar
     const el = document.getElementById('admin-username')
     if (el) el.textContent = data.username
   } catch(e) {
-    window.location.href = '/login.html'
+    if (e.name === 'AbortError') {
+      // Server sleeping — show warning but don't redirect
+      const warn = document.createElement('div')
+      warn.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1c1917;padding:10px;text-align:center;font-size:13px;font-weight:500;z-index:999'
+      warn.innerHTML = '⏳ Server is waking up — this takes ~30 seconds on free plan. <button onclick="location.reload()" style="margin-left:12px;padding:4px 12px;background:#1c1917;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600">Refresh</button>'
+      document.body.prepend(warn)
+    } else {
+      // Unknown error — redirect to login only if no token stored
+      console.error('[Auth]', e.message)
+    }
   }
 }
 
@@ -752,9 +769,13 @@ async function api(method, path, body) {
     }
   }
   if (body) opts.body = JSON.stringify(body)
-  const r    = await fetch(API_URL + path, opts)
-  const data = await r.json()
-  // Auto-logout on 401
+  let r, data
+  try {
+    r    = await fetch(API_URL + path, opts)
+    data = await r.json()
+  } catch(e) {
+    throw new Error('Cannot reach server. It may be starting up — wait 30 seconds and refresh.')
+  }
   if (r.status === 401) {
     localStorage.removeItem('clinic_token')
     window.location.href = '/login.html'
@@ -763,6 +784,7 @@ async function api(method, path, body) {
   if (!r.ok) throw new Error(data.error || 'Request failed')
   return data
 }
+
 
 async function changePassword() {
   const curr = document.getElementById('cp-current').value
@@ -801,7 +823,7 @@ function toast(type, msg) {
 }
 
 function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,"'")
 }
 
 // ── APPOINTMENTS ──
