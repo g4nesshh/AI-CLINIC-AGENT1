@@ -307,6 +307,37 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 
     <!-- QR CODE -->
     <div class="page" id="page-qr">
+      <div class="topbar">
+        <div><div class="topbar-sub">Tools</div><h1>QR Code</h1></div>
+      </div>
+      <div class="section" style="max-width:500px">
+        <div class="section-header"><h2>📱 Clinic Booking QR Code</h2></div>
+        <div style="padding:28px;text-align:center">
+          <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Patients scan this to open your clinic booking page. Print it and put it at reception.</div>
+          <div style="background:white;border-radius:16px;padding:20px;display:inline-block;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.3)">
+            <canvas id="qr-canvas" width="200" height="200"></canvas>
+            <div id="qr-div"></div>
+          </div>
+          <div style="margin-bottom:20px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">QR Code URL</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input class="form-input" id="qr-url" value="" style="flex:1;font-family:monospace;font-size:12px" oninput="generateQR()">
+              <button class="btn btn-ghost" onclick="copyUrl()">Copy</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="downloadQR()">⬇ Download PNG</button>
+            <button class="btn btn-ghost" onclick="window.open(document.getElementById('qr-url').value,'_blank')">🌐 Open Page</button>
+          </div>
+          <div style="margin-top:24px;padding:16px;background:var(--bg);border-radius:10px;font-size:12.5px;color:var(--muted);text-align:left;line-height:1.7">
+            💡 <strong style="color:var(--text)">Tips:</strong><br>
+            • Print at minimum 4×4 cm for reliable scanning<br>
+            • Test the QR code with your phone before printing<br>
+            • Place at eye level at the reception desk
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- REVENUE DASHBOARD -->
     <div class="page" id="page-revenue">
@@ -394,7 +425,6 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
           </div>
         </div>
       </div>
-    </div>
 
     <!-- SETTINGS -->
     <div class="page" id="page-settings">
