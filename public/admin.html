@@ -9,199 +9,249 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0f1117;--surface:#181c27;--border:#262d3d;--accent:#3b82f6;--accent2:#10b981;--danger:#ef4444;--warn:#f59e0b;--text:#e2e8f0;--muted:#64748b;--card:#1e2435}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── LAYOUT ── */
 .layout{display:flex;min-height:100vh}
-.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:28px 16px;display:flex;flex-direction:column;gap:4px;position:fixed;top:0;left:0;bottom:0;overflow-y:auto}
-.logo{font-size:15px;font-weight:600;padding:8px 12px 20px;border-bottom:1px solid var(--border);margin-bottom:8px}
-.logo span{display:inline-block;width:8px;height:8px;background:var(--accent2);border-radius:50%;margin-right:8px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.nav-item{padding:9px 12px;border-radius:8px;font-size:13.5px;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;user-select:none;border:none;background:none;width:100%;text-align:left;font-family:inherit}
-.nav-item:hover,.nav-item.active{background:var(--border);color:var(--text)}
-.main{margin-left:220px;flex:1;padding:32px 36px}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
-.topbar h1{font-size:20px;font-weight:600;letter-spacing:-0.4px}
-.topbar-sub{font-size:12px;color:var(--muted);margin-bottom:4px}
-.topbar-right{display:flex;gap:10px}
-.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column;gap:3px;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:10;transition:transform .25s ease}
+.main{margin-left:220px;flex:1;padding:28px 32px}
+
+/* ── SIDEBAR ── */
+.logo{font-size:14px;font-weight:600;padding:6px 10px 16px;border-bottom:1px solid var(--border);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.logo-dot{width:8px;height:8px;background:var(--accent2);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-btn{padding:8px 10px;border-radius:7px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.nav-btn:hover{background:var(--border);color:var(--text)}
+.nav-btn.active{background:rgba(59,130,246,.15);color:var(--accent)}
+.nav-divider{height:1px;background:var(--border);margin:8px 0}
+.nav-user{padding:6px 10px;font-size:11.5px;color:var(--muted)}
+
+/* ── MOBILE ── */
+.hamburger{display:none;position:fixed;top:12px;left:12px;z-index:200;width:38px;height:38px;border-radius:8px;background:var(--surface);border:1px solid var(--border);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:8px}
+.hamburger span{display:block;width:16px;height:2px;background:var(--text);border-radius:2px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.topbar-left{display:flex;flex-direction:column}
+.page-sub{font-size:11.5px;color:var(--muted);margin-bottom:3px}
+.page-title{font-size:20px;font-weight:600;letter-spacing:-.4px}
+.topbar-right{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── BUTTONS ── */
+.btn{padding:7px 14px;border-radius:7px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
 .btn-primary{background:var(--accent);color:white}.btn-primary:hover{background:#2563eb}
-.btn-ghost{background:var(--border);color:var(--text)}.btn-ghost:hover{background:#2e3650}
-.btn-danger{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.3)}.btn-danger:hover{background:rgba(239,68,68,.2)}
-.btn-sm{padding:5px 12px;font-size:12px}.btn-xs{padding:3px 9px;font-size:11.5px;border-radius:6px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
-.stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.stat-value{font-size:28px;font-weight:600;letter-spacing:-1px}
-.blue{color:var(--accent)}.green{color:var(--accent2)}.warn{color:var(--warn)}
-.section{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px}
-.section-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
-.section-header h2{font-size:15px;font-weight:600}
-.section-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.filter-tabs{display:flex;gap:6px;padding:12px 22px;border-bottom:1px solid var(--border)}
-.filter-tab{padding:5px 14px;border-radius:6px;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--muted);background:transparent;border:none;font-family:inherit}
-.filter-tab:hover{color:var(--text)}.filter-tab.active{background:var(--border);color:var(--text)}
-.search-input{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:220px;transition:border-color .15s}
-.search-input:focus{border-color:var(--accent)}.search-input::placeholder{color:var(--muted)}
+.btn-ghost{background:var(--border);color:var(--text)}.btn-ghost:hover{background:#2a3148}
+.btn-danger{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.25)}.btn-danger:hover{background:rgba(239,68,68,.2)}
+.btn-success{background:var(--accent2);color:white}.btn-success:hover{background:#059669}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11.5px;border-radius:5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:18px}
+.stat-label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-size:26px;font-weight:600;letter-spacing:-1px}
+
+/* ── SECTION ── */
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.section-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.section-head h2{font-size:14px;font-weight:600}
+.section-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.filter-tabs{display:flex;gap:5px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.filter-tab{padding:4px 12px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);background:transparent;border:none;font-family:inherit}
+.filter-tab:hover{color:var(--text)}
+.filter-tab.active{background:var(--border);color:var(--text)}
+
+/* ── INPUTS ── */
+.search-input{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12.5px;outline:none;width:200px;transition:border-color .15s}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--muted)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11.5px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;font-weight:500}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--accent)}
+select.form-input{cursor:pointer}
+.form-error{font-size:11.5px;color:var(--danger);margin-top:3px;min-height:16px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ── TABLE ── */
 table{width:100%;border-collapse:collapse}
-thead th{padding:11px 22px;text-align:left;font-size:11.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
-tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+thead th{padding:10px 16px;text-align:left;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
 tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:rgba(59,130,246,.04)}
-tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
-.td-name{font-weight:500}.td-mono{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--muted)}
-.td-actions{display:flex;gap:6px}
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:500}
-.badge-active{background:rgba(16,185,129,.12);color:#6ee7b7}
-.badge-inactive{background:rgba(100,116,139,.15);color:var(--muted)}
-.badge-today{background:rgba(59,130,246,.15);color:#93c5fd}
-.badge-upcoming{background:rgba(16,185,129,.12);color:#6ee7b7}
-.badge-past{background:rgba(100,116,139,.15);color:var(--muted)}
-.badge-urgent{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
-.doctor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:20px 22px}
-.doctor-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px;transition:border-color .2s}
-.doctor-card:hover{border-color:var(--accent)}.doctor-card.inactive{opacity:.55}
-.doctor-card-name{font-size:14px;font-weight:600;margin-bottom:4px}
-.doctor-card-spec{font-size:12px;color:var(--accent);margin-bottom:8px}
-.doctor-card-days{margin-bottom:12px}
-.doctor-card-actions{display:flex;gap:6px;flex-wrap:wrap}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;padding:20px}
+tbody tr:hover{background:rgba(59,130,246,.03)}
+tbody td{padding:11px 16px;font-size:13px;vertical-align:middle}
+.td-name{font-weight:500}
+.td-mono{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
+.td-actions{display:flex;gap:5px;flex-wrap:wrap}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:500}
+.badge-green{background:rgba(16,185,129,.12);color:#6ee7b7}
+.badge-blue{background:rgba(59,130,246,.12);color:#93c5fd}
+.badge-gray{background:rgba(100,116,139,.15);color:var(--muted)}
+.badge-red{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}
+.badge-yellow{background:rgba(245,158,11,.12);color:#fcd34d}
+
+/* ── DOCTOR GRID ── */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;padding:16px}
+.doc-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .2s}
+.doc-card:hover{border-color:var(--accent)}
+.doc-card.inactive{opacity:.55}
+.doc-name{font-size:13.5px;font-weight:600;margin-bottom:3px}
+.doc-spec{font-size:12px;color:var(--accent);margin-bottom:8px}
+.doc-days{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.day-chip{padding:2px 7px;border-radius:4px;font-size:10.5px}
+.day-on{background:rgba(59,130,246,.15);color:#93c5fd}
+.day-off{background:var(--border);color:var(--muted)}
+.doc-actions{display:flex;gap:6px;flex-wrap:wrap}
+.days-picker{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.dp-chip{padding:5px 10px;border-radius:6px;border:1.5px solid var(--border);background:var(--bg);font-size:12px;cursor:pointer;color:var(--muted);font-family:inherit;transition:all .15s}
+.dp-chip.active{background:var(--accent);border-color:var(--accent);color:white}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;padding:16px}
 .modal-bg.show{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:480px;max-width:100%;max-height:90vh;overflow-y:auto}
-.modal h3{font-size:16px;font-weight:600;margin-bottom:20px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;transition:border-color .15s}
-.form-input:focus{border-color:var(--accent)}.form-input.error{border-color:var(--danger)}
-.form-error{font-size:11.5px;color:var(--danger);margin-top:4px}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
-.days-picker{display:flex;gap:6px;flex-wrap:wrap}
-.day-chip{padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--muted);transition:all .15s;user-select:none}
-.day-chip.active{background:var(--accent);border-color:var(--accent);color:white}
-.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.settings-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.info-box{font-size:13px;color:var(--muted);line-height:1.6;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:8px;padding:12px 16px;margin-bottom:16px}
-.empty{text-align:center;padding:56px 0;color:var(--muted);font-size:14px}
-.loading{text-align:center;padding:48px;color:var(--muted);font-size:13px}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13.5px;display:none;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:999;max-width:360px}
-.toast.show{display:flex}.toast.success{border-left:3px solid var(--accent2)}.toast.error{border-left:3px solid var(--danger)}.toast.info{border-left:3px solid var(--accent)}
-.page{display:none}.page.active{display:block}
-.today-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:20px 22px}
-.appt-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px}
-.appt-card:hover{border-color:var(--accent)}.appt-card.appt-urgent{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.04)}
-.appt-time{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--accent);margin-bottom:6px}
-.appt-name{font-size:15px;font-weight:600;margin-bottom:4px}
-.appt-detail{font-size:12.5px;color:var(--muted);margin-bottom:2px}
-.period-label{padding:10px 22px 4px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
-/* ── DOCTOR CALENDAR ── */
-.cal-wrap{overflow-x:auto;padding:0}
-.cal-grid{min-width:700px}
-.cal-head{display:grid;border-bottom:1px solid var(--border)}
-.cal-head-cell{padding:10px 8px;font-size:11.5px;font-weight:500;color:var(--muted);text-align:center;border-right:1px solid var(--border)}
-.cal-head-cell:last-child{border-right:none}
-.cal-head-cell.today-col{color:var(--accent);background:rgba(59,130,246,.06)}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:460px;max-width:100%;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:18px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+/* ── INFO BOX ── */
+.info-box{font-size:12.5px;color:var(--muted);line-height:1.6;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:8px;padding:11px 14px;margin-bottom:14px}
+
+/* ── TODAY ── */
+.today-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;padding:16px}
+.appt-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px}
+.appt-card:hover{border-color:var(--accent)}
+.appt-urgent{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.03)}
+.appt-time{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--accent);margin-bottom:5px}
+.appt-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.appt-detail{font-size:12px;color:var(--muted);margin-bottom:2px}
+.period-label{padding:8px 18px 2px;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+
+/* ── CALENDAR ── */
+.cal-wrap{overflow-x:auto}
+.cal-grid-hd{display:grid;border-bottom:1px solid var(--border)}
+.cal-hd-cell{padding:8px 6px;font-size:11px;font-weight:500;color:var(--muted);text-align:center;border-right:1px solid var(--border)}
+.cal-hd-cell:last-child{border-right:none}
+.cal-hd-today{color:var(--accent);background:rgba(59,130,246,.05)}
 .cal-row{display:grid;border-bottom:1px solid var(--border)}
 .cal-row:last-child{border-bottom:none}
-.cal-doctor-cell{padding:10px 14px;font-size:12.5px;font-weight:600;border-right:1px solid var(--border);display:flex;align-items:center;gap:8px}
-.cal-doctor-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.cal-cell{border-right:1px solid var(--border);padding:5px;min-height:72px;vertical-align:top}
+.cal-doc-cell{padding:10px 12px;font-size:12px;font-weight:600;border-right:1px solid var(--border);display:flex;align-items:center;gap:7px}
+.cal-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.cal-cell{border-right:1px solid var(--border);padding:5px;min-height:68px}
 .cal-cell:last-child{border-right:none}
-.cal-cell.today-col{background:rgba(59,130,246,.04)}
-.cal-cell.off-day{background:repeating-linear-gradient(-45deg,transparent,transparent 5px,rgba(100,116,139,.05) 5px,rgba(100,116,139,.05) 10px)}
-.cal-appt{background:var(--accent);border-radius:5px;padding:3px 6px;margin-bottom:3px;font-size:10.5px;color:white;line-height:1.4;cursor:default}
-.cal-appt.urgent{background:#ef4444}
-.cal-appt-time{font-weight:600;opacity:.85;font-size:10px}
-.cal-off-label{font-size:10px;color:var(--muted);text-align:center;padding-top:20px;opacity:.5}
-.cal-legend{display:flex;gap:16px;padding:10px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);flex-wrap:wrap}
-.cal-legend-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.cal-cell.off{background:repeating-linear-gradient(-45deg,transparent,transparent 5px,rgba(100,116,139,.04) 5px,rgba(100,116,139,.04) 10px)}
+.cal-cell.today{background:rgba(59,130,246,.03)}
+.cal-appt{background:var(--accent);border-radius:4px;padding:3px 5px;margin-bottom:3px;font-size:10px;color:white;line-height:1.4}
+.cal-appt.urgent{background:var(--danger)}
+.cal-legend{display:flex;gap:14px;padding:10px 18px;border-top:1px solid var(--border);flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.cal-legend-dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:middle}
 
-/* ── MOBILE RESPONSIVE ── */
-.hamburger{display:none;position:fixed;top:14px;left:14px;z-index:200;width:40px;height:40px;border-radius:10px;background:var(--surface);border:1px solid var(--border);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:8px}
-.hamburger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:all .25s}
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:149}
+/* ── REVENUE ── */
+.rev-charts{display:flex;gap:16px;margin-bottom:16px}
+.rev-bar-wrap{flex:2;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.rev-svc-wrap{flex:1;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+
+/* ── EMPTY / LOADING ── */
+.empty{text-align:center;padding:48px 0;color:var(--muted);font-size:13.5px}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px 18px;font-size:13px;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:999;max-width:340px}
+.toast.show{display:flex}
+.toast.success{border-left:3px solid var(--accent2)}
+.toast.error{border-left:3px solid var(--danger)}
+.toast.info{border-left:3px solid var(--accent)}
+
+/* ── PAGE VISIBILITY ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── MOBILE ── */
 @media(max-width:768px){
   .hamburger{display:flex}
-  .sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:150}
+  .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
-  .sidebar-overlay.show{display:block}
-  .main{margin-left:0;padding:20px 14px 80px}
-  .topbar{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:18px;padding-top:48px}
-  .topbar-right{width:100%;flex-wrap:wrap;gap:8px}
-  .topbar-right .btn{flex:1;min-width:120px;justify-content:center}
-  .stats{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-  .stat-card{padding:14px}
-  .stat-value{font-size:22px}
-  .doctor-grid{grid-template-columns:1fr}
-  .services-grid,.settings-grid,.settings-grid-3{grid-template-columns:1fr}
-  .section-header{flex-direction:column;align-items:flex-start;gap:8px}
-  .section-controls{width:100%;flex-wrap:wrap}
-  .search-input{width:100% !important}
-  .modal{width:calc(100vw - 32px);margin:16px}
-  table{font-size:12px}
-  thead th{padding:8px 10px;font-size:10px}
-  tbody td{padding:10px;font-size:12px}
-  .td-actions{flex-wrap:wrap}
-  .btn-xs{padding:4px 8px}
-  .today-grid{grid-template-columns:1fr}
-  .revenue-grid{grid-template-columns:1fr 1fr !important}
-  .rev-chart-row{flex-direction:column}
+  .overlay.show{display:block}
+  .main{margin-left:0;padding:16px 12px 80px;padding-top:56px}
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
+  .topbar{flex-direction:column;align-items:flex-start}
+  .topbar-right{width:100%}
+  .doc-grid{grid-template-columns:1fr}
+  .rev-charts{flex-direction:column}
+  table{font-size:11.5px}
+  thead th{padding:8px 10px}
+  tbody td{padding:9px 10px}
 }
 @media(max-width:480px){
   .stats{grid-template-columns:1fr}
-  .revenue-grid{grid-template-columns:1fr !important}
 }
-
 </style>
 </head>
 <body>
-<button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()">
   <span></span><span></span><span></span>
 </button>
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="layout">
-  <aside class="sidebar">
-    <div class="logo"><span></span>ClinicAI Admin</div>
-    <button class="nav-item active" onclick="showPage('appointments',this)">📋 Appointments</button>
-    <button class="nav-item" onclick="showPage('today',this)">📅 Today</button>
-    <button class="nav-item" onclick="showPage('doctors',this)">👨‍⚕️ Doctors</button>
-    <button class="nav-item" onclick="showPage('services',this)">💊 Services</button>
-    <button class="nav-item" onclick="showPage('holidays',this)">🗓️ Holidays</button>
-    <button class="nav-item" onclick="showPage('waitlist',this)">⏳ Waitlist</button>
-    <button class="nav-item" onclick="showPage('analytics',this)">📊 Analytics</button>
-    <button class="nav-item" onclick="showPage('revenue',this);loadRevenue()">💰 Revenue</button>
-    <button class="nav-item" onclick="showPage('audit',this);loadAuditLog()">🔍 Audit Log</button>
-    <button class="nav-item" onclick="showPage('calendar',this);loadCalendar()">📆 Calendar</button>
-    <button class="nav-item" onclick="showPage('qr',this);initQR()">📱 QR Code</button>
-    <button class="nav-item" onclick="showPage('settings',this)">⚙️ Settings</button>
-    <!-- Auth section at bottom of sidebar -->
-    <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border)">
-      <div style="font-size:11.5px;color:var(--muted);padding:6px 12px;margin-bottom:4px">Signed in as <strong style="color:var(--text)" id="admin-username">admin</strong></div>
-      <button class="nav-item" onclick="document.getElementById('cp-modal').classList.add('show')" style="font-size:12.5px">🔑 Change Password</button>
-      <button class="nav-item" onclick="logout()" style="font-size:12.5px;color:#fca5a5">🚪 Logout</button>
-    </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><div class="logo-dot"></div>ClinicAI Admin</div>
+
+    <button class="nav-btn active" onclick="nav('appointments',this)">📋 Appointments</button>
+    <button class="nav-btn" onclick="nav('today',this)">📅 Today</button>
+    <button class="nav-btn" onclick="nav('doctors',this)">👨‍⚕️ Doctors</button>
+    <button class="nav-btn" onclick="nav('services',this)">💊 Services</button>
+    <button class="nav-btn" onclick="nav('holidays',this)">🗓️ Holidays</button>
+    <button class="nav-btn" onclick="nav('waitlist',this)">⏳ Waitlist</button>
+
+    <div class="nav-divider"></div>
+
+    <button class="nav-btn" onclick="nav('analytics',this)">📊 Analytics</button>
+    <button class="nav-btn" onclick="nav('revenue',this)">💰 Revenue</button>
+    <button class="nav-btn" onclick="nav('calendar',this)">📆 Calendar</button>
+    <button class="nav-btn" onclick="nav('audit',this)">🔍 Audit Log</button>
+    <button class="nav-btn" onclick="nav('qr',this)">📱 QR Code</button>
+    <button class="nav-btn" onclick="nav('settings',this)">⚙️ Settings</button>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-user">Signed in as <strong id="admin-username">admin</strong></div>
+    <button class="nav-btn" onclick="showModal('cp-modal')">🔑 Change Password</button>
+    <button class="nav-btn" style="color:#fca5a5" onclick="logout()">🚪 Logout</button>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
 
     <!-- APPOINTMENTS -->
     <div class="page active" id="page-appointments">
       <div class="topbar">
-        <div><div class="topbar-sub">Admin Dashboard</div><h1>Appointments</h1></div>
+        <div class="topbar-left"><div class="page-sub">Admin</div><div class="page-title">Appointments</div></div>
         <div class="topbar-right">
-          <button class="btn btn-ghost" onclick="loadAppointments()">↻ Refresh</button>
-          <button class="btn btn-primary" onclick="exportCSV()">↓ Export CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadAppointments()">↻ Refresh</button>
+          <button class="btn btn-primary btn-sm" onclick="exportCSV()">↓ CSV</button>
         </div>
       </div>
       <div class="stats">
-        <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value blue" id="stat-total">—</div></div>
-        <div class="stat-card"><div class="stat-label">Today</div><div class="stat-value green" id="stat-today">—</div></div>
-        <div class="stat-card"><div class="stat-label">Upcoming</div><div class="stat-value warn" id="stat-upcoming">—</div></div>
-        <div class="stat-card"><div class="stat-label">Past</div><div class="stat-value" id="stat-past" style="color:var(--muted)">—</div></div>
+        <div class="stat"><div class="stat-label">Total</div><div class="stat-value" style="color:var(--accent)" id="stat-total">—</div></div>
+        <div class="stat"><div class="stat-label">Today</div><div class="stat-value" style="color:var(--accent2)" id="stat-today">—</div></div>
+        <div class="stat"><div class="stat-label">Upcoming</div><div class="stat-value" style="color:var(--warn)" id="stat-upcoming">—</div></div>
+        <div class="stat"><div class="stat-label">Past</div><div class="stat-value" style="color:var(--muted)" id="stat-past">—</div></div>
       </div>
       <div class="section">
-        <div class="section-header">
+        <div class="section-head">
           <h2>All Appointments</h2>
           <div class="section-controls">
-            <select class="search-input" id="doctor-filter" onchange="renderTable()" style="width:160px"><option value="">All Doctors</option></select>
-            <input class="search-input" id="search" placeholder="Search name, phone…" oninput="renderTable()">
+            <select class="search-input" id="doctor-filter" onchange="renderTable()" style="width:150px"><option value="">All Doctors</option></select>
+            <input class="search-input" id="search" placeholder="Search…" oninput="renderTable()">
           </div>
         </div>
         <div class="filter-tabs">
@@ -217,14 +267,14 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <!-- TODAY -->
     <div class="page" id="page-today">
       <div class="topbar">
-        <div><div class="topbar-sub" id="today-date-label">—</div><h1>Today's Schedule</h1></div>
+        <div class="topbar-left"><div class="page-sub" id="today-date-label">—</div><div class="page-title">Today's Schedule</div></div>
         <div class="topbar-right">
-          <button class="btn btn-ghost" onclick="loadToday()">↻ Refresh</button>
-          <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadToday()">↻</button>
+          <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
         </div>
       </div>
       <div class="section">
-        <div id="today-summary" style="display:flex;gap:16px;padding:16px 22px;border-bottom:1px solid var(--border);flex-wrap:wrap"></div>
+        <div id="today-summary" style="display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;font-size:13px;color:var(--muted)"></div>
         <div id="today-container"><div class="loading">Loading…</div></div>
       </div>
     </div>
@@ -232,32 +282,32 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <!-- DOCTORS -->
     <div class="page" id="page-doctors">
       <div class="topbar">
-        <div><div class="topbar-sub">Staff Management</div><h1>Doctors</h1></div>
+        <div class="topbar-left"><div class="page-sub">Staff</div><div class="page-title">Doctors</div></div>
         <div class="topbar-right">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer">
-            <input type="checkbox" id="show-inactive" onchange="loadDoctors()"> Show inactive
+          <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer">
+            <input type="checkbox" id="show-inactive" onchange="loadDoctors()"> Inactive
           </label>
-          <button class="btn btn-ghost" onclick="loadDoctors()">↻ Refresh</button>
-          <button class="btn btn-primary" onclick="openDoctorModal()">+ Add Doctor</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadDoctors()">↻</button>
+          <button class="btn btn-primary btn-sm" onclick="openDoctorModal()">+ Add</button>
         </div>
       </div>
       <div class="section">
-        <div class="section-header"><h2>All Doctors</h2></div>
-        <div class="doctor-grid" id="doctor-grid"><div class="loading">Loading…</div></div>
+        <div class="section-head"><h2>All Doctors</h2></div>
+        <div class="doc-grid" id="doctor-grid"><div class="loading">Loading…</div></div>
       </div>
     </div>
 
     <!-- SERVICES -->
     <div class="page" id="page-services">
       <div class="topbar">
-        <div><div class="topbar-sub">Clinic Management</div><h1>Services</h1></div>
+        <div class="topbar-left"><div class="page-sub">Clinic</div><div class="page-title">Services</div></div>
         <div class="topbar-right">
-          <button class="btn btn-ghost" onclick="loadServices()">↻ Refresh</button>
-          <button class="btn btn-primary" onclick="openServiceModal()">+ Add Service</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadServices()">↻</button>
+          <button class="btn btn-primary btn-sm" onclick="openServiceModal()">+ Add</button>
         </div>
       </div>
       <div class="section">
-        <div class="section-header"><h2>All Services</h2><span style="font-size:12px;color:var(--muted)">Duration controls how many slots are blocked</span></div>
+        <div class="section-head"><h2>All Services</h2></div>
         <div id="service-table"><div class="loading">Loading…</div></div>
       </div>
     </div>
@@ -265,14 +315,14 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <!-- HOLIDAYS -->
     <div class="page" id="page-holidays">
       <div class="topbar">
-        <div><div class="topbar-sub">Clinic Management</div><h1>Holidays &amp; Closures</h1></div>
+        <div class="topbar-left"><div class="page-sub">Clinic</div><div class="page-title">Holidays</div></div>
         <div class="topbar-right">
-          <button class="btn btn-ghost" onclick="loadHolidays()">↻ Refresh</button>
-          <button class="btn btn-primary" onclick="openHolidayModal()">+ Add Holiday</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadHolidays()">↻</button>
+          <button class="btn btn-primary btn-sm" onclick="openHolidayModal()">+ Add</button>
         </div>
       </div>
       <div class="section">
-        <div class="section-header"><h2>Closed Dates</h2><span style="font-size:12px;color:var(--muted)">Patients cannot book on these dates</span></div>
+        <div class="section-head"><h2>Closed Dates</h2></div>
         <div id="holiday-table"><div class="loading">Loading…</div></div>
       </div>
     </div>
@@ -280,11 +330,11 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <!-- WAITLIST -->
     <div class="page" id="page-waitlist">
       <div class="topbar">
-        <div><div class="topbar-sub">Clinic Management</div><h1>Waitlist</h1></div>
-        <div class="topbar-right"><button class="btn btn-ghost" onclick="loadWaitlist()">↻ Refresh</button></div>
+        <div class="topbar-left"><div class="page-sub">Clinic</div><div class="page-title">Waitlist</div></div>
+        <div class="topbar-right"><button class="btn btn-ghost btn-sm" onclick="loadWaitlist()">↻</button></div>
       </div>
       <div class="section">
-        <div class="section-header"><h2>Patients Waiting for a Slot</h2></div>
+        <div class="section-head"><h2>Patients Waiting</h2></div>
         <div id="waitlist-table"><div class="loading">Loading…</div></div>
       </div>
     </div>
@@ -292,308 +342,68 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
     <!-- ANALYTICS -->
     <div class="page" id="page-analytics">
       <div class="topbar">
-        <div><div class="topbar-sub">Insights</div><h1>Analytics</h1></div>
-        <div class="topbar-right"><button class="btn btn-ghost" onclick="loadAnalytics()">↻ Refresh</button></div>
+        <div class="topbar-left"><div class="page-sub">Insights</div><div class="page-title">Analytics</div></div>
+        <div class="topbar-right"><button class="btn btn-ghost btn-sm" onclick="loadAnalytics()">↻</button></div>
       </div>
-      <div class="section" style="margin-bottom:24px">
-        <div class="section-header"><h2>Top Services (Last 30 days)</h2></div>
+      <div class="section" style="margin-bottom:16px">
+        <div class="section-head"><h2>Top Services (30 days)</h2></div>
         <div id="analytics-services"><div class="loading">Loading…</div></div>
       </div>
       <div class="section">
-        <div class="section-header"><h2>Intent Drop-off</h2></div>
+        <div class="section-head"><h2>Intent Drop-off</h2></div>
         <div id="analytics-dropoff"><div class="loading">Loading…</div></div>
       </div>
     </div>
 
-    <!-- QR CODE -->
-    <div class="page" id="page-qr">
-      <div class="topbar">
-        <div><div class="topbar-sub">Tools</div><h1>QR Code</h1></div>
-      </div>
-      <div class="section" style="max-width:500px">
-        <div class="section-header"><h2>📱 Clinic Booking QR Code</h2></div>
-        <div style="padding:28px;text-align:center">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Patients scan this to open your clinic booking page. Print it and put it at reception.</div>
-          <div style="background:white;border-radius:16px;padding:20px;display:inline-block;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.3)">
-            <canvas id="qr-canvas" width="200" height="200"></canvas>
-            <div id="qr-div"></div>
-          </div>
-          <div style="margin-bottom:20px">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">QR Code URL</div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <input class="form-input" id="qr-url" value="" style="flex:1;font-family:monospace;font-size:12px" oninput="generateQR()">
-              <button class="btn btn-ghost" onclick="copyUrl()">Copy</button>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="downloadQR()">⬇ Download PNG</button>
-            <button class="btn btn-ghost" onclick="window.open(document.getElementById('qr-url').value,'_blank')">🌐 Open Page</button>
-          </div>
-          <div style="margin-top:24px;padding:16px;background:var(--bg);border-radius:10px;font-size:12.5px;color:var(--muted);text-align:left;line-height:1.7">
-            💡 <strong style="color:var(--text)">Tips:</strong><br>
-            • Print at minimum 4×4 cm for reliable scanning<br>
-            • Test the QR code with your phone before printing<br>
-            • Place at eye level at the reception desk
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- REVENUE DASHBOARD -->
+    <!-- REVENUE -->
     <div class="page" id="page-revenue">
       <div class="topbar">
-        <div><div class="topbar-sub">Finance</div><h1>Revenue Dashboard</h1></div>
+        <div class="topbar-left"><div class="page-sub">Finance</div><div class="page-title">Revenue</div></div>
         <div class="topbar-right">
-          <select id="rev-period" class="search-input" style="width:140px" onchange="loadRevenue()">
+          <select id="rev-period" class="search-input" style="width:130px" onchange="loadRevenue()">
             <option value="7">Last 7 days</option>
             <option value="30" selected>Last 30 days</option>
             <option value="90">Last 90 days</option>
           </select>
-          <button class="btn btn-ghost" onclick="loadRevenue()">↻ Refresh</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadRevenue()">↻</button>
         </div>
       </div>
-
-      <!-- STAT CARDS -->
-      <div class="stats revenue-grid" style="grid-template-columns:repeat(4,1fr)">
-        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value green" id="rev-total">—</div></div>
-        <div class="stat-card"><div class="stat-label">Appointments</div><div class="stat-value blue" id="rev-count">—</div></div>
-        <div class="stat-card"><div class="stat-label">Avg per Visit</div><div class="stat-value warn" id="rev-avg">—</div></div>
-        <div class="stat-card"><div class="stat-label">Top Service</div><div class="stat-value" id="rev-top" style="font-size:16px;color:var(--muted)">—</div></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Revenue</div><div class="stat-value" style="color:var(--accent2)" id="rev-total">—</div></div>
+        <div class="stat"><div class="stat-label">Appointments</div><div class="stat-value" style="color:var(--accent)" id="rev-count">—</div></div>
+        <div class="stat"><div class="stat-label">Avg / Visit</div><div class="stat-value" style="color:var(--warn)" id="rev-avg">—</div></div>
+        <div class="stat"><div class="stat-label">Top Service</div><div class="stat-value" style="font-size:15px;color:var(--muted)" id="rev-top">—</div></div>
       </div>
-
-      <!-- CHARTS ROW -->
-      <div class="rev-chart-row" style="display:flex;gap:16px;margin-bottom:16px">
-        <div class="section" style="flex:2">
-          <div class="section-header"><h2>Daily Revenue</h2></div>
-          <div style="padding:20px">
-            <canvas id="rev-bar-chart" style="width:100%;height:220px"></canvas>
-          </div>
+      <div class="rev-charts">
+        <div class="rev-bar-wrap">
+          <div class="section-head"><h2>Daily Revenue</h2></div>
+          <div style="padding:16px"><canvas id="rev-bar-chart" style="width:100%;height:200px"></canvas></div>
         </div>
-        <div class="section" style="flex:1">
-          <div class="section-header"><h2>By Service</h2></div>
-          <div id="rev-service-list" style="padding:0"><div class="loading">Loading…</div></div>
+        <div class="rev-svc-wrap">
+          <div class="section-head"><h2>By Service</h2></div>
+          <div id="rev-service-list"><div class="loading">Loading…</div></div>
         </div>
       </div>
-
-      <!-- RECENT REVENUE TABLE -->
-      <div class="section">
-        <div class="section-header"><h2>Recent Appointments with Revenue</h2>
-          <span style="font-size:12px;color:var(--muted)">Based on service prices set below</span>
-        </div>
+      <div class="section" style="margin-bottom:16px">
+        <div class="section-head"><h2>Recent Appointments</h2></div>
         <div id="rev-table"><div class="loading">Loading…</div></div>
       </div>
-
-      <!-- SET PRICES -->
-      <div class="section" style="margin-top:16px">
-        <div class="section-header"><h2>💰 Service Prices</h2>
-          <button class="btn btn-primary btn-sm" onclick="savePrices()">Save Prices</button>
-        </div>
+      <div class="section">
+        <div class="section-head"><h2>💰 Set Service Prices</h2><button class="btn btn-primary btn-sm" onclick="savePrices()">Save</button></div>
         <div id="price-table"><div class="loading">Loading…</div></div>
       </div>
     </div>
-      <div class="topbar">
-        <div><div class="topbar-sub">Tools</div><h1>QR Code</h1></div>
-      </div>
-      <div class="section" style="max-width:500px">
-        <div class="section-header"><h2>📱 Clinic Booking QR Code</h2></div>
-        <div style="padding:28px;text-align:center">
-          <div style="font-size:13px;color:var(--muted);margin-bottom:20px">Patients scan this to open your clinic booking page. Print it and put it at your reception, entrance, or anywhere visible.</div>
 
-          <div style="background:white;border-radius:16px;padding:20px;display:inline-block;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.3)">
-            <canvas id="qr-canvas" width="200" height="200"></canvas>
-          </div>
-
-          <div style="margin-bottom:20px">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">QR Code URL</div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <input class="form-input" id="qr-url" value="" style="flex:1;font-family:monospace;font-size:12px" oninput="generateQR()">
-              <button class="btn btn-ghost" onclick="copyUrl()">Copy</button>
-            </div>
-          </div>
-
-          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="downloadQR('png')">⬇ Download PNG</button>
-            <button class="btn btn-ghost"   onclick="downloadQR('svg')">⬇ Download SVG</button>
-            <button class="btn btn-ghost"   onclick="window.open(document.getElementById('qr-url').value,'_blank')">🌐 Open Page</button>
-          </div>
-
-          <div style="margin-top:24px;padding:16px;background:var(--bg);border-radius:10px;font-size:12.5px;color:var(--muted);text-align:left;line-height:1.7">
-            💡 <strong style="color:var(--text)">Tips:</strong><br>
-            • Print at minimum 4×4 cm for reliable scanning<br>
-            • Test the QR code with your phone before printing<br>
-            • Place at eye level at the reception desk
-          </div>
-        </div>
-      </div>
-
-    <!-- SETTINGS -->
-    <div class="page" id="page-settings">
-      <div class="topbar">
-        <div><div class="topbar-sub">Configuration</div><h1>Settings</h1></div>
-        <div class="topbar-right">
-          <button class="btn btn-ghost" onclick="previewClinicPage()">👁 Preview Page</button>
-          <button class="btn btn-primary" onclick="saveSettings()">💾 Save All</button>
-        </div>
-      </div>
-
-      <!-- CLINIC PROFILE -->
-      <div class="section" style="max-width:700px">
-        <div class="section-header">
-          <h2>🏥 Clinic Profile</h2>
-          <span style="font-size:12px;color:var(--muted)">Everything here appears on the patient-facing landing page</span>
-        </div>
-        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
-          <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--muted)">
-            ✅ All fields below appear live on the clinic landing page. Patients see this when they scan the QR code.
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 100px;gap:12px">
-            <div class="form-group"><label>Clinic Name *</label><input class="form-input" id="cfg-name" placeholder="e.g. Dr. Sharma Dental Clinic"></div>
-            <div class="form-group"><label>Icon (emoji)</label><input class="form-input" id="cfg-icon" placeholder="🏥" maxlength="4" style="text-align:center;font-size:20px"></div>
-          </div>
-          <div class="form-group"><label>Tagline / Description (shown below clinic name)</label><input class="form-input" id="cfg-tagline" placeholder="e.g. Quality dental care for the whole family"></div>
-          <div class="settings-grid">
-            <div class="form-group">
-              <label>Clinic Type</label>
-              <select class="form-input" id="cfg-type">
-                <option value="dental">🦷 Dental</option>
-                <option value="general">🩺 General / GP</option>
-                <option value="eye">👁️ Eye / Ophthalmology</option>
-                <option value="skin">🧴 Skin / Dermatology</option>
-                <option value="ortho">🦴 Orthopaedic</option>
-                <option value="physio">🏃 Physiotherapy</option>
-                <option value="paediatric">👶 Paediatric</option>
-                <option value="ent">👂 ENT</option>
-                <option value="other">🏥 Other</option>
-              </select>
-            </div>
-            <div class="form-group"><label>Phone Number</label><input class="form-input" id="cfg-phone" placeholder="+91 98765 43210"></div>
-          </div>
-          <div class="form-group"><label>Address (shown on page)</label><input class="form-input" id="cfg-address" placeholder="123 Main St, City, State - 400001"></div>
-          <div class="settings-grid">
-            <div class="form-group"><label>Website URL</label><input class="form-input" id="cfg-website" placeholder="https://yourclinic.com"></div>
-            <div class="form-group"><label>WhatsApp Number</label><input class="form-input" id="cfg-whatsapp" placeholder="+91 98765 43210"></div>
-          </div>
-          <div class="form-group"><label>Google Maps Link</label><input class="form-input" id="cfg-maps" placeholder="Paste your Google Maps share link here"></div>
-        </div>
-      </div>
-
-      <!-- HOURS -->
-      <div class="section" style="max-width:700px;margin-top:20px">
-        <div class="section-header"><h2>🕐 Hours &amp; Capacity</h2></div>
-        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
-          <div class="settings-grid-3">
-            <div class="form-group"><label>Open Hour (24h)</label><input class="form-input" id="cfg-open" type="number" min="0" max="23" placeholder="10"></div>
-            <div class="form-group"><label>Close Hour (24h)</label><input class="form-input" id="cfg-close" type="number" min="0" max="23" placeholder="17"></div>
-            <div class="form-group"><label>Slot Duration (min)</label><input class="form-input" id="cfg-slot" type="number" min="15" max="120" placeholder="30"></div>
-          </div>
-          <div class="form-group">
-            <label>Open Days (click to toggle)</label>
-            <div id="cfg-days-picker" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-              <span class="day-chip active" data-day="Mon">Mon</span>
-              <span class="day-chip active" data-day="Tue">Tue</span>
-              <span class="day-chip active" data-day="Wed">Wed</span>
-              <span class="day-chip active" data-day="Thu">Thu</span>
-              <span class="day-chip active" data-day="Fri">Fri</span>
-              <span class="day-chip active" data-day="Sat">Sat</span>
-              <span class="day-chip" data-day="Sun">Sun</span>
-            </div>
-            <input type="hidden" id="cfg-days" value="Mon,Tue,Wed,Thu,Fri,Sat">
-          </div>
-          <div class="settings-grid">
-            <div class="form-group"><label>Max Bookings Per Day</label><input class="form-input" id="cfg-max" type="number" min="1" max="500" placeholder="20"></div>
-            <div class="form-group"><label>Clinic Email (contact)</label><input class="form-input" id="cfg-email" type="email" placeholder="clinic@example.com"></div>
-          </div>
-          <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
-        </div>
-      </div>
-
-      <!-- RAZORPAY -->
-      <div class="section" style="max-width:700px;margin-top:16px">
-        <div class="section-header"><h2>💳 Razorpay Deposit</h2></div>
-        <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
-          <div class="info-box">
-            Collect a refundable deposit when patients confirm their booking. Reduces no-shows significantly.<br>
-            Add <code style="color:#93c5fd">RAZORPAY_KEY_ID</code> and <code style="color:#93c5fd">RAZORPAY_KEY_SECRET</code> to Render → Environment Variables.
-            Get keys at <a href="https://razorpay.com" target="_blank" style="color:#93c5fd">razorpay.com</a> (free account).
-          </div>
-          <div class="settings-grid">
-            <div class="form-group">
-              <label>Enable Deposit</label>
-              <select class="form-input" id="cfg-deposit-enabled">
-                <option value="0">Disabled</option>
-                <option value="1">Enabled</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Deposit Amount (₹)</label>
-              <input class="form-input" id="cfg-deposit-amount" type="number" min="0" placeholder="e.g. 200">
-            </div>
-          </div>
-          <div style="font-size:12px;color:var(--muted)">Patients see the payment option after booking. They can pay or skip — booking is confirmed either way.</div>
-          <button class="btn btn-primary" onclick="saveSettings()">💾 Save Deposit Settings</button>
-        </div>
-      </div>
-
-      <!-- RESEND EMAIL -->
-      <div class="section" style="max-width:700px;margin-top:20px">
-        <div class="section-header"><h2>📧 Email Reminders (Resend)</h2></div>
-        <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
-          <div class="info-box">
-            ✉️ Uses <strong style="color:var(--text)">Resend</strong> — free, reliable, no Gmail hassle.<br>
-            <strong>Step 1:</strong> Sign up free at <a href="https://resend.com" target="_blank" style="color:#93c5fd">resend.com</a><br>
-            <strong>Step 2:</strong> Go to API Keys → Create API Key → copy it<br>
-            <strong>Step 3:</strong> In Render → your service → Environment → add <code style="color:#93c5fd">RESEND_API_KEY</code><br>
-            <strong>Step 4:</strong> Optionally add <code style="color:#93c5fd">RESEND_FROM_EMAIL</code> if you have a verified domain (leave blank to use Resend's test address)
-          </div>
-          <div id="email-status-box" style="padding:12px 16px;border-radius:8px;font-size:13px;background:var(--bg);border:1px solid var(--border)">
-            Checking email status…
-          </div>
-          <div class="form-group">
-            <label>Test — Send to this address</label>
-            <div style="display:flex;gap:10px">
-              <input class="form-input" id="test-email-addr" type="email" placeholder="your@email.com" style="flex:1">
-              <button class="btn btn-ghost" onclick="testEmail()" style="white-space:nowrap">📧 Send Test</button>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Weekly Report — Send to</label>
-            <div style="display:flex;gap:10px">
-              <input class="form-input" id="report-email-addr" type="email" placeholder="admin@example.com" style="flex:1">
-              <button class="btn btn-ghost" onclick="sendWeeklyReport()" style="white-space:nowrap">📊 Send Now</button>
-            </div>
-            <div style="font-size:11.5px;color:var(--muted);margin-top:6px">Sent automatically every Monday 8am. Click to send immediately for testing.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AUDIT LOG -->
-    <div class="page" id="page-audit">
-      <div class="topbar">
-        <div><div class="topbar-sub">Security</div><h1>Audit Log</h1></div>
-        <div class="topbar-right">
-          <button class="btn btn-ghost" onclick="loadAuditLog()">↻ Refresh</button>
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-header">
-          <h2>Admin Actions</h2>
-          <span style="font-size:12px;color:var(--muted)">Last 50 actions — kept for 90 days</span>
-        </div>
-        <div id="audit-table"><div class="loading">Loading…</div></div>
-      </div>
-    </div>
-
-    <!-- DOCTOR CALENDAR -->
+    <!-- CALENDAR -->
     <div class="page" id="page-calendar">
       <div class="topbar">
-        <div><div class="topbar-sub">Schedule</div><h1>Doctor Availability</h1></div>
+        <div class="topbar-left"><div class="page-sub">Schedule</div><div class="page-title">Doctor Calendar</div></div>
         <div class="topbar-right">
-          <button class="btn btn-ghost" onclick="calPrev()">← Prev</button>
-          <span id="cal-label" style="font-size:14px;font-weight:600;padding:0 12px"></span>
-          <button class="btn btn-ghost" onclick="calNext()">Next →</button>
-          <button class="btn btn-ghost" onclick="calToday()">Today</button>
-          <button class="btn btn-ghost" onclick="loadCalendar()">↻</button>
+          <button class="btn btn-ghost btn-sm" onclick="calPrev()">← Prev</button>
+          <span id="cal-label" style="font-size:13px;font-weight:600;padding:0 10px"></span>
+          <button class="btn btn-ghost btn-sm" onclick="calNext()">Next →</button>
+          <button class="btn btn-ghost btn-sm" onclick="calToday()">Today</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadCalendar()">↻</button>
         </div>
       </div>
       <div class="section" style="overflow:auto">
@@ -601,92 +411,226 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
       </div>
     </div>
 
+    <!-- AUDIT LOG -->
+    <div class="page" id="page-audit">
+      <div class="topbar">
+        <div class="topbar-left"><div class="page-sub">Security</div><div class="page-title">Audit Log</div></div>
+        <div class="topbar-right"><button class="btn btn-ghost btn-sm" onclick="loadAuditLog()">↻</button></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>Admin Actions</h2><span style="font-size:11.5px;color:var(--muted)">Last 50 — kept 90 days</span></div>
+        <div id="audit-table"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- QR CODE -->
+    <div class="page" id="page-qr">
+      <div class="topbar">
+        <div class="topbar-left"><div class="page-sub">Tools</div><div class="page-title">QR Code</div></div>
+      </div>
+      <div class="section" style="max-width:480px">
+        <div class="section-head"><h2>📱 Booking QR Code</h2></div>
+        <div style="padding:24px;text-align:center">
+          <div style="background:white;border-radius:14px;padding:18px;display:inline-block;margin-bottom:18px;box-shadow:0 4px 16px rgba(0,0,0,.25)">
+            <canvas id="qr-canvas" width="200" height="200"></canvas>
+            <div id="qr-div"></div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">URL</div>
+            <div style="display:flex;gap:7px">
+              <input class="form-input" id="qr-url" style="flex:1;font-family:monospace;font-size:12px" oninput="generateQR()">
+              <button class="btn btn-ghost btn-sm" onclick="copyUrl()">Copy</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="btn btn-primary btn-sm" onclick="downloadQR()">⬇ Download PNG</button>
+            <button class="btn btn-ghost btn-sm" onclick="window.open(document.getElementById('qr-url').value,'_blank')">🌐 Open</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="topbar">
+        <div class="topbar-left"><div class="page-sub">Configuration</div><div class="page-title">Settings</div></div>
+        <div class="topbar-right"><button class="btn btn-primary btn-sm" onclick="saveSettings()">💾 Save All</button></div>
+      </div>
+
+      <div class="section" style="max-width:660px;margin-bottom:16px">
+        <div class="section-head"><h2>🏥 Clinic Identity</h2></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:13px">
+          <div class="form-grid">
+            <div class="form-group"><label>Clinic Name</label><input class="form-input" id="cfg-name" placeholder="Dr. Sharma Dental"></div>
+            <div class="form-group"><label>Icon (emoji)</label><input class="form-input" id="cfg-icon" placeholder="🏥" maxlength="4" style="text-align:center;font-size:20px"></div>
+          </div>
+          <div class="form-group"><label>Tagline</label><input class="form-input" id="cfg-tagline" placeholder="Quality care for your whole family"></div>
+          <div class="form-group"><label>Clinic Type</label>
+            <select class="form-input" id="cfg-type">
+              <option value="dental">🦷 Dental</option>
+              <option value="general">🩺 General / GP</option>
+              <option value="eye">👁️ Eye</option>
+              <option value="skin">🧴 Skin / Dermatology</option>
+              <option value="ortho">🦴 Ortho / Physio</option>
+              <option value="pediatric">👶 Pediatric</option>
+              <option value="ent">👂 ENT</option>
+              <option value="other">🏥 Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="max-width:660px;margin-bottom:16px">
+        <div class="section-head"><h2>📞 Contact</h2></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:13px">
+          <div class="form-grid">
+            <div class="form-group"><label>Phone</label><input class="form-input" id="cfg-phone" placeholder="+91 98765 43210"></div>
+            <div class="form-group"><label>WhatsApp</label><input class="form-input" id="cfg-whatsapp" placeholder="+91 98765 43210"></div>
+          </div>
+          <div class="form-group"><label>Address</label><input class="form-input" id="cfg-address" placeholder="123 Main St, City"></div>
+          <div class="form-grid">
+            <div class="form-group"><label>Website</label><input class="form-input" id="cfg-website" placeholder="https://yourclinic.com"></div>
+            <div class="form-group"><label>Google Maps Link</label><input class="form-input" id="cfg-maps" placeholder="Paste maps link"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="max-width:660px;margin-bottom:16px">
+        <div class="section-head"><h2>🕐 Hours</h2></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:13px">
+          <div class="form-grid-3">
+            <div class="form-group"><label>Open Hour</label><input class="form-input" id="cfg-open" type="number" min="0" max="23" placeholder="10"></div>
+            <div class="form-group"><label>Close Hour</label><input class="form-input" id="cfg-close" type="number" min="0" max="23" placeholder="17"></div>
+            <div class="form-group"><label>Slot (min)</label><input class="form-input" id="cfg-slot" type="number" min="15" max="120" placeholder="30"></div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Open Days</label>
+              <div class="days-picker" id="cfg-days-picker">
+                <button class="dp-chip active" data-day="Mon">Mon</button>
+                <button class="dp-chip active" data-day="Tue">Tue</button>
+                <button class="dp-chip active" data-day="Wed">Wed</button>
+                <button class="dp-chip active" data-day="Thu">Thu</button>
+                <button class="dp-chip active" data-day="Fri">Fri</button>
+                <button class="dp-chip active" data-day="Sat">Sat</button>
+                <button class="dp-chip" data-day="Sun">Sun</button>
+              </div>
+              <input type="hidden" id="cfg-days">
+            </div>
+            <div class="form-group"><label>Max / Day</label><input class="form-input" id="cfg-max" type="number" min="1" placeholder="20"></div>
+          </div>
+          <div class="form-group"><label>Clinic Email</label><input class="form-input" id="cfg-email" type="email" placeholder="clinic@gmail.com"></div>
+        </div>
+      </div>
+
+      <div class="section" style="max-width:660px;margin-bottom:16px">
+        <div class="section-head"><h2>📧 Email (Resend)</h2></div>
+        <div style="padding:20px">
+          <div class="info-box">Sign up at <strong style="color:var(--text)">resend.com</strong> → API Keys → Create → add <code style="color:#93c5fd">RESEND_API_KEY</code> to Render env vars.</div>
+          <div id="email-status-box" style="padding:10px 14px;border-radius:7px;font-size:12.5px;background:var(--bg);border:1px solid var(--border);margin-bottom:14px">Checking…</div>
+          <div class="form-group">
+            <label>Send Test Email To</label>
+            <div style="display:flex;gap:8px">
+              <input class="form-input" id="test-email-addr" type="email" placeholder="your@email.com" style="flex:1">
+              <button class="btn btn-ghost btn-sm" onclick="testEmail()">📧 Send Test</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Weekly Report Email</label>
+            <div style="display:flex;gap:8px">
+              <input class="form-input" id="report-email-addr" type="email" placeholder="admin@email.com" style="flex:1">
+              <button class="btn btn-ghost btn-sm" onclick="sendWeeklyReport()">📊 Send Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="max-width:660px;margin-bottom:16px">
+        <div class="section-head"><h2>💳 Razorpay Deposit</h2></div>
+        <div style="padding:20px">
+          <div class="info-box">Add <code style="color:#93c5fd">RAZORPAY_KEY_ID</code> and <code style="color:#93c5fd">RAZORPAY_KEY_SECRET</code> to Render env vars. Get keys at <strong style="color:var(--text)">razorpay.com</strong>.</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Enable Deposit</label>
+              <select class="form-input" id="cfg-deposit-enabled">
+                <option value="0">Disabled</option>
+                <option value="1">Enabled</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Deposit Amount (₹)</label><input class="form-input" id="cfg-deposit-amount" type="number" min="0" placeholder="200"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="max-width:660px;padding-bottom:24px">
+        <button class="btn btn-primary" onclick="saveSettings()">💾 Save All Settings</button>
+      </div>
+    </div>
+
   </main>
 </div>
 
-<!-- DOCTOR MODAL -->
+<!-- MODALS -->
 <div class="modal-bg" id="doctor-modal">
   <div class="modal">
     <h3 id="doctor-modal-title">Add Doctor</h3>
-    <div class="form-group"><label>Full Name *</label><input class="form-input" id="doc-name" placeholder="e.g. Dr. Sharma"><div class="form-error" id="doc-name-err"></div></div>
-    <div class="form-group"><label>Specialization *</label><input class="form-input" id="doc-spec" placeholder="e.g. General Dentist"></div>
-    <div class="form-group">
-      <label>Available Days (click to toggle)</label>
+    <div class="form-group"><label>Full Name *</label><input class="form-input" id="doc-name" placeholder="Dr. Sharma"><div class="form-error" id="doc-name-err"></div></div>
+    <div class="form-group"><label>Specialization *</label><input class="form-input" id="doc-spec" placeholder="General Dentist"></div>
+    <div class="form-group"><label>Available Days</label>
       <div class="days-picker" id="days-picker">
-        <span class="day-chip active" data-day="Mon">Mon</span>
-        <span class="day-chip active" data-day="Tue">Tue</span>
-        <span class="day-chip active" data-day="Wed">Wed</span>
-        <span class="day-chip active" data-day="Thu">Thu</span>
-        <span class="day-chip active" data-day="Fri">Fri</span>
-        <span class="day-chip active" data-day="Sat">Sat</span>
-        <span class="day-chip" data-day="Sun">Sun</span>
+        <button class="dp-chip active" data-day="Mon">Mon</button>
+        <button class="dp-chip active" data-day="Tue">Tue</button>
+        <button class="dp-chip active" data-day="Wed">Wed</button>
+        <button class="dp-chip active" data-day="Thu">Thu</button>
+        <button class="dp-chip active" data-day="Fri">Fri</button>
+        <button class="dp-chip active" data-day="Sat">Sat</button>
+        <button class="dp-chip" data-day="Sun">Sun</button>
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeDoctorModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeModal('doctor-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveDoctor()">Save Doctor</button>
     </div>
   </div>
 </div>
 
-<!-- SERVICE MODAL -->
 <div class="modal-bg" id="service-modal">
   <div class="modal">
     <h3 id="svc-modal-title">Add Service</h3>
-    <div class="form-group"><label>Service Name *</label><input class="form-input" id="svc-name" placeholder="e.g. Root Canal"><div class="form-error" id="svc-name-err"></div></div>
-    <div class="form-group"><label>Duration (minutes)</label><input class="form-input" id="svc-duration" type="number" placeholder="30" min="15" max="240"><div style="font-size:11.5px;color:var(--muted);margin-top:4px">Controls how many slots are blocked per booking</div></div>
+    <div class="form-group"><label>Service Name *</label><input class="form-input" id="svc-name" placeholder="Root Canal"><div class="form-error" id="svc-name-err"></div></div>
+    <div class="form-group"><label>Duration (minutes)</label><input class="form-input" id="svc-duration" type="number" placeholder="30" min="15" max="240"></div>
     <div class="form-group"><label>Status</label><select class="form-input" id="svc-active"><option value="1">Active</option><option value="0">Inactive</option></select></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeSvcModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeModal('service-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveService()">Save Service</button>
     </div>
   </div>
 </div>
 
-<!-- HOLIDAY MODAL -->
 <div class="modal-bg" id="holiday-modal">
   <div class="modal">
-    <h3>Add Holiday / Closure</h3>
+    <h3>Add Holiday</h3>
     <div class="form-group"><label>Date *</label><input type="date" class="form-input" id="hol-date"></div>
-    <div class="form-group"><label>Reason</label><input class="form-input" id="hol-reason" placeholder="e.g. Diwali, Doctor Leave"></div>
+    <div class="form-group"><label>Reason</label><input class="form-input" id="hol-reason" placeholder="Diwali, Doctor Leave…"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeHolidayModal()">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeModal('holiday-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="saveHoliday()">Add Holiday</button>
     </div>
   </div>
 </div>
 
-<!-- CHANGE PASSWORD MODAL -->
-<!-- PRESCRIPTION MODAL -->
 <div class="modal-bg" id="rx-modal">
-  <div class="modal" style="width:560px;max-width:100%">
+  <div class="modal" style="width:520px">
     <h3>📋 Prescription &amp; Notes</h3>
     <input type="hidden" id="rx-appt-id">
-    <input type="hidden" id="rx-appt-email">
-
-    <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px" id="rx-appt-info"></div>
-
-    <div class="form-group">
-      <label>Doctor's Notes / Diagnosis</label>
-      <textarea class="form-input" id="rx-notes" rows="4" placeholder="e.g. Patient presented with tooth sensitivity in upper left molar. Cavity detected on X-ray..." style="resize:vertical;min-height:90px"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Prescription</label>
-      <textarea class="form-input" id="rx-prescription" rows="5" placeholder="e.g. 1. Amoxicillin 500mg — 3 times daily for 5 days&#10;2. Ibuprofen 400mg — after meals for pain&#10;3. Chlorhexidine mouthwash — twice daily" style="resize:vertical;min-height:110px;font-family:monospace"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Follow-up Date (optional)</label>
-      <input type="date" class="form-input" id="rx-followup">
-    </div>
-
+    <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px" id="rx-appt-info"></div>
+    <div class="form-group"><label>Doctor Notes / Diagnosis</label><textarea class="form-input" id="rx-notes" rows="4" style="resize:vertical" placeholder="Examination findings…"></textarea></div>
+    <div class="form-group"><label>Prescription</label><textarea class="form-input" id="rx-prescription" rows="5" style="resize:vertical;font-family:monospace" placeholder="1. Medicine 500mg — 3x daily&#10;2. …"></textarea></div>
+    <div class="form-group"><label>Follow-up Date</label><input type="date" class="form-input" id="rx-followup"></div>
     <div id="rx-status" style="font-size:12.5px;min-height:18px;margin-bottom:8px"></div>
-
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="document.getElementById('rx-modal').classList.remove('show')">Cancel</button>
-      <button class="btn btn-ghost" onclick="saveRx(false)">💾 Save Notes</button>
-      <button class="btn btn-primary" onclick="saveRx(true)" id="rx-send-btn">📧 Save &amp; Email Patient</button>
+      <button class="btn btn-ghost" onclick="closeModal('rx-modal')">Cancel</button>
+      <button class="btn btn-ghost" onclick="saveRx(false)">💾 Save</button>
+      <button class="btn btn-primary" id="rx-send-btn" onclick="saveRx(true)">📧 Save &amp; Email</button>
     </div>
   </div>
 </div>
@@ -694,12 +638,12 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 <div class="modal-bg" id="cp-modal">
   <div class="modal">
     <h3>🔑 Change Password</h3>
-    <div class="form-group"><label>Current Password</label><input class="form-input" id="cp-current" type="password" placeholder="Your current password"></div>
+    <div class="form-group"><label>Current Password</label><input class="form-input" id="cp-current" type="password"></div>
     <div class="form-group"><label>New Password</label><input class="form-input" id="cp-new" type="password" placeholder="Min 8 characters"></div>
-    <div class="form-group"><label>Confirm New Password</label><input class="form-input" id="cp-confirm" type="password" placeholder="Repeat new password"></div>
-    <div id="cp-error" style="font-size:12.5px;color:var(--danger);margin-bottom:8px;min-height:18px"></div>
+    <div class="form-group"><label>Confirm New Password</label><input class="form-input" id="cp-confirm" type="password"></div>
+    <div id="cp-error" style="font-size:12px;color:var(--danger);min-height:18px"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="document.getElementById('cp-modal').classList.remove('show')">Cancel</button>
+      <button class="btn btn-ghost" onclick="closeModal('cp-modal')">Cancel</button>
       <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
     </div>
   </div>
@@ -708,12 +652,14 @@ tbody td{padding:13px 22px;font-size:13.5px;vertical-align:middle}
 <div class="toast" id="toast"></div>
 
 <script>
-const API_URL = ''  // Same server — works on any domain
+const API_URL = ''  // Same Render server
 
+/* ── STATE ── */
 let allAppointments = [], allDoctors = [], allSvcs = []
-let activeFilter = 'all'
-let editingDoctorId = null, editingSvcId = null
+let activeFilter = 'all', editingDoctorId = null, editingSvcId = null
 const todayStr = new Date().toISOString().split('T')[0]
+const COLORS = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899']
+let calCurrentMonday = getMonday(new Date())
 
 /* ── AUTH ── */
 function getToken() { return localStorage.getItem('clinic_token') }
@@ -724,48 +670,48 @@ function logout() {
   window.location.href = '/login'
 }
 
-// Redirect to login if not authenticated
 async function checkAuth() {
   const token = getToken()
-  if (!token) { window.location.href = '/login'; return }
+  if (!token) { window.location.href = '/login'; return false }
   try {
-    const controller = new AbortController()
-    const timeout    = setTimeout(() => controller.abort(), 10000)
-    const r = await fetch(API_URL + '/auth/verify', {
-      headers: { 'Authorization': 'Bearer ' + token },
-      signal:  controller.signal
+    const r = await fetch('/auth/verify', {
+      headers: { 'Authorization': 'Bearer ' + token }
     })
-    clearTimeout(timeout)
     if (r.status === 401) {
       localStorage.removeItem('clinic_token')
       window.location.href = '/login'
-      return
+      return false
     }
-    if (!r.ok) throw new Error('Server error ' + r.status)
+    if (!r.ok) {
+      // Server error - show warning but don't redirect
+      showServerWarning()
+      return true
+    }
     const data = await r.json()
     const el = document.getElementById('admin-username')
-    if (el) el.textContent = data.username
+    if (el) el.textContent = data.username || 'admin'
+    return true
   } catch(e) {
-    if (e.name === 'AbortError') {
-      // Server sleeping — show warning but don't redirect
-      const warn = document.createElement('div')
-      warn.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1c1917;padding:10px;text-align:center;font-size:13px;font-weight:500;z-index:999'
-      warn.innerHTML = '⏳ Server is waking up — this takes ~30 seconds on free plan. <button onclick="location.reload()" style="margin-left:12px;padding:4px 12px;background:#1c1917;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600">Refresh</button>'
-      document.body.prepend(warn)
-    } else {
-      // Unknown error — redirect to login only if no token stored
-      console.error('[Auth]', e.message)
-    }
+    // Network error - server may be sleeping
+    showServerWarning()
+    return true  // Don't redirect - let them use the UI
   }
 }
 
+function showServerWarning() {
+  const w = document.createElement('div')
+  w.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1c1917;padding:9px;text-align:center;font-size:13px;font-weight:500;z-index:9999'
+  w.innerHTML = '⏳ Server starting up (~30s on free plan). <button onclick="location.reload()" style="margin-left:10px;padding:3px 10px;background:#1c1917;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600">Refresh</button>'
+  document.body.prepend(w)
+}
+
+/* ── API ── */
 async function api(method, path, body) {
-  const token = getToken()
-  const opts  = {
+  const opts = {
     method,
     headers: {
-      'Content-Type':  'application/json',
-      'Authorization': 'Bearer ' + (token || '')
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + (getToken() || '')
     }
   }
   if (body) opts.body = JSON.stringify(body)
@@ -774,7 +720,7 @@ async function api(method, path, body) {
     r    = await fetch(API_URL + path, opts)
     data = await r.json()
   } catch(e) {
-    throw new Error('Cannot reach server. It may be starting up — wait 30 seconds and refresh.')
+    throw new Error('Cannot reach server. Wait ~30s and refresh.')
   }
   if (r.status === 401) {
     localStorage.removeItem('clinic_token')
@@ -785,165 +731,225 @@ async function api(method, path, body) {
   return data
 }
 
-
-async function changePassword() {
-  const curr = document.getElementById('cp-current').value
-  const newp = document.getElementById('cp-new').value
-  const conf = document.getElementById('cp-confirm').value
-  const err  = document.getElementById('cp-error')
-
-  err.textContent = ''
-  if (!curr || !newp) { err.textContent = 'All fields required'; return }
-  if (newp.length < 8) { err.textContent = 'New password must be at least 8 characters'; return }
-  if (newp !== conf)   { err.textContent = 'New passwords do not match'; return }
-
-  try {
-    await api('POST', '/auth/change-password', { currentPassword: curr, newPassword: newp })
-    document.getElementById('cp-modal').classList.remove('show')
-    document.getElementById('cp-current').value = ''
-    document.getElementById('cp-new').value     = ''
-    document.getElementById('cp-confirm').value = ''
-    toast('success', '✅ Password changed successfully')
-  } catch(e) { err.textContent = e.message }
-}
-
-function showPage(name, el) {
+/* ── NAVIGATION ── */
+function nav(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'))
   document.getElementById('page-' + name).classList.add('active')
   el.classList.add('active')
-  const loaders = { appointments:loadAppointments, today:loadToday, doctors:loadDoctors, services:loadServices, holidays:loadHolidays, waitlist:loadWaitlist, analytics:loadAnalytics, settings:loadSettings, audit:loadAuditLog, calendar:loadCalendar, qr:initQR, revenue:loadRevenue }
+  if (window.innerWidth <= 768) closeSidebar()
+  const loaders = {
+    appointments: loadAppointments, today: loadToday,
+    doctors: loadDoctors, services: loadServices,
+    holidays: loadHolidays, waitlist: loadWaitlist,
+    analytics: loadAnalytics, revenue: loadRevenue,
+    calendar: loadCalendar, audit: loadAuditLog,
+    qr: initQR, settings: loadSettings
+  }
   if (loaders[name]) loaders[name]()
 }
 
+/* ── MOBILE ── */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open')
+  document.getElementById('overlay').classList.toggle('show')
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open')
+  document.getElementById('overlay').classList.remove('show')
+}
+
+/* ── MODALS ── */
+function showModal(id) { document.getElementById(id).classList.add('show') }
+function closeModal(id) { document.getElementById(id).classList.remove('show') }
+
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('show') })
+})
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-bg.show').forEach(m => m.classList.remove('show'))
+})
+
+/* ── TOAST ── */
 function toast(type, msg) {
   const t = document.getElementById('toast')
-  t.textContent = msg; t.className = `toast show ${type}`
-  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 4000)
+  t.textContent = msg
+  t.className = 'toast show ' + type
+  clearTimeout(t._t)
+  t._t = setTimeout(() => t.classList.remove('show'), 4000)
 }
 
+/* ── ESC ── */
 function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,"'")
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 }
 
-// ── APPOINTMENTS ──
+/* ── APPOINTMENTS ── */
 async function loadAppointments() {
   try {
     const [appts, docs] = await Promise.all([api('GET','/appointments'), api('GET','/doctors')])
-    allAppointments = appts; allDoctors = docs
-    const sel = document.getElementById('doctor-filter')
+    allAppointments = appts || []
+    allDoctors      = docs  || []
+    const sel  = document.getElementById('doctor-filter')
     const prev = sel.value
     sel.innerHTML = '<option value="">All Doctors</option>'
-    docs.filter(d=>d.active).forEach(d => { const o=document.createElement('option'); o.value=d.id; o.textContent=d.name; sel.appendChild(o) })
+    docs.filter(d=>d.active).forEach(d => {
+      const o = document.createElement('option')
+      o.value = d.id; o.textContent = d.name; sel.appendChild(o)
+    })
     sel.value = prev
     document.getElementById('stat-total').textContent    = appts.length
     document.getElementById('stat-today').textContent    = appts.filter(a=>a.date===todayStr).length
     document.getElementById('stat-upcoming').textContent = appts.filter(a=>a.date>todayStr).length
     document.getElementById('stat-past').textContent     = appts.filter(a=>a.date<todayStr).length
     renderTable()
-  } catch(e) { document.getElementById('table-container').innerHTML = `<div class="empty">⚠️ ${esc(e.message)}</div>` }
+  } catch(e) {
+    document.getElementById('table-container').innerHTML = '<div class="empty">⚠️ ' + esc(e.message) + '</div>'
+  }
 }
 
-function setFilter(f,el) { activeFilter=f; document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderTable() }
+function setFilter(f, el) {
+  activeFilter = f
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'))
+  el.classList.add('active')
+  renderTable()
+}
 
 function renderTable() {
-  const query=document.getElementById('search').value.toLowerCase(), docId=document.getElementById('doctor-filter').value
-  let data=[...allAppointments]
-  if(activeFilter==='today')    data=data.filter(a=>a.date===todayStr)
-  if(activeFilter==='upcoming') data=data.filter(a=>a.date>todayStr)
-  if(activeFilter==='past')     data=data.filter(a=>a.date<todayStr)
-  if(docId) data=data.filter(a=>String(a.doctor_id)===docId)
-  if(query) data=data.filter(a=>(a.name||'').toLowerCase().includes(query)||(a.phone||'').includes(query)||(a.service||'').toLowerCase().includes(query))
-  if(!data.length){document.getElementById('table-container').innerHTML='<div class="empty">No appointments found.</div>';return}
+  const q   = document.getElementById('search').value.toLowerCase()
+  const did = document.getElementById('doctor-filter').value
+  let data  = [...allAppointments]
+  if (activeFilter==='today')    data = data.filter(a=>a.date===todayStr)
+  if (activeFilter==='upcoming') data = data.filter(a=>a.date>todayStr)
+  if (activeFilter==='past')     data = data.filter(a=>a.date<todayStr)
+  if (did) data = data.filter(a=>String(a.doctor_id)===did)
+  if (q)   data = data.filter(a=>(a.name||'').toLowerCase().includes(q)||(a.phone||'').includes(q)||(a.service||'').toLowerCase().includes(q))
+  if (!data.length) { document.getElementById('table-container').innerHTML='<div class="empty">No appointments found.</div>'; return }
   data.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))
-  const rows=data.map(a=>{
-    const badge=a.date===todayStr?'<span class="badge badge-today">Today</span>':a.date>todayStr?'<span class="badge badge-upcoming">Upcoming</span>':'<span class="badge badge-past">Past</span>'
-    const urg=a.is_urgent?'<span class="badge badge-urgent">🚨</span> ':''
-    const attended = a.attended===1 ? '<span class="badge badge-active">✅ Attended</span>'
-      : a.attended===2 ? '<span class="badge badge-inactive" style="color:#fca5a5">❌ No-show</span>'
-      : a.date<todayStr ? `<button class="btn btn-ghost btn-xs" onclick="markAttendance(${a.id},'${esc(a.name)}')">Mark →</button>`
+
+  const rows = data.map(a => {
+    const badge = a.date===todayStr ? '<span class="badge badge-blue">Today</span>'
+      : a.date>todayStr ? '<span class="badge badge-green">Upcoming</span>'
+      : '<span class="badge badge-gray">Past</span>'
+    const urg  = a.is_urgent ? '<span class="badge badge-red">🚨</span> ' : ''
+    const att  = a.attended===1 ? '<span class="badge badge-green">✅</span>'
+      : a.attended===2 ? '<span class="badge badge-red">❌ No-show</span>'
+      : a.date<todayStr ? '<button class="btn btn-ghost btn-xs" onclick="markAtt(' + a.id + ',\'' + esc(a.name) + '\')">Mark</button>'
       : '—'
-    return `<tr><td class="td-name">${esc(a.name||'—')}</td><td class="td-mono">${esc(a.phone||'—')}</td><td style="color:var(--accent);font-size:12.5px">${esc(a.doctor_name||'Any')}</td><td class="td-mono">${esc(a.date||'—')}</td><td class="td-mono">${esc(a.time||'—')}</td><td>${esc(a.service||'—')}</td><td style="font-size:12px;color:var(--muted)">${esc(a.notes||'—')}</td><td>${urg}${badge}</td><td>${attended}</td><td><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openRx(${a.id},'${esc(a.name)}','${esc(a.email||'')}','${esc(a.date)}','${esc(a.service)}','${esc(a.doctor_name||'')}','${esc(a.notes||'')}','${esc(a.prescription||'')}','${esc(a.follow_up_date||'')}')">📋 Notes</button><button class="btn btn-danger btn-xs" onclick="deleteAppt(${a.id},'${esc(a.name)}')">Delete</button></div></td></tr>`
+    return `<tr>
+      <td class="td-name">${esc(a.name||'—')}</td>
+      <td class="td-mono">${esc(a.phone||'—')}</td>
+      <td style="color:var(--accent);font-size:12px">${esc(a.doctor_name||'Any')}</td>
+      <td class="td-mono">${esc(a.date||'—')}</td>
+      <td class="td-mono">${esc(a.time||'—')}</td>
+      <td>${esc(a.service||'—')}</td>
+      <td>${urg}${badge}</td>
+      <td>${att}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-ghost btn-xs" onclick="openRx(${a.id},'${esc(a.name)}','${esc(a.email||'')}','${esc(a.date)}','${esc(a.service)}','${esc(a.doctor_name||'')}','${esc(a.notes||'')}','${esc(a.prescription||'')}','${esc(a.follow_up_date||'')}')">📋</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteAppt(${a.id},'${esc(a.name)}')">Del</button>
+      </div></td>
+    </tr>`
   }).join('')
-  document.getElementById('table-container').innerHTML=`<table><thead><tr><th>Patient</th><th>Phone</th><th>Doctor</th><th>Date</th><th>Time</th><th>Service</th><th>Notes</th><th>Status</th><th>Attendance</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
+
+  document.getElementById('table-container').innerHTML =
+    `<table><thead><tr><th>Patient</th><th>Phone</th><th>Doctor</th><th>Date</th><th>Time</th><th>Service</th><th>Status</th><th>Attend</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
 }
 
-async function markAttendance(id, name) {
-  const choice = confirm(`Did ${name} attend their appointment?\n\nOK = Attended ✅\nCancel = No-show ❌`)
-  const val    = choice ? 1 : 2
+async function markAtt(id, name) {
+  const ok = confirm(`Did ${name} attend?\nOK = Attended   Cancel = No-show`)
   try {
-    await api('PATCH', `/appointments/${id}/attendance`, { attended: val })
-    const appt = allAppointments.find(a => a.id === id)
-    if (appt) appt.attended = val
+    await api('PATCH', `/appointments/${id}/attendance`, { attended: ok ? 1 : 2 })
+    const a = allAppointments.find(x=>x.id===id)
+    if (a) a.attended = ok ? 1 : 2
     renderTable()
-    toast('success', choice ? `✅ Marked ${name} as attended` : `❌ Marked ${name} as no-show`)
+    toast('success', ok ? '✅ Marked attended' : '❌ Marked no-show')
   } catch(e) { toast('error', e.message) }
 }
 
-async function deleteAppt(id,name) {
-  if(!confirm(`Permanently delete appointment for ${name}?`)) return
-  try { await api('DELETE',`/appointments/${id}`); allAppointments=allAppointments.filter(a=>a.id!==id); document.getElementById('stat-total').textContent=allAppointments.length; renderTable(); toast('success',`Deleted appointment for ${name}`) }
-  catch(e){toast('error',e.message)}
+async function deleteAppt(id, name) {
+  if (!confirm('Delete appointment for ' + name + '?')) return
+  try {
+    await api('DELETE', '/appointments/' + id)
+    allAppointments = allAppointments.filter(a=>a.id!==id)
+    document.getElementById('stat-total').textContent = allAppointments.length
+    renderTable()
+    toast('success', 'Deleted')
+  } catch(e) { toast('error', e.message) }
 }
 
 function exportCSV() {
-  const rows=allAppointments.map(a=>[a.id,a.name,a.phone,a.doctor_name||'',a.date,a.time,a.service,a.notes||''].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','))
-  const csv=['ID,Name,Phone,Doctor,Date,Time,Service,Notes',...rows].join('\n')
-  const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob)
-  const a=document.createElement('a'); a.href=url; a.download=`appointments-${todayStr}.csv`; a.click(); URL.revokeObjectURL(url)
-  toast('success','CSV exported')
+  const rows = allAppointments.map(a =>
+    [a.id,a.name,a.phone,a.doctor_name||'',a.date,a.time,a.service,a.notes||'']
+    .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')
+  )
+  const csv  = ['ID,Name,Phone,Doctor,Date,Time,Service,Notes',...rows].join('\n')
+  const a    = document.createElement('a')
+  a.href     = URL.createObjectURL(new Blob([csv],{type:'text/csv'}))
+  a.download = 'appointments-' + todayStr + '.csv'
+  a.click()
+  toast('success', 'CSV exported')
 }
 
-// ── TODAY ──
+/* ── TODAY ── */
 async function loadToday() {
-  document.getElementById('today-date-label').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})
+  document.getElementById('today-date-label').textContent =
+    new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})
   try {
-    const appts=await api('GET','/appointments/today')
-    const total=appts.length, urg=appts.filter(a=>a.is_urgent).length
-    document.getElementById('today-summary').innerHTML=`<div style="font-size:13px;color:var(--muted)">Total <strong style="color:var(--text)">${total}</strong></div><div style="font-size:13px;color:var(--muted)">Morning <strong style="color:var(--text)">${appts.filter(a=>parseInt(a.time)<12).length}</strong></div><div style="font-size:13px;color:var(--muted)">Afternoon <strong style="color:var(--text)">${appts.filter(a=>parseInt(a.time)>=12).length}</strong></div>${urg?`<div style="font-size:13px;color:var(--muted)">🚨 Urgent <strong style="color:#fca5a5">${urg}</strong></div>`:''}`
-    if(!appts.length){document.getElementById('today-container').innerHTML='<div class="empty">No appointments today 😊</div>';return}
-    const morning=appts.filter(a=>parseInt(a.time)<12), afternoon=appts.filter(a=>parseInt(a.time)>=12)
-    let html=''
-    if(morning.length) html+='<div class="period-label">Morning</div><div class="today-grid">'+morning.map(todayCard).join('')+'</div>'
-    if(afternoon.length) html+='<div class="period-label">Afternoon / Evening</div><div class="today-grid">'+afternoon.map(todayCard).join('')+'</div>'
-    document.getElementById('today-container').innerHTML=html
-  } catch(e){document.getElementById('today-container').innerHTML=`<div class="empty">⚠️ ${esc(e.message)}</div>`}
+    const appts = await api('GET','/appointments/today')
+    const urg   = appts.filter(a=>a.is_urgent).length
+    document.getElementById('today-summary').innerHTML =
+      `<span>Total <strong style="color:var(--text)">${appts.length}</strong></span>
+       <span>Morning <strong style="color:var(--text)">${appts.filter(a=>parseInt(a.time)<12).length}</strong></span>
+       <span>Afternoon <strong style="color:var(--text)">${appts.filter(a=>parseInt(a.time)>=12).length}</strong></span>
+       ${urg ? `<span style="color:var(--danger)">🚨 Urgent <strong>${urg}</strong></span>` : ''}`
+    if (!appts.length) { document.getElementById('today-container').innerHTML='<div class="empty">No appointments today 😊</div>'; return }
+    const am = appts.filter(a=>parseInt(a.time)<12), pm = appts.filter(a=>parseInt(a.time)>=12)
+    let html = ''
+    if (am.length) html += '<div class="period-label">Morning</div><div class="today-grid">'+am.map(apptCard).join('')+'</div>'
+    if (pm.length) html += '<div class="period-label">Afternoon</div><div class="today-grid">'+pm.map(apptCard).join('')+'</div>'
+    document.getElementById('today-container').innerHTML = html
+  } catch(e) { document.getElementById('today-container').innerHTML='<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
-function todayCard(a) {
-  const [h,m]=(a.time||'0:0').split(':').map(Number), p=h>=12?'PM':'AM', h12=h%12||12
+function apptCard(a) {
+  const [h,m] = (a.time||'0:0').split(':').map(Number)
   return `<div class="appt-card ${a.is_urgent?'appt-urgent':''}">
-    <div class="appt-time">${h12}:${String(m).padStart(2,'0')} ${p}</div>
+    <div class="appt-time">${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}</div>
     <div class="appt-name">${esc(a.name)}</div>
     <div class="appt-detail">${esc(a.service)}</div>
-    <div class="appt-detail" style="color:var(--accent)">${esc(a.doctor_name||'Any doctor')}</div>
+    <div class="appt-detail" style="color:var(--accent)">${esc(a.doctor_name||'Any')}</div>
     <div class="appt-detail">${esc(a.phone)}</div>
-    ${a.notes?`<div class="appt-detail" style="font-style:italic;margin-top:4px">${esc(a.notes)}</div>`:''}
+    ${a.notes?`<div class="appt-detail" style="font-style:italic">${esc(a.notes)}</div>`:''}
   </div>`
 }
 
-// ── DOCTORS ──
+/* ── DOCTORS ── */
 async function loadDoctors() {
   try {
-    const docs=await api('GET','/doctors'); allDoctors=docs
-    const showInactive=document.getElementById('show-inactive')?.checked
-    renderDoctors(showInactive?docs:docs.filter(d=>d.active))
-  } catch(e){document.getElementById('doctor-grid').innerHTML=`<div class="empty">⚠️ ${esc(e.message)}</div>`}
+    const docs = await api('GET','/doctors')
+    allDoctors = docs
+    const show = document.getElementById('show-inactive')?.checked
+    renderDoctors(show ? docs : docs.filter(d=>d.active))
+  } catch(e) { document.getElementById('doctor-grid').innerHTML='<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
 function renderDoctors(docs) {
-  if(!docs.length){document.getElementById('doctor-grid').innerHTML='<div class="empty">No doctors yet. Click "+ Add Doctor" to add one.</div>';return}
-  document.getElementById('doctor-grid').innerHTML=docs.map(d=>{
-    const allDays=['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-    const activeDays=(d.available_days||'').split(',').map(x=>x.trim())
-    const dayChips=allDays.map(day=>`<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;margin:2px;background:${activeDays.includes(day)?'rgba(59,130,246,.2)':'var(--border)'};color:${activeDays.includes(day)?'#93c5fd':'var(--muted)'};">${day}</span>`).join('')
-    return `<div class="doctor-card ${d.active?'':'inactive'}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-        <div><div class="doctor-card-name">${esc(d.name)}</div><div style="font-size:12px;color:var(--accent)">${esc(d.specialization)}</div></div>
-        <span class="badge ${d.active?'badge-active':'badge-inactive'}">${d.active?'Active':'Inactive'}</span>
+  if (!docs.length) { document.getElementById('doctor-grid').innerHTML='<div class="empty">No doctors yet. Click + Add.</div>'; return }
+  const ALL = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+  document.getElementById('doctor-grid').innerHTML = docs.map(d => {
+    const active = (d.available_days||'').split(',').map(x=>x.trim())
+    const chips  = ALL.map(day=>`<span class="day-chip ${active.includes(day)?'day-on':'day-off'}">${day}</span>`).join('')
+    return `<div class="doc-card ${d.active?'':'inactive'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div>
+          <div class="doc-name">${esc(d.name)}</div>
+          <div class="doc-spec">${esc(d.specialization)}</div>
+        </div>
+        <span class="badge ${d.active?'badge-green':'badge-gray'}">${d.active?'Active':'Off'}</span>
       </div>
-      <div class="doctor-card-days" style="margin-bottom:12px">${dayChips}</div>
-      <div class="doctor-card-actions">
+      <div class="doc-days">${chips}</div>
+      <div class="doc-actions">
         <button class="btn btn-ghost btn-sm" onclick="openDoctorModal(${d.id})">Edit</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleDoctor(${d.id},'${esc(d.name)}')">${d.active?'Deactivate':'Activate'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteDoctor(${d.id},'${esc(d.name)}')">Delete</button>
@@ -953,652 +959,423 @@ function renderDoctors(docs) {
 }
 
 function openDoctorModal(id) {
-  editingDoctorId=id||null
-  document.getElementById('doctor-modal-title').textContent=id?'Edit Doctor':'Add Doctor'
-  document.getElementById('doc-name-err').textContent=''
-  if(id) {
-    const doc=allDoctors.find(d=>d.id===id)
-    if(doc) {
-      document.getElementById('doc-name').value=doc.name
-      document.getElementById('doc-spec').value=doc.specialization
-      const activeDays=(doc.available_days||'').split(',').map(x=>x.trim())
-      document.querySelectorAll('#days-picker .day-chip').forEach(c=>c.classList.toggle('active',activeDays.includes(c.dataset.day)))
+  editingDoctorId = id || null
+  document.getElementById('doctor-modal-title').textContent = id ? 'Edit Doctor' : 'Add Doctor'
+  document.getElementById('doc-name-err').textContent = ''
+  if (id) {
+    const d = allDoctors.find(x=>x.id===id)
+    if (d) {
+      document.getElementById('doc-name').value = d.name
+      document.getElementById('doc-spec').value = d.specialization
+      const a = (d.available_days||'').split(',').map(x=>x.trim())
+      document.querySelectorAll('#days-picker .dp-chip').forEach(c=>c.classList.toggle('active',a.includes(c.dataset.day)))
     }
   } else {
-    document.getElementById('doc-name').value=''
-    document.getElementById('doc-spec').value=''
-    document.querySelectorAll('#days-picker .day-chip').forEach(c=>c.classList.toggle('active',c.dataset.day!=='Sun'))
+    document.getElementById('doc-name').value = ''
+    document.getElementById('doc-spec').value = ''
+    document.querySelectorAll('#days-picker .dp-chip').forEach(c=>c.classList.toggle('active',c.dataset.day!=='Sun'))
   }
-  document.getElementById('doctor-modal').classList.add('show')
+  showModal('doctor-modal')
   setTimeout(()=>document.getElementById('doc-name').focus(),100)
 }
 
-function closeDoctorModal(){document.getElementById('doctor-modal').classList.remove('show')}
+function closeDoctorModal() { closeModal('doctor-modal') }
 
-document.querySelectorAll('#days-picker .day-chip').forEach(c=>{ c.onclick=()=>c.classList.toggle('active') })
+document.querySelectorAll('#days-picker .dp-chip').forEach(c=>{ c.onclick=()=>c.classList.toggle('active') })
 
 async function saveDoctor() {
-  const name=document.getElementById('doc-name').value.trim()
-  const spec=document.getElementById('doc-spec').value.trim()
-  const days=[...document.querySelectorAll('#days-picker .day-chip.active')].map(c=>c.dataset.day).join(',')
-  if(!name){document.getElementById('doc-name-err').textContent='Name is required';document.getElementById('doc-name').classList.add('error');return}
-  document.getElementById('doc-name').classList.remove('error');document.getElementById('doc-name-err').textContent=''
+  const name = document.getElementById('doc-name').value.trim()
+  const spec = document.getElementById('doc-spec').value.trim()
+  const days = [...document.querySelectorAll('#days-picker .dp-chip.active')].map(c=>c.dataset.day).join(',')
+  if (!name) { document.getElementById('doc-name-err').textContent='Name required'; return }
+  document.getElementById('doc-name-err').textContent = ''
   try {
-    if(editingDoctorId) { await api('PUT',`/doctors/${editingDoctorId}`,{name,specialization:spec||'General Dentist',available_days:days||'Mon,Tue,Wed,Thu,Fri,Sat',active:1}); toast('success',`${name} updated`) }
-    else { await api('POST','/doctors',{name,specialization:spec||'General Dentist',available_days:days||'Mon,Tue,Wed,Thu,Fri,Sat'}); toast('success',`${name} added`) }
-    closeDoctorModal(); loadDoctors()
-  } catch(e){toast('error',e.message)}
+    if (editingDoctorId) await api('PUT',`/doctors/${editingDoctorId}`,{name,specialization:spec||'General',available_days:days||'Mon,Tue,Wed,Thu,Fri,Sat',active:1})
+    else                 await api('POST','/doctors',{name,specialization:spec||'General',available_days:days||'Mon,Tue,Wed,Thu,Fri,Sat'})
+    closeModal('doctor-modal')
+    loadDoctors()
+    toast('success', (editingDoctorId?'Updated: ':'Added: ')+name)
+  } catch(e) { toast('error',e.message) }
 }
 
 async function toggleDoctor(id,name) {
-  try { await api('PATCH',`/doctors/${id}/toggle`); toast('info',`${name} status updated`); loadDoctors() }
-  catch(e){toast('error',e.message)}
+  try { await api('PATCH',`/doctors/${id}/toggle`); loadDoctors(); toast('info',name+' status changed') }
+  catch(e) { toast('error',e.message) }
 }
 
 async function deleteDoctor(id,name) {
-  if(!confirm(`Permanently delete ${name}? This cannot be undone.`)) return
-  try { await api('DELETE',`/doctors/${id}`); toast('success',`${name} deleted`); loadDoctors() }
-  catch(e){toast('error',e.message)}
+  if (!confirm('Permanently delete '+name+'?')) return
+  try { await api('DELETE','/doctors/'+id); loadDoctors(); toast('success','Deleted: '+name) }
+  catch(e) { toast('error',e.message) }
 }
 
-// ── SERVICES ──
+/* ── SERVICES ── */
 async function loadServices() {
-  try { allSvcs=await api('GET','/services'); renderServices(allSvcs) }
-  catch(e){document.getElementById('service-table').innerHTML=`<div class="empty">⚠️ ${esc(e.message)}</div>`}
+  try { allSvcs = await api('GET','/services'); renderServices(allSvcs) }
+  catch(e) { document.getElementById('service-table').innerHTML='<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
 function renderServices(svcs) {
-  if(!svcs.length){document.getElementById('service-table').innerHTML='<div class="empty">No services yet. Click "+ Add Service".</div>';return}
-  const rows=svcs.map(s=>`<tr>
+  if (!svcs.length) { document.getElementById('service-table').innerHTML='<div class="empty">No services. Click + Add.</div>'; return }
+  const rows = svcs.map(s=>`<tr>
     <td class="td-name">${esc(s.name)}</td>
-    <td><span class="badge badge-upcoming">${s.duration_minutes} min</span></td>
-    <td style="color:var(--muted);font-size:12px">${Math.ceil(s.duration_minutes/30)} slot(s)</td>
-    <td><span class="badge ${s.active?'badge-active':'badge-inactive'}">${s.active?'Active':'Inactive'}</span></td>
-    <td><div class="td-actions"><button class="btn btn-ghost btn-xs" onclick="openServiceModal(${s.id})">Edit</button><button class="btn btn-danger btn-xs" onclick="deleteService(${s.id},'${esc(s.name)}')">Delete</button></div></td>
+    <td><span class="badge badge-blue">${s.duration_minutes} min</span></td>
+    <td style="font-size:12px;color:var(--muted)">${Math.ceil(s.duration_minutes/30)} slot(s)</td>
+    <td><span class="badge ${s.active?'badge-green':'badge-gray'}">${s.active?'Active':'Inactive'}</span></td>
+    <td><div class="td-actions">
+      <button class="btn btn-ghost btn-xs" onclick="openServiceModal(${s.id})">Edit</button>
+      <button class="btn btn-danger btn-xs" onclick="deleteService(${s.id},'${esc(s.name)}')">Delete</button>
+    </div></td>
   </tr>`).join('')
   document.getElementById('service-table').innerHTML=`<table><thead><tr><th>Service</th><th>Duration</th><th>Slots</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
 }
 
 function openServiceModal(id) {
-  editingSvcId=id||null
-  document.getElementById('svc-modal-title').textContent=id?'Edit Service':'Add Service'
-  document.getElementById('svc-name-err').textContent=''
-  if(id) {
-    const s=allSvcs.find(x=>x.id===id)
-    if(s){document.getElementById('svc-name').value=s.name;document.getElementById('svc-duration').value=s.duration_minutes;document.getElementById('svc-active').value=s.active?'1':'0'}
+  editingSvcId = id || null
+  document.getElementById('svc-modal-title').textContent = id ? 'Edit Service' : 'Add Service'
+  document.getElementById('svc-name-err').textContent = ''
+  if (id) {
+    const s = allSvcs.find(x=>x.id===id)
+    if (s) {
+      document.getElementById('svc-name').value     = s.name
+      document.getElementById('svc-duration').value = s.duration_minutes
+      document.getElementById('svc-active').value   = s.active ? '1' : '0'
+    }
   } else {
-    document.getElementById('svc-name').value='';document.getElementById('svc-duration').value='30';document.getElementById('svc-active').value='1'
+    document.getElementById('svc-name').value     = ''
+    document.getElementById('svc-duration').value = '30'
+    document.getElementById('svc-active').value   = '1'
   }
-  document.getElementById('service-modal').classList.add('show')
+  showModal('service-modal')
   setTimeout(()=>document.getElementById('svc-name').focus(),100)
 }
 
-function closeSvcModal(){document.getElementById('service-modal').classList.remove('show')}
+function closeSvcModal() { closeModal('service-modal') }
 
 async function saveService() {
-  const name=document.getElementById('svc-name').value.trim()
-  const duration=parseInt(document.getElementById('svc-duration').value)||30
-  const active=document.getElementById('svc-active').value==='1'?1:0
-  if(!name){document.getElementById('svc-name-err').textContent='Service name is required';return}
-  document.getElementById('svc-name-err').textContent=''
+  const name     = document.getElementById('svc-name').value.trim()
+  const duration = parseInt(document.getElementById('svc-duration').value)||30
+  const active   = document.getElementById('svc-active').value==='1' ? 1 : 0
+  if (!name) { document.getElementById('svc-name-err').textContent='Name required'; return }
+  document.getElementById('svc-name-err').textContent = ''
   try {
-    if(editingSvcId){await api('PUT',`/services/${editingSvcId}`,{name,duration_minutes:duration,active});toast('success',`${name} updated`)}
-    else{await api('POST','/services',{name,duration_minutes:duration});toast('success',`${name} added`)}
-    closeSvcModal(); loadServices()
-  } catch(e){toast('error',e.message)}
+    if (editingSvcId) await api('PUT',`/services/${editingSvcId}`,{name,duration_minutes:duration,active})
+    else              await api('POST','/services',{name,duration_minutes:duration})
+    closeModal('service-modal')
+    loadServices()
+    toast('success',(editingSvcId?'Updated: ':'Added: ')+name)
+  } catch(e) { toast('error',e.message) }
 }
 
 async function deleteService(id,name) {
-  if(!confirm(`Permanently delete "${name}"?`)) return
-  try{await api('DELETE',`/services/${id}`);toast('success',`${name} deleted`);loadServices()}
-  catch(e){toast('error',e.message)}
+  if (!confirm('Delete service "'+name+'"?')) return
+  try { await api('DELETE','/services/'+id); loadServices(); toast('success','Deleted') }
+  catch(e) { toast('error',e.message) }
 }
 
-// ── HOLIDAYS ──
+/* ── HOLIDAYS ── */
 async function loadHolidays() {
   try {
-    const holidays=await api('GET','/holidays')
-    if(!holidays.length){document.getElementById('holiday-table').innerHTML='<div class="empty">No holidays added.</div>';return}
-    const rows=holidays.map(h=>`<tr><td class="td-mono">${esc(h.date)}</td><td class="td-name">${esc(h.reason)}</td><td><span class="badge ${h.date>=todayStr?'badge-upcoming':'badge-past'}">${h.date>=todayStr?'Upcoming':'Past'}</span></td><td><button class="btn btn-danger btn-xs" onclick="deleteHoliday(${h.id},'${esc(h.reason)}')">Remove</button></td></tr>`).join('')
+    const h = await api('GET','/holidays')
+    if (!h.length) { document.getElementById('holiday-table').innerHTML='<div class="empty">No holidays. Clinic open all working days.</div>'; return }
+    const rows = h.map(x=>`<tr>
+      <td class="td-mono">${esc(x.date)}</td>
+      <td class="td-name">${esc(x.reason)}</td>
+      <td><span class="badge ${x.date>=todayStr?'badge-blue':'badge-gray'}">${x.date>=todayStr?'Upcoming':'Past'}</span></td>
+      <td><button class="btn btn-danger btn-xs" onclick="deleteHoliday(${x.id},'${esc(x.reason)}')">Remove</button></td>
+    </tr>`).join('')
     document.getElementById('holiday-table').innerHTML=`<table><thead><tr><th>Date</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
-  } catch(e){document.getElementById('holiday-table').innerHTML=`<div class="empty">⚠️ ${esc(e.message)}</div>`}
+  } catch(e) { document.getElementById('holiday-table').innerHTML='<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
-function openHolidayModal(){document.getElementById('hol-date').value='';document.getElementById('hol-reason').value='';document.getElementById('holiday-modal').classList.add('show')}
-function closeHolidayModal(){document.getElementById('holiday-modal').classList.remove('show')}
+function openHolidayModal() { document.getElementById('hol-date').value=''; document.getElementById('hol-reason').value=''; showModal('holiday-modal') }
+function closeHolidayModal() { closeModal('holiday-modal') }
 
 async function saveHoliday() {
-  const date=document.getElementById('hol-date').value, reason=document.getElementById('hol-reason').value.trim()||'Clinic Holiday'
-  if(!date){toast('error','Please select a date');return}
-  try{await api('POST','/holidays',{date,reason});closeHolidayModal();loadHolidays();toast('success',`Holiday added: ${date}`)}
-  catch(e){toast('error',e.message)}
+  const date   = document.getElementById('hol-date').value
+  const reason = document.getElementById('hol-reason').value.trim()||'Clinic Holiday'
+  if (!date) { toast('error','Select a date'); return }
+  try { await api('POST','/holidays',{date,reason}); closeModal('holiday-modal'); loadHolidays(); toast('success','Holiday added') }
+  catch(e) { toast('error',e.message) }
 }
 
 async function deleteHoliday(id,reason) {
-  if(!confirm(`Remove holiday: ${reason}?`)) return
-  try{await api('DELETE',`/holidays/${id}`);loadHolidays();toast('success','Holiday removed')}
-  catch(e){toast('error',e.message)}
+  if (!confirm('Remove: '+reason+'?')) return
+  try { await api('DELETE','/holidays/'+id); loadHolidays(); toast('success','Removed') }
+  catch(e) { toast('error',e.message) }
 }
 
-// ── WAITLIST ──
+/* ── WAITLIST ── */
 async function loadWaitlist() {
   try {
-    const data=await api('GET','/waitlist')
-    if(!data.length){document.getElementById('waitlist-table').innerHTML='<div class="empty">No one on the waitlist 🎉</div>';return}
-    const rows=data.map((w,i)=>`<tr><td style="color:var(--muted);font-size:12px">${i+1}</td><td class="td-name">${esc(w.name)}</td><td class="td-mono">${esc(w.phone)}</td><td class="td-mono">${esc(w.date)}</td><td>${esc(w.service)}</td><td style="color:var(--accent);font-size:12.5px">${esc(w.doctor_name||'Any')}</td><td>${esc(w.email||'—')}</td><td><span class="badge ${w.notified?'badge-today':w.date<todayStr?'badge-past':'badge-upcoming'}">${w.notified?'Notified':w.date<todayStr?'Expired':'Waiting'}</span></td><td><button class="btn btn-danger btn-xs" onclick="removeWaiter(${w.id},'${esc(w.name)}')">Remove</button></td></tr>`).join('')
-    document.getElementById('waitlist-table').innerHTML=`<table><thead><tr><th>#</th><th>Patient</th><th>Phone</th><th>Date</th><th>Service</th><th>Doctor</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
-  } catch(e){document.getElementById('waitlist-table').innerHTML=`<div class="empty">⚠️ ${esc(e.message)}</div>`}
+    const data = await api('GET','/waitlist')
+    if (!data.length) { document.getElementById('waitlist-table').innerHTML='<div class="empty">No one on waitlist 🎉</div>'; return }
+    const rows = data.map((w,i)=>`<tr>
+      <td style="color:var(--muted);font-size:12px">${i+1}</td>
+      <td class="td-name">${esc(w.name)}</td>
+      <td class="td-mono">${esc(w.phone)}</td>
+      <td class="td-mono">${esc(w.date)}</td>
+      <td>${esc(w.service)}</td>
+      <td><span class="badge ${w.notified?'badge-blue':w.date<todayStr?'badge-gray':'badge-green'}">${w.notified?'Notified':w.date<todayStr?'Expired':'Waiting'}</span></td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeWaiter(${w.id},'${esc(w.name)}')">Remove</button></td>
+    </tr>`).join('')
+    document.getElementById('waitlist-table').innerHTML=`<table><thead><tr><th>#</th><th>Patient</th><th>Phone</th><th>Date</th><th>Service</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`
+  } catch(e) { document.getElementById('waitlist-table').innerHTML='<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
 async function removeWaiter(id,name) {
-  if(!confirm(`Remove ${name} from waitlist?`)) return
-  try{await api('DELETE',`/waitlist/${id}`);loadWaitlist();toast('success',`${name} removed`)}
-  catch(e){toast('error',e.message)}
+  if (!confirm('Remove '+name+' from waitlist?')) return
+  try { await api('DELETE','/waitlist/'+id); loadWaitlist(); toast('success','Removed') }
+  catch(e) { toast('error',e.message) }
 }
 
-// ── ANALYTICS ──
+/* ── ANALYTICS ── */
 async function loadAnalytics() {
   try {
-    const data=await api('GET','/analytics')
-    if(data.topServices?.length){
-      const rows=data.topServices.map(s=>`<tr><td class="td-name">${esc(s.service)}</td><td><strong style="color:var(--accent)">${s.count}</strong> bookings</td></tr>`).join('')
+    const data = await api('GET','/analytics')
+    if (data.topServices?.length) {
+      const rows = data.topServices.map(s=>`<tr><td class="td-name">${esc(s.service)}</td><td><strong style="color:var(--accent)">${s.count}</strong></td></tr>`).join('')
       document.getElementById('analytics-services').innerHTML=`<table><thead><tr><th>Service</th><th>Bookings</th></tr></thead><tbody>${rows}</tbody></table>`
-    } else document.getElementById('analytics-services').innerHTML='<div class="empty">No booking data yet</div>'
-
-    if(data.dropOffs?.length){
-      const rows=data.dropOffs.map(d=>{const rate=Math.round((d.success_rate||0)*100);return`<tr><td class="td-name">${esc(d.intent)}</td><td>${d.count}</td><td><span style="color:${rate>50?'var(--accent2)':'var(--warn)'}">${rate}% success</span></td></tr>`}).join('')
-      document.getElementById('analytics-dropoff').innerHTML=`<table><thead><tr><th>Intent</th><th>Count</th><th>Success Rate</th></tr></thead><tbody>${rows}</tbody></table>`
-    } else document.getElementById('analytics-dropoff').innerHTML='<div class="empty">No intent data yet</div>'
-  } catch(e){ document.getElementById('analytics-services').innerHTML=`<div class="empty">⚠️ ${esc(e.message)}</div>` }
+    } else document.getElementById('analytics-services').innerHTML='<div class="empty">No data yet</div>'
+    if (data.dropOffs?.length) {
+      const rows = data.dropOffs.map(d=>{const r=Math.round((d.success_rate||0)*100);return`<tr><td class="td-name">${esc(d.intent)}</td><td>${d.count}</td><td style="color:${r>50?'var(--accent2)':'var(--warn)'}">${r}%</td></tr>`}).join('')
+      document.getElementById('analytics-dropoff').innerHTML=`<table><thead><tr><th>Intent</th><th>Count</th><th>Success</th></tr></thead><tbody>${rows}</tbody></table>`
+    } else document.getElementById('analytics-dropoff').innerHTML='<div class="empty">No data yet</div>'
+  } catch(e) { document.getElementById('analytics-services').innerHTML='<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
-// ── SETTINGS ──
+/* ── SETTINGS ── */
 async function loadSettings() {
   try {
-    const cfg = await api('GET', '/clinic-config')
-    document.getElementById('cfg-name').value       = cfg.clinic_name    || ''
-    document.getElementById('cfg-icon').value       = cfg.clinic_icon    || '🏥'
-    document.getElementById('cfg-tagline').value    = cfg.clinic_tagline || ''
-    document.getElementById('cfg-type').value       = cfg.clinic_type    || 'dental'
-    document.getElementById('cfg-phone').value      = cfg.clinic_phone   || ''
-    document.getElementById('cfg-address').value    = cfg.clinic_address || ''
-    document.getElementById('cfg-website').value    = cfg.clinic_website || ''
-    document.getElementById('cfg-whatsapp').value   = cfg.whatsapp       || ''
-    document.getElementById('cfg-maps').value       = cfg.google_maps    || ''
-    document.getElementById('cfg-email').value      = cfg.clinic_email   || ''
-    document.getElementById('cfg-open').value       = cfg.open_hour      || 10
-    document.getElementById('cfg-close').value      = cfg.close_hour     || 17
-    document.getElementById('cfg-slot').value       = cfg.slot_duration  || 30
-    document.getElementById('cfg-max').value        = cfg.max_per_day    || 20
-
-    // Set open days picker
-    const openDays = (cfg.open_days || 'Mon,Tue,Wed,Thu,Fri,Sat').split(',').map(d => d.trim())
-    document.querySelectorAll('#cfg-days-picker .day-chip').forEach(c => {
-      c.classList.toggle('active', openDays.includes(c.dataset.day))
-    })
-    document.getElementById('cfg-days').value = openDays.join(',')
-
+    const cfg = await api('GET','/clinic-config')
+    document.getElementById('cfg-name').value      = cfg.clinic_name    || ''
+    document.getElementById('cfg-icon').value      = cfg.clinic_icon    || '🏥'
+    document.getElementById('cfg-tagline').value   = cfg.clinic_tagline || ''
+    document.getElementById('cfg-type').value      = cfg.clinic_type    || 'dental'
+    document.getElementById('cfg-phone').value     = cfg.clinic_phone   || ''
+    document.getElementById('cfg-address').value   = cfg.clinic_address || ''
+    document.getElementById('cfg-website').value   = cfg.clinic_website || ''
+    document.getElementById('cfg-whatsapp').value  = cfg.whatsapp       || ''
+    document.getElementById('cfg-maps').value      = cfg.google_maps    || ''
+    document.getElementById('cfg-email').value     = cfg.clinic_email   || ''
+    document.getElementById('cfg-open').value      = cfg.open_hour      || 10
+    document.getElementById('cfg-close').value     = cfg.close_hour     || 17
+    document.getElementById('cfg-slot').value      = cfg.slot_duration  || 30
+    document.getElementById('cfg-max').value       = cfg.max_per_day    || 20
     document.getElementById('cfg-deposit-enabled').value = cfg.deposit_enabled || 0
     document.getElementById('cfg-deposit-amount').value  = cfg.deposit_amount  || ''
-
-    // Load email status from server
+    const days = (cfg.open_days||'Mon,Tue,Wed,Thu,Fri,Sat').split(',').map(d=>d.trim())
+    document.querySelectorAll('#cfg-days-picker .dp-chip').forEach(c=>c.classList.toggle('active',days.includes(c.dataset.day)))
     loadEmailStatus()
-
-  } catch(e) { toast('error', 'Could not load settings: ' + e.message) }
+  } catch(e) { toast('error','Could not load settings: '+e.message) }
 }
 
 async function loadEmailStatus() {
   try {
-    const status = await api('GET', '/email-status')
-    const box    = document.getElementById('email-status-box')
+    const s   = await api('GET','/email-status')
+    const box = document.getElementById('email-status-box')
     if (!box) return
-    if (status.configured) {
-      box.style.background = 'rgba(16,185,129,.08)'
-      box.style.border     = '1px solid rgba(16,185,129,.3)'
-      box.style.color      = '#6ee7b7'
-      box.innerHTML        = '✅ Resend is configured. Emails will be sent automatically.'
+    if (s.configured) {
+      box.style.cssText = 'padding:10px 14px;border-radius:7px;font-size:12.5px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:#6ee7b7'
+      box.textContent = '✅ Resend configured — emails will send automatically'
     } else {
-      box.style.background = 'rgba(245,158,11,.08)'
-      box.style.border     = '1px solid rgba(245,158,11,.3)'
-      box.style.color      = '#fcd34d'
-      box.innerHTML        = '⚠️ RESEND_API_KEY not set. Add it in Render → Environment Variables to enable emails.'
+      box.style.cssText = 'padding:10px 14px;border-radius:7px;font-size:12.5px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fcd34d'
+      box.textContent = '⚠️ RESEND_API_KEY not set in Render environment variables'
     }
-  } catch(e) { /* silently ignore */ }
+  } catch(e) {}
 }
 
 async function saveSettings() {
-  const openDays = [...document.querySelectorAll('#cfg-days-picker .day-chip.active')].map(c => c.dataset.day).join(',')
-  document.getElementById('cfg-days').value = openDays
-
+  const days = [...document.querySelectorAll('#cfg-days-picker .dp-chip.active')].map(c=>c.dataset.day).join(',')
   const body = {
-    clinic_name:    document.getElementById('cfg-name').value,
-    clinic_icon:    document.getElementById('cfg-icon').value || '🏥',
-    clinic_tagline: document.getElementById('cfg-tagline').value,
-    clinic_type:    document.getElementById('cfg-type').value,
-    clinic_phone:   document.getElementById('cfg-phone').value,
-    clinic_address: document.getElementById('cfg-address').value,
-    clinic_website: document.getElementById('cfg-website').value,
-    whatsapp:       document.getElementById('cfg-whatsapp').value,
-    google_maps:    document.getElementById('cfg-maps').value,
-    clinic_email:   document.getElementById('cfg-email').value,
-    open_hour:      parseInt(document.getElementById('cfg-open').value)  || 10,
-    close_hour:     parseInt(document.getElementById('cfg-close').value) || 17,
-    slot_duration:  parseInt(document.getElementById('cfg-slot').value)  || 30,
-    open_days:      openDays || 'Mon,Tue,Wed,Thu,Fri,Sat',
-    max_per_day:     parseInt(document.getElementById('cfg-max').value)            || 20,
-    deposit_enabled: parseInt(document.getElementById('cfg-deposit-enabled')?.value) || 0,
-    deposit_amount:  parseInt(document.getElementById('cfg-deposit-amount')?.value)  || 0
+    clinic_name:     document.getElementById('cfg-name').value,
+    clinic_icon:     document.getElementById('cfg-icon').value    || '🏥',
+    clinic_tagline:  document.getElementById('cfg-tagline').value,
+    clinic_type:     document.getElementById('cfg-type').value,
+    clinic_phone:    document.getElementById('cfg-phone').value,
+    clinic_address:  document.getElementById('cfg-address').value,
+    clinic_website:  document.getElementById('cfg-website').value,
+    whatsapp:        document.getElementById('cfg-whatsapp').value,
+    google_maps:     document.getElementById('cfg-maps').value,
+    clinic_email:    document.getElementById('cfg-email').value,
+    open_hour:       parseInt(document.getElementById('cfg-open').value)  || 10,
+    close_hour:      parseInt(document.getElementById('cfg-close').value) || 17,
+    slot_duration:   parseInt(document.getElementById('cfg-slot').value)  || 30,
+    open_days:       days || 'Mon,Tue,Wed,Thu,Fri,Sat',
+    max_per_day:     parseInt(document.getElementById('cfg-max').value)   || 20,
+    deposit_enabled: parseInt(document.getElementById('cfg-deposit-enabled').value) || 0,
+    deposit_amount:  parseInt(document.getElementById('cfg-deposit-amount').value)  || 0
   }
-
-  try {
-    await api('PUT', '/clinic-config', body)
-    toast('success', '✅ Settings saved — clinic page updated!')
-  } catch(e) { toast('error', 'Could not save: ' + e.message) }
+  try { await api('PUT','/clinic-config',body); toast('success','✅ Settings saved!') }
+  catch(e) { toast('error','Save failed: '+e.message) }
 }
 
-function previewClinicPage() { window.open('/', '_blank') }
-
 async function testEmail() {
-  const to = document.getElementById('test-email-addr')?.value || document.getElementById('cfg-email')?.value
-  if (!to) { toast('error', 'Enter an email address to send test to'); return }
-  toast('info', 'Sending test email via Resend…')
-  try {
-    await api('POST', '/test-email', { to })
-    toast('success', '✅ Test email sent! Check your inbox.')
-  } catch(e) {
-    toast('error', '❌ ' + e.message)
-  }
+  const to = document.getElementById('test-email-addr').value
+  if (!to) { toast('error','Enter email address'); return }
+  toast('info','Sending…')
+  try { await api('POST','/test-email',{to}); toast('success','✅ Test email sent!') }
+  catch(e) { toast('error','❌ '+e.message) }
 }
 
 async function sendWeeklyReport() {
-  const to = document.getElementById('report-email-addr')?.value || document.getElementById('cfg-email')?.value
-  if (!to) { toast('error', 'Enter an email address for the report'); return }
-  toast('info', 'Generating weekly report…')
+  const to = document.getElementById('report-email-addr').value
+  if (!to) { toast('error','Enter email address'); return }
+  toast('info','Generating report…')
+  try { await api('POST','/send-weekly-report',{to}); toast('success','📊 Weekly report sent!') }
+  catch(e) { toast('error','❌ '+e.message) }
+}
+
+function previewClinicPage() { window.open('/','_blank') }
+
+async function changePassword() {
+  const curr = document.getElementById('cp-current').value
+  const newp = document.getElementById('cp-new').value
+  const conf = document.getElementById('cp-confirm').value
+  const err  = document.getElementById('cp-error')
+  err.textContent = ''
+  if (!curr||!newp) { err.textContent='All fields required'; return }
+  if (newp.length<8) { err.textContent='Min 8 characters'; return }
+  if (newp!==conf)   { err.textContent='Passwords do not match'; return }
   try {
-    await api('POST', '/send-weekly-report', { to })
-    toast('success', '📊 Weekly report sent!')
-  } catch(e) {
-    toast('error', '❌ ' + e.message)
-  }
+    await api('POST','/auth/change-password',{currentPassword:curr,newPassword:newp})
+    closeModal('cp-modal')
+    document.getElementById('cp-current').value = ''
+    document.getElementById('cp-new').value     = ''
+    document.getElementById('cp-confirm').value = ''
+    toast('success','✅ Password changed')
+  } catch(e) { err.textContent = e.message }
 }
 
-// Close modals on backdrop click
-document.querySelectorAll('.modal-bg').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('show')}))
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg.show').forEach(m=>m.classList.remove('show'))})
-
-// Settings day chips toggle
-document.querySelectorAll('#cfg-days-picker .day-chip').forEach(c=>{
-  c.onclick=()=>{
-    c.classList.toggle('active')
-    const active=[...document.querySelectorAll('#cfg-days-picker .day-chip.active')].map(x=>x.dataset.day).join(',')
-    document.getElementById('cfg-days').value=active
-  }
-})
-
-// ── DOCTOR CALENDAR ──
-const DOCTOR_COLORS = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#ec4899','#84cc16']
-let calCurrentMonday = getMonday(new Date())
-
-function getMonday(d) {
-  const day = new Date(d); day.setHours(0,0,0,0)
-  const diff = day.getDay() === 0 ? -6 : 1 - day.getDay()
-  day.setDate(day.getDate() + diff)
-  return day
-}
-
-function calPrev()   { calCurrentMonday = new Date(calCurrentMonday); calCurrentMonday.setDate(calCurrentMonday.getDate()-7); loadCalendar() }
-function calNext()   { calCurrentMonday = new Date(calCurrentMonday); calCurrentMonday.setDate(calCurrentMonday.getDate()+7); loadCalendar() }
-function calToday()  { calCurrentMonday = getMonday(new Date()); loadCalendar() }
-
-async function loadCalendar() {
-  const container = document.getElementById('cal-container')
-  if (!container) return
-  container.innerHTML = '<div class="loading">Loading schedule…</div>'
-
-  try {
-    const [doctors, appts] = await Promise.all([
-      api('GET', '/doctors'),
-      api('GET', '/appointments')
-    ])
-
-    const activeDoctors = doctors.filter(d => d.active)
-    const days = []
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(calCurrentMonday); d.setDate(d.getDate() + i)
-      days.push(d)
-    }
-
-    const todayStr  = new Date().toISOString().split('T')[0]
-    const dayNames  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-    const dayShort  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-    const colCount  = 1 + 7  // doctor label + 7 days
-    const gridCols  = `130px repeat(7, 1fr)`
-
-    // Week label
-    const startLabel = days[0].toLocaleDateString('en-IN', { day:'numeric', month:'short' })
-    const endLabel   = days[6].toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
-    document.getElementById('cal-label').textContent = `${startLabel} – ${endLabel}`
-
-    // Build header row
-    let headCells = `<div class="cal-doctor-cell" style="background:var(--surface);">Doctors</div>`
-    days.forEach(d => {
-      const ds     = d.toISOString().split('T')[0]
-      const isToday = ds === todayStr
-      headCells += `<div class="cal-head-cell ${isToday?'today-col':#39;''}" style="padding:8px 4px">
-        <div style="font-size:11px">${dayNames[d.getDay()]}</div>
-        <div style="font-size:16px;font-weight:600;color:${isToday?'var(--accent)':'var(--text)'}">${d.getDate()}</div>
-        <div style="font-size:10px;color:var(--muted)">${d.toLocaleDateString('en-IN',{month:'short'})}</div>
-      </div>`
-    })
-
-    // Build doctor rows
-    let rows = ''
-    activeDoctors.forEach((doc, di) => {
-      const color      = DOCTOR_COLORS[di % DOCTOR_COLORS.length]
-      const availDays  = (doc.available_days || '').split(',').map(x => x.trim().toLowerCase())
-      const dayAbbrevs = ['sun','mon','tue','wed','thu','fri','sat']
-
-      let cells = `<div class="cal-doctor-cell">
-        <span class="cal-doctor-dot" style="background:${color}"></span>
-        <div>
-          <div>${esc(doc.name)}</div>
-          <div style="font-size:10.5px;color:var(--muted);font-weight:400">${esc(doc.specialization)}</div>
-        </div>
-      </div>`
-
-      days.forEach(d => {
-        const ds      = d.toISOString().split('T')[0]
-        const isToday = ds === todayStr
-        const isAvail = availDays.includes(dayAbbrevs[d.getDay()])
-        const dayAppts = appts.filter(a => a.date === ds && (a.doctor_id === doc.id || String(a.doctor_id) === String(doc.id)))
-          .sort((a,b) => a.time.localeCompare(b.time))
-
-        if (!isAvail) {
-          cells += `<div class="cal-cell off-day ${isToday?'today-col':''}"><div class="cal-off-label">Off</div></div>`
-        } else {
-          const apptHtml = dayAppts.map(a =>
-            `<div class="cal-appt ${a.is_urgent?'urgent':''}" title="${esc(a.name)} — ${esc(a.service)}">
-              <div class="cal-appt-time">${a.time}</div>
-              <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${esc(a.name)}</div>
-            </div>`
-          ).join('')
-          cells += `<div class="cal-cell ${isToday?'today-col':''}">${apptHtml || ''}</div>`
-        }
-      })
-
-      rows += `<div class="cal-row" style="grid-template-columns:${gridCols}">${cells}</div>`
-    })
-
-    if (!activeDoctors.length) {
-      rows = `<div style="padding:40px;text-align:center;color:var(--muted)">No active doctors. Add doctors first.</div>`
-    }
-
-    container.innerHTML = `
-      <div class="cal-wrap">
-        <div class="cal-grid">
-          <div class="cal-head" style="grid-template-columns:${gridCols}">${headCells}</div>
-          <div>${rows}</div>
-        </div>
-        <div class="cal-legend">
-          ${activeDoctors.map((d,i)=>`<span><span class="cal-legend-dot" style="background:${DOCTOR_COLORS[i%DOCTOR_COLORS.length]}"></span>${esc(d.name)}</span>`).join('')}
-          <span style="margin-left:auto"><span class="cal-legend-dot" style="background:#ef4444"></span>Urgent</span>
-          <span><span class="cal-legend-dot" style="background:var(--border);border:1px solid var(--muted)"></span>Day off</span>
-        </div>
-      </div>`
-
-  } catch(e) {
-    document.getElementById('cal-container').innerHTML = `<div class="empty">⚠️ ${esc(e.message)}</div>`
-  }
-}
-
-// Init — check auth then load data
-// ── PRESCRIPTION / NOTES ──
-function openRx(id, name, email, date, service, doctor, notes, prescription, followUp) {
+/* ── PRESCRIPTION ── */
+function openRx(id,name,email,date,service,doctor,notes,prescription,followUp) {
   document.getElementById('rx-appt-id').value    = id
-  document.getElementById('rx-appt-email').value  = email
   document.getElementById('rx-appt-info').innerHTML =
-    `<strong style="color:var(--text)">${esc(name)}</strong> &nbsp;·&nbsp; ${esc(date)} &nbsp;·&nbsp; ${esc(service)}` +
-    (doctor ? ` &nbsp;·&nbsp; <span style="color:var(--accent)">${esc(doctor)}</span>` : '') +
-    (email  ? `` : ` &nbsp;·&nbsp; <span style="color:var(--danger)">⚠️ No email — cannot send</span>`)
+    `<strong>${esc(name)}</strong> · ${esc(date)} · ${esc(service)}`+
+    (doctor?` · <span style="color:var(--accent)">${esc(doctor)}</span>`:'')+
+    (!email?` · <span style="color:var(--danger)">No email</span>`:'')
   document.getElementById('rx-notes').value        = notes        || ''
   document.getElementById('rx-prescription').value = prescription || ''
   document.getElementById('rx-followup').value     = followUp     || ''
   document.getElementById('rx-status').textContent = ''
-  const sendBtn = document.getElementById('rx-send-btn')
-  sendBtn.disabled = !email
-  sendBtn.title    = !email ? 'Patient has no email address' : ''
-  document.getElementById('rx-modal').classList.add('show')
-  document.getElementById('rx-notes').focus()
+  document.getElementById('rx-send-btn').disabled  = !email
+  showModal('rx-modal')
 }
 
 async function saveRx(sendEmail) {
-  const id           = document.getElementById('rx-appt-id').value
-  const notes        = document.getElementById('rx-notes').value.trim()
-  const prescription = document.getElementById('rx-prescription').value.trim()
-  const followUp     = document.getElementById('rx-followup').value
-  const statusEl     = document.getElementById('rx-status')
-
-  statusEl.textContent      = 'Saving…'
-  statusEl.style.color      = 'var(--muted)'
-
+  const id  = document.getElementById('rx-appt-id').value
+  const st  = document.getElementById('rx-status')
+  st.textContent = 'Saving…'; st.style.color = 'var(--muted)'
   try {
-    // Save notes
-    await api('PATCH', `/appointments/${id}/notes`, { notes, prescription, follow_up_date: followUp })
-
+    await api('PATCH',`/appointments/${id}/notes`,{
+      notes:           document.getElementById('rx-notes').value.trim(),
+      prescription:    document.getElementById('rx-prescription').value.trim(),
+      follow_up_date:  document.getElementById('rx-followup').value
+    })
     if (sendEmail) {
-      statusEl.textContent = 'Sending prescription email…'
-      await api('POST', `/appointments/${id}/send-prescription`)
-      statusEl.textContent = '✅ Prescription emailed to patient!'
-      statusEl.style.color = 'var(--accent2)'
-      setTimeout(() => { document.getElementById('rx-modal').classList.remove('show'); loadAppointments() }, 2000)
+      st.textContent = 'Sending email…'
+      await api('POST',`/appointments/${id}/send-prescription`)
+      st.textContent = '✅ Prescription emailed!'; st.style.color = 'var(--accent2)'
+      setTimeout(()=>{ closeModal('rx-modal'); loadAppointments() }, 1800)
     } else {
-      statusEl.textContent = '✅ Notes saved successfully'
-      statusEl.style.color = 'var(--accent2)'
-      // Update local data
-      const appt = allAppointments.find(a => a.id === parseInt(id))
-      if (appt) { appt.notes = notes; appt.prescription = prescription; appt.follow_up_date = followUp }
-      setTimeout(() => { document.getElementById('rx-modal').classList.remove('show') }, 1500)
+      st.textContent = '✅ Saved'; st.style.color = 'var(--accent2)'
+      setTimeout(()=>closeModal('rx-modal'), 1200)
     }
-  } catch(e) {
-    statusEl.textContent = '❌ ' + e.message
-    statusEl.style.color = 'var(--danger)'
-  }
+  } catch(e) { st.textContent = '❌ '+e.message; st.style.color = 'var(--danger)' }
 }
 
-// ── MOBILE SIDEBAR ──
-function toggleSidebar() {
-  document.querySelector('.sidebar').classList.toggle('open')
-  document.getElementById('sidebar-overlay').classList.toggle('show')
+/* ── CALENDAR ── */
+function getMonday(d) {
+  const day = new Date(d); day.setHours(0,0,0,0)
+  const diff = day.getDay()===0 ? -6 : 1-day.getDay()
+  day.setDate(day.getDate()+diff)
+  return day
 }
-function closeSidebar() {
-  document.querySelector('.sidebar').classList.remove('open')
-  document.getElementById('sidebar-overlay').classList.remove('show')
-}
-document.querySelectorAll('.nav-item').forEach(btn => {
-  btn.addEventListener('click', () => { if (window.innerWidth <= 768) closeSidebar() })
-})
+function calPrev()  { calCurrentMonday = new Date(calCurrentMonday); calCurrentMonday.setDate(calCurrentMonday.getDate()-7); loadCalendar() }
+function calNext()  { calCurrentMonday = new Date(calCurrentMonday); calCurrentMonday.setDate(calCurrentMonday.getDate()+7); loadCalendar() }
+function calToday() { calCurrentMonday = getMonday(new Date()); loadCalendar() }
 
-// ── REVENUE DASHBOARD ──
-const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN')
-let servicePrices = {}
-
-async function loadRevenue() {
-  const days = parseInt(document.getElementById('rev-period')?.value) || 30
+async function loadCalendar() {
+  const c = document.getElementById('cal-container')
+  if (!c) return
+  c.innerHTML = '<div class="loading">Loading…</div>'
   try {
-    const [appts, svcs] = await Promise.all([api('GET','/appointments'), api('GET','/services')])
-    const savedPrices   = JSON.parse(localStorage.getItem('service_prices') || '{}')
-    servicePrices       = savedPrices
-    const priceMap      = {}
-    svcs.forEach(s => { priceMap[s.name?.toLowerCase()] = savedPrices[s.id] || 0 })
-    const cutoff    = new Date(); cutoff.setDate(cutoff.getDate() - days)
-    const cutoffStr = cutoff.toISOString().split('T')[0]
-    const filtered  = appts.filter(a => a.date >= cutoffStr)
-    const withRev   = filtered.map(a => ({ ...a, price: priceMap[a.service?.toLowerCase()] || 0 }))
-    const totalRev  = withRev.reduce((s,a) => s+a.price, 0)
-    const avgRev    = withRev.length ? Math.round(totalRev/withRev.length) : 0
-    const byService = {}
-    withRev.forEach(a => { byService[a.service] = (byService[a.service]||0)+a.price })
-    const topSvc = Object.entries(byService).sort((a,b)=>b[1]-a[1])[0]
-    document.getElementById('rev-total').textContent = fmt(totalRev)
-    document.getElementById('rev-count').textContent = filtered.length
-    document.getElementById('rev-avg').textContent   = fmt(avgRev)
-    document.getElementById('rev-top').textContent   = topSvc ? topSvc[0] : '—'
-    renderBarChart(withRev, days)
-    renderServiceBreakdown(byService, totalRev)
-    renderRevenueTable(withRev.slice(0,20))
-    renderPriceTable(svcs, savedPrices)
-  } catch(e) { console.error('Revenue error:', e.message) }
-}
+    const [docs, appts] = await Promise.all([api('GET','/doctors'), api('GET','/appointments')])
+    const active  = docs.filter(d=>d.active)
+    const days    = Array.from({length:7},(_,i)=>{ const d=new Date(calCurrentMonday); d.setDate(d.getDate()+i); return d })
+    const dayAbbr = ['sun','mon','tue','wed','thu','fri','sat']
+    const dayName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    const cols    = '140px ' + 'repeat(7, 1fr)'
 
-function renderBarChart(appts, days) {
-  const canvas = document.getElementById('rev-bar-chart')
-  if (!canvas) return
-  const ctx   = canvas.getContext('2d')
-  canvas.width  = canvas.parentElement?.offsetWidth - 40 || 400
-  canvas.height = 200
-  const byDate = {}
-  const today  = new Date()
-  for (let i = days-1; i >= 0; i--) {
-    const d = new Date(today); d.setDate(d.getDate()-i)
-    byDate[d.toISOString().split('T')[0]] = 0
-  }
-  appts.forEach(a => { if (byDate.hasOwnProperty(a.date)) byDate[a.date] += a.price })
-  const dates  = Object.keys(byDate)
-  const values = Object.values(byDate)
-  const maxVal = Math.max(...values, 1)
-  const W = canvas.width, H = canvas.height
-  const pad = { top:16, right:8, bottom:28, left:48 }
-  const cW  = W-pad.left-pad.right, cH = H-pad.top-pad.bottom
-  const bW  = Math.max(2, (cW/dates.length)-2)
-  ctx.clearRect(0,0,W,H)
-  for (let i=0;i<=4;i++) {
-    const y   = pad.top+(cH/4)*i
-    ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1
-    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke()
-    const v   = Math.round(maxVal-(maxVal/4)*i)
-    ctx.fillStyle='#64748b'; ctx.font='9px DM Sans'; ctx.textAlign='right'
-    ctx.fillText(v>0?'₹'+v:'0', pad.left-4, y+4)
-  }
-  dates.forEach((date,i) => {
-    const val = values[i], barH = (val/maxVal)*cH
-    const x   = pad.left + i*(cW/dates.length)
-    ctx.fillStyle = val>0 ? '#3b82f6' : 'rgba(59,130,246,.12)'
-    ctx.beginPath()
-    if (ctx.roundRect) ctx.roundRect(x+1, pad.top+cH-barH, bW, barH, [2,2,0,0])
-    else               ctx.rect(x+1, pad.top+cH-barH, bW, barH)
-    ctx.fill()
-    if (days<=14 || i%Math.ceil(days/8)===0) {
-      const d = new Date(date)
-      ctx.fillStyle='#64748b'; ctx.font='9px DM Sans'; ctx.textAlign='center'
-      ctx.fillText(`${d.getDate()}/${d.getMonth()+1}`, x+bW/2, H-6)
-    }
-  })
-}
+    const startL = days[0].toLocaleDateString('en-IN',{day:'numeric',month:'short'})
+    const endL   = days[6].toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})
+    document.getElementById('cal-label').textContent = startL + ' – ' + endL
 
-function renderServiceBreakdown(byService, total) {
-  const el = document.getElementById('rev-service-list')
-  if (!el) return
-  const entries = Object.entries(byService).sort((a,b)=>b[1]-a[1])
-  if (!entries.length || !total) {
-    el.innerHTML='<div class="empty" style="padding:28px;font-size:13px">No revenue yet.<br><small>Set service prices below.</small></div>'
-    return
-  }
-  el.innerHTML = entries.map(([svc,rev]) => {
-    const pct = Math.round((rev/total)*100)
-    return `<div style="padding:11px 18px;border-bottom:1px solid var(--border)">
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">
-        <span>${esc(svc)}</span><span style="font-weight:600;color:var(--accent2)">${fmt(rev)}</span>
-      </div>
-      <div style="height:3px;background:var(--border);border-radius:2px">
-        <div style="height:3px;width:${pct}%;background:var(--accent2);border-radius:2px"></div>
+    let head = `<div style="display:grid;grid-template-columns:${cols};border-bottom:1px solid var(--border)">`
+    head += `<div class="cal-hd-cell" style="background:var(--surface)">Doctors</div>`
+    days.forEach(d => {
+      const ds = d.toISOString().split('T')[0]
+      const tt = ds===todayStr
+      head += `<div class="cal-hd-cell${tt?' cal-hd-today':''}"><div style="font-size:10.5px">${dayName[d.getDay()]}</div><div style="font-size:17px;font-weight:600">${d.getDate()}</div></div>`
+    })
+    head += '</div>'
+
+    let rows = ''
+    active.forEach((doc, di) => {
+      const color = COLORS[di % COLORS.length]
+      const avail = (doc.available_days||'').split(',').map(x=>x.trim().toLowerCase())
+      let row = `<div style="display:grid;grid-template-columns:${cols};border-bottom:1px solid var(--border)">`
+      row += `<div class="cal-doc-cell"><span class="cal-dot" style="background:${color}"></span><div><div style="font-size:12px;font-weight:600">${esc(doc.name)}</div><div style="font-size:10.5px;color:var(--muted)">${esc(doc.specialization)}</div></div></div>`
+      days.forEach(d => {
+        const ds     = d.toISOString().split('T')[0]
+        const isAvail = avail.includes(dayAbbr[d.getDay()])
+        const dayAppts = appts.filter(a=>a.date===ds&&(a.doctor_id===doc.id||String(a.doctor_id)===String(doc.id))).sort((a,b)=>a.time.localeCompare(b.time))
+        if (!isAvail) {
+          row += `<div class="cal-cell off${ds===todayStr?' today':''}"><div style="font-size:10px;color:var(--muted);text-align:center;padding-top:20px;opacity:.4">Off</div></div>`
+        } else {
+          const ahtml = dayAppts.map(a=>`<div class="cal-appt${a.is_urgent?' urgent':''}" title="${esc(a.name)} — ${esc(a.service)}"><div style="font-size:9px;opacity:.8">${a.time}</div><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(a.name)}</div></div>`).join('')
+          row += `<div class="cal-cell${ds===todayStr?' today':''}">${ahtml}</div>`
+        }
+      })
+      row += '</div>'
+      rows += row
+    })
+
+    if (!active.length) rows = '<div class="empty">No active doctors.</div>'
+
+    c.innerHTML = `<div class="cal-wrap"><div>${head}${rows}</div>
+      <div class="cal-legend">
+        ${active.map((d,i)=>`<span><span class="cal-legend-dot" style="background:${COLORS[i%COLORS.length]}"></span>${esc(d.name)}</span>`).join('')}
+        <span style="margin-left:auto"><span class="cal-legend-dot" style="background:var(--danger)"></span>Urgent</span>
       </div>
     </div>`
-  }).join('')
+  } catch(e) { c.innerHTML = '<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
-function renderRevenueTable(appts) {
-  const el = document.getElementById('rev-table')
-  if (!el) return
-  if (!appts.length) { el.innerHTML='<div class="empty">No appointments in this period.</div>'; return }
-  const rows = appts.map(a=>`<tr>
-    <td class="td-name">${esc(a.name||'—')}</td>
-    <td class="td-mono">${esc(a.date||'—')}</td>
-    <td>${esc(a.service||'—')}</td>
-    <td style="color:var(--accent);font-size:12.5px">${esc(a.doctor_name||'Any')}</td>
-    <td style="font-weight:600;color:${a.price>0?'var(--accent2)':'var(--muted)'}">
-      ${a.price>0?fmt(a.price):'<span style="opacity:.35">—</span>'}
-    </td>
-  </tr>`).join('')
-  el.innerHTML=`<table><thead><tr><th>Patient</th><th>Date</th><th>Service</th><th>Doctor</th><th>Revenue</th></tr></thead><tbody>${rows}</tbody></table>`
-}
-
-function renderPriceTable(svcs, saved) {
-  const el = document.getElementById('price-table')
-  if (!el) return
-  const active = svcs.filter(s=>s.active)
-  if (!active.length) { el.innerHTML='<div class="empty">No active services.</div>'; return }
-  const rows = active.map(s=>`<tr>
-    <td class="td-name">${esc(s.name)}</td>
-    <td style="color:var(--muted);font-size:12px">${s.duration_minutes} min</td>
-    <td style="width:160px">
-      <div style="display:flex;align-items:center;gap:6px">
-        <span style="color:var(--muted)">₹</span>
-        <input type="number" class="form-input" data-svc-id="${s.id}"
-          value="${saved[s.id]||''}" placeholder="0" min="0" step="50"
-          style="width:110px;padding:6px 10px;font-size:13px">
-      </div>
-    </td>
-  </tr>`).join('')
-  el.innerHTML=`<table><thead><tr><th>Service</th><th>Duration</th><th>Price (₹)</th></tr></thead><tbody>${rows}</tbody></table>
-    <div style="padding:12px 22px;font-size:12px;color:var(--muted)">Prices are saved locally in your browser for revenue calculations.</div>`
-}
-
-function savePrices() {
-  const inputs = document.querySelectorAll('input[data-svc-id]')
-  const prices = {}
-  inputs.forEach(inp => { if(inp.dataset.svcId) prices[inp.dataset.svcId] = parseInt(inp.value)||0 })
-  localStorage.setItem('service_prices', JSON.stringify(prices))
-  servicePrices = prices
-  toast('success', '💰 Prices saved!')
-  loadRevenue()
-}
-
-checkAuth().then(() => loadAppointments())
-
-// ── AUDIT LOG ──
+/* ── AUDIT LOG ── */
 async function loadAuditLog() {
   try {
-    const logs = await api('GET', '/audit-log?limit=50')
-    if (!logs.length) {
-      document.getElementById('audit-table').innerHTML = '<div class="empty">No audit log entries yet.</div>'
-      return
-    }
-    const ACTION_COLORS = {
-      DELETE: 'var(--danger)', CREATE: 'var(--accent2)',
-      UPDATE: 'var(--accent)', LOGIN:  '#f59e0b', default: 'var(--muted)'
-    }
+    const logs = await api('GET','/audit-log?limit=50')
+    if (!logs.length) { document.getElementById('audit-table').innerHTML='<div class="empty">No audit entries yet.</div>'; return }
+    const C = { DELETE:'var(--danger)', CREATE:'var(--accent2)', UPDATE:'var(--accent)', LOGIN:'var(--warn)' }
     const rows = logs.map(l => {
-      const color  = ACTION_COLORS[l.action?.split('_')[0]] || ACTION_COLORS.default
-      const detail = l.details ? (() => { try { const d = JSON.parse(l.details); return Object.entries(d).map(([k,v])=>`${k}: ${v}`).join(', ') } catch { return l.details } })() : '—'
-      const time   = new Date(l.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+      const color = C[l.action?.split('_')[0]] || 'var(--muted)'
+      const det   = l.details ? (() => { try { return Object.entries(JSON.parse(l.details)).map(([k,v])=>k+': '+v).join(', ') } catch { return l.details }})() : '—'
+      const time  = new Date(l.created_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})
       return `<tr>
-        <td class="td-mono" style="font-size:11.5px;color:var(--muted)">${time}</td>
+        <td class="td-mono" style="font-size:11px;color:var(--muted)">${time}</td>
         <td><span class="badge" style="background:rgba(59,130,246,.1);color:${color}">${esc(l.action||'—')}</span></td>
         <td style="font-size:12.5px">${esc(l.entity||'—')}</td>
         <td class="td-mono">${esc(String(l.entity_id||'—'))}</td>
-        <td style="font-size:12px;color:var(--muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(detail)}</td>
+        <td style="font-size:11.5px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(det)}</td>
         <td style="font-size:12px;color:var(--accent)">${esc(l.username||'—')}</td>
       </tr>`
     }).join('')
-    document.getElementById('audit-table').innerHTML = `
-      <table><thead><tr><th>Time</th><th>Action</th><th>Entity</th><th>ID</th><th>Details</th><th>User</th></tr></thead>
-      <tbody>${rows}</tbody></table>`
-  } catch(e) {
-    document.getElementById('audit-table').innerHTML = `<div class="empty">⚠️ ${esc(e.message)}</div>`
-  }
+    document.getElementById('audit-table').innerHTML=`<table><thead><tr><th>Time</th><th>Action</th><th>Entity</th><th>ID</th><th>Details</th><th>User</th></tr></thead><tbody>${rows}</tbody></table>`
+  } catch(e) { document.getElementById('audit-table').innerHTML='<div class="empty">⚠️ '+esc(e.message)+'</div>' }
 }
 
-// ── QR CODE ──
+/* ── QR CODE ── */
 function initQR() {
   const url = window.location.origin + '/'
   document.getElementById('qr-url').value = url
@@ -1606,88 +1383,136 @@ function initQR() {
 }
 
 function generateQR() {
-  const url    = document.getElementById('qr-url').value.trim()
-  const canvas = document.getElementById('qr-canvas')
-  if (!canvas || !url) return
-
-  // Use QR code library from CDN
+  const url = document.getElementById('qr-url')?.value?.trim()
+  if (!url) return
   if (typeof QRCode === 'undefined') {
-    const script   = document.createElement('script')
-    script.src     = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
-    script.onload  = () => renderQR(url, canvas)
-    document.head.appendChild(script)
-  } else {
-    renderQR(url, canvas)
-  }
+    const s = document.createElement('script')
+    s.src   = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
+    s.onload = () => renderQR(url)
+    document.head.appendChild(s)
+  } else renderQR(url)
 }
 
-function renderQR(url, canvas) {
-  canvas.getContext('2d').clearRect(0, 0, 200, 200)
-  canvas._qr = null
-  try {
-    new QRCode(canvas, {
-      text:          url,
-      width:         200,
-      height:        200,
-      colorDark:     '#000000',
-      colorLight:    '#ffffff',
-      correctLevel:  QRCode.CorrectLevel.H
-    })
-  } catch(e) {
-    // QRCode writes to a div, not canvas — create a temp div
-    const tmp = document.createElement('div')
-    canvas.parentNode.insertBefore(tmp, canvas)
-    canvas.style.display = 'none'
-    tmp.id = 'qr-div'
-    new QRCode(tmp, {
-      text:          url,
-      width:         200,
-      height:        200,
-      colorDark:     '#000000',
-      colorLight:    '#ffffff',
-      correctLevel:  QRCode.CorrectLevel.H
-    })
-  }
+function renderQR(url) {
+  const div = document.getElementById('qr-div')
+  div.innerHTML = ''
+  new QRCode(div, { text: url, width: 200, height: 200, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.H })
 }
 
-function downloadQR(format) {
-  const url    = document.getElementById('qr-url').value.trim()
-  const div    = document.getElementById('qr-div')
-  const img    = div ? div.querySelector('img') : null
-
-  if (format === 'png') {
-    if (img) {
-      const a   = document.createElement('a')
-      a.href    = img.src
-      a.download = 'clinic-qr.png'
-      a.click()
-    } else {
-      toast('info', 'QR code is loading — try again in a second')
-    }
-    return
-  }
-
-  // SVG version — draw as plain SVG for printing
-  const size   = 200
-  const modules = Math.ceil(Math.sqrt(url.length)) + 10
-  const cell    = size / modules
-  let rects     = ''
-  // Simple placeholder SVG — real one requires QR lib
-  const svgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <rect width="${size}" height="${size}" fill="white"/>
-    <text x="${size/2}" y="${size/2}" text-anchor="middle" font-size="12" fill="black">Download PNG for printing</text>
-  </svg>`
-  const blob    = new Blob([svgData], { type: 'image/svg+xml' })
-  const a       = document.createElement('a')
-  a.href        = URL.createObjectURL(blob)
-  a.download    = 'clinic-qr.svg'
-  a.click()
+function downloadQR() {
+  const div = document.getElementById('qr-div')
+  const img = div?.querySelector('img')
+  if (img) {
+    const a = document.createElement('a'); a.href=img.src; a.download='clinic-qr.png'; a.click()
+  } else toast('info','QR loading — try again in a second')
 }
 
 function copyUrl() {
-  const url = document.getElementById('qr-url').value
-  navigator.clipboard.writeText(url).then(() => toast('success', 'URL copied!'))
+  navigator.clipboard.writeText(document.getElementById('qr-url').value)
+    .then(()=>toast('success','URL copied!'))
 }
+
+/* ── REVENUE ── */
+const rupee = n => '₹' + Number(n||0).toLocaleString('en-IN')
+
+async function loadRevenue() {
+  const days = parseInt(document.getElementById('rev-period')?.value)||30
+  try {
+    const [appts, svcs] = await Promise.all([api('GET','/appointments'), api('GET','/services')])
+    const saved  = JSON.parse(localStorage.getItem('service_prices')||'{}')
+    const priceMap = {}
+    svcs.forEach(s=>{ priceMap[s.name?.toLowerCase()] = saved[s.id]||0 })
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-days)
+    const filt   = appts.filter(a=>a.date>=cutoff.toISOString().split('T')[0])
+    const withR  = filt.map(a=>({...a,price:priceMap[a.service?.toLowerCase()]||0}))
+    const total  = withR.reduce((s,a)=>s+a.price,0)
+    const avg    = withR.length ? Math.round(total/withR.length) : 0
+    const bySvc  = {}
+    withR.forEach(a=>{ bySvc[a.service]=(bySvc[a.service]||0)+a.price })
+    const top    = Object.entries(bySvc).sort((a,b)=>b[1]-a[1])[0]
+    document.getElementById('rev-total').textContent = rupee(total)
+    document.getElementById('rev-count').textContent = filt.length
+    document.getElementById('rev-avg').textContent   = rupee(avg)
+    document.getElementById('rev-top').textContent   = top ? top[0] : '—'
+    renderRevBarChart(withR, days)
+    const el = document.getElementById('rev-service-list')
+    const entries = Object.entries(bySvc).sort((a,b)=>b[1]-a[1])
+    el.innerHTML = entries.length && total ? entries.map(([s,r])=>{
+      const pct = Math.round((r/total)*100)
+      return `<div style="padding:10px 16px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span>${esc(s)}</span><strong style="color:var(--accent2)">${rupee(r)}</strong></div>
+        <div style="height:3px;background:var(--border);border-radius:2px"><div style="height:3px;width:${pct}%;background:var(--accent2);border-radius:2px"></div></div>
+      </div>`
+    }).join('') : '<div class="empty" style="padding:24px;font-size:13px">Set prices below to see revenue</div>'
+    const rrows = withR.slice(0,20).map(a=>`<tr>
+      <td class="td-name">${esc(a.name||'—')}</td>
+      <td class="td-mono">${esc(a.date||'—')}</td>
+      <td>${esc(a.service||'—')}</td>
+      <td style="font-weight:600;color:${a.price>0?'var(--accent2)':'var(--muted)'}">${a.price>0?rupee(a.price):'—'}</td>
+    </tr>`).join('')
+    document.getElementById('rev-table').innerHTML = rrows.length
+      ? `<table><thead><tr><th>Patient</th><th>Date</th><th>Service</th><th>Revenue</th></tr></thead><tbody>${rrows}</tbody></table>`
+      : '<div class="empty">No appointments in this period.</div>'
+    const prows = svcs.filter(s=>s.active).map(s=>`<tr>
+      <td class="td-name">${esc(s.name)}</td>
+      <td style="color:var(--muted);font-size:12px">${s.duration_minutes} min</td>
+      <td style="width:150px"><div style="display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">₹</span><input type="number" class="form-input" data-svc-id="${s.id}" value="${saved[s.id]||''}" placeholder="0" min="0" step="50" style="width:100px;padding:5px 9px;font-size:12.5px"></div></td>
+    </tr>`).join('')
+    document.getElementById('price-table').innerHTML = prows
+      ? `<table><thead><tr><th>Service</th><th>Duration</th><th>Price (₹)</th></tr></thead><tbody>${prows}</tbody></table><div style="padding:10px 18px;font-size:11.5px;color:var(--muted)">Saved locally in your browser.</div>`
+      : '<div class="empty">No active services.</div>'
+  } catch(e) { console.error('Revenue error:', e.message) }
+}
+
+function renderRevBarChart(appts, days) {
+  const canvas = document.getElementById('rev-bar-chart')
+  if (!canvas) return
+  const ctx  = canvas.getContext('2d')
+  canvas.width  = canvas.parentElement?.offsetWidth - 32 || 360
+  canvas.height = 180
+  const byDate = {}
+  const today  = new Date()
+  for (let i=days-1;i>=0;i--) { const d=new Date(today); d.setDate(d.getDate()-i); byDate[d.toISOString().split('T')[0]]=0 }
+  appts.forEach(a=>{ if(byDate.hasOwnProperty(a.date)) byDate[a.date]+=a.price })
+  const dates=Object.keys(byDate), vals=Object.values(byDate), maxV=Math.max(...vals,1)
+  const W=canvas.width,H=canvas.height,p={t:14,r:8,b:24,l:44}
+  const cW=W-p.l-p.r,cH=H-p.t-p.b,bW=Math.max(2,(cW/dates.length)-2)
+  ctx.clearRect(0,0,W,H)
+  for(let i=0;i<=4;i++){
+    const y=p.t+(cH/4)*i
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(W-p.r,y);ctx.stroke()
+    const v=Math.round(maxV-(maxV/4)*i)
+    ctx.fillStyle='#64748b';ctx.font='9px DM Sans';ctx.textAlign='right'
+    ctx.fillText(v>0?'₹'+v:'0',p.l-3,y+4)
+  }
+  dates.forEach((dt,i)=>{
+    const val=vals[i],bH=(val/maxV)*cH,x=p.l+i*(cW/dates.length)
+    ctx.fillStyle=val>0?'#3b82f6':'rgba(59,130,246,.12)'
+    ctx.beginPath()
+    if(ctx.roundRect) ctx.roundRect(x+1,p.t+cH-bH,bW,bH,[2,2,0,0])
+    else ctx.rect(x+1,p.t+cH-bH,bW,bH)
+    ctx.fill()
+    if(days<=14||i%Math.ceil(days/8)===0){const d=new Date(dt);ctx.fillStyle='#64748b';ctx.font='9px DM Sans';ctx.textAlign='center';ctx.fillText(`${d.getDate()}/${d.getMonth()+1}`,x+bW/2,H-6)}
+  })
+}
+
+function savePrices() {
+  const prices={}
+  document.querySelectorAll('input[data-svc-id]').forEach(i=>{if(i.dataset.svcId)prices[i.dataset.svcId]=parseInt(i.value)||0})
+  localStorage.setItem('service_prices',JSON.stringify(prices))
+  toast('success','💰 Prices saved!')
+  loadRevenue()
+}
+
+/* ── DAY CHIPS (settings page) ── */
+document.querySelectorAll('#cfg-days-picker .dp-chip').forEach(c=>{
+  c.onclick = () => c.classList.toggle('active')
+})
+
+/* ── INIT ── */
+checkAuth().then(ok => {
+  if (ok) loadAppointments()
+})
 </script>
 </body>
 </html>
