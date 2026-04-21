@@ -123,7 +123,13 @@ async function login() {
     window.location.href = '/admin'
 
   } catch(e) {
-    errorBox.textContent = 'Could not connect to server. Please try again.'
+    if (e.name === 'TypeError' || e.message.includes('fetch')) {
+      errorBox.textContent = 'Server is starting up (~30s). Please wait and try again.'
+      btn.textContent = 'Retrying in 8s…'
+      setTimeout(() => { btn.disabled = false; btn.innerHTML = 'Sign In' }, 8000)
+    } else {
+      errorBox.textContent = 'Could not connect to server. Please try again.'
+    }
     errorBox.classList.add('show')
     btn.disabled  = false
     btn.innerHTML = 'Sign In'

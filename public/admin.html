@@ -670,43 +670,67 @@ function logout() {
   window.location.href = '/login'
 }
 
+// Auto-retry counter
+let _authRetries = 0
+
 async function checkAuth() {
   const token = getToken()
   if (!token) { window.location.href = '/login'; return false }
+
   try {
     const r = await fetch('/auth/verify', {
       headers: { 'Authorization': 'Bearer ' + token }
     })
+
+    // Clear any wake-up banner
+    const banner = document.getElementById('wake-banner')
+    if (banner) banner.remove()
+    _authRetries = 0
+
     if (r.status === 401) {
       localStorage.removeItem('clinic_token')
       window.location.href = '/login'
       return false
     }
-    if (!r.ok) {
-      // Server error - show warning but don't redirect
-      showServerWarning()
-      return true
-    }
+
     const data = await r.json()
     const el = document.getElementById('admin-username')
     if (el) el.textContent = data.username || 'admin'
     return true
+
   } catch(e) {
-    // Network error - server may be sleeping
-    showServerWarning()
-    return true  // Don't redirect - let them use the UI
+    // Server sleeping — show wake-up banner and auto-retry
+    _authRetries++
+    showWakeBanner(_authRetries)
+
+    if (_authRetries < 10) {
+      // Retry every 5 seconds — server usually wakes in 20-30s
+      setTimeout(() => checkAuth().then(ok => { if (ok) loadAppointments() }), 5000)
+    }
+    return false
   }
 }
 
-function showServerWarning() {
-  const w = document.createElement('div')
-  w.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1c1917;padding:9px;text-align:center;font-size:13px;font-weight:500;z-index:9999'
-  w.innerHTML = '⏳ Server starting up (~30s on free plan). <button onclick="location.reload()" style="margin-left:10px;padding:3px 10px;background:#1c1917;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:600">Refresh</button>'
-  document.body.prepend(w)
+function showWakeBanner(attempt) {
+  let banner = document.getElementById('wake-banner')
+  if (!banner) {
+    banner = document.createElement('div')
+    banner.id = 'wake-banner'
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#f59e0b;color:#1c1917;padding:10px 16px;text-align:center;font-size:13px;font-weight:500;z-index:9999;display:flex;align-items:center;justify-content:center;gap:12px'
+    document.body.prepend(banner)
+  }
+  const dots = '.'.repeat((attempt % 3) + 1)
+  banner.innerHTML = \`
+    <span>⏳ Server is waking up\${dots} (free plan sleeps after 15 min inactivity)</span>
+    <div style="background:rgba(0,0,0,.15);border-radius:99px;width:120px;height:4px;overflow:hidden">
+      <div style="height:4px;background:#1c1917;border-radius:99px;width:\${Math.min(attempt*12,95)}%;transition:width .5s"></div>
+    </div>
+    <button onclick="location.reload()" style="padding:4px 12px;background:#1c1917;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:12px">Refresh</button>
+  \`
 }
 
 /* ── API ── */
-async function api(method, path, body) {
+async function api(method, path, body, _retry) {
   const opts = {
     method,
     headers: {
@@ -720,8 +744,18 @@ async function api(method, path, body) {
     r    = await fetch(API_URL + path, opts)
     data = await r.json()
   } catch(e) {
-    throw new Error('Cannot reach server. Wait ~30s and refresh.')
+    // Server sleeping - auto retry once after 6 seconds
+    if (!_retry) {
+      showWakeBanner(1)
+      await new Promise(res => setTimeout(res, 6000))
+      return api(method, path, body, true)
+    }
+    throw new Error('Server not responding. Please refresh the page.')
   }
+  // Clear wake banner on success
+  const banner = document.getElementById('wake-banner')
+  if (banner) banner.remove()
+
   if (r.status === 401) {
     localStorage.removeItem('clinic_token')
     window.location.href = '/login'

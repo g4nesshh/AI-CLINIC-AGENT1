@@ -244,4 +244,20 @@ setInterval(runCleanupJob,   24 * 60 * 60 * 1000)
 setInterval(runWeeklyReport, 60 * 60 * 1000)
 setInterval(runFollowUpJob,  6 * 60 * 60 * 1000)  // check every 6 hours
 
-console.log('[Worker] Ready — reminders 15min, follow-ups every 6hrs, weekly report Mondays 8am')
+/* ── Keep-alive — prevents Render free plan sleeping ── */
+const CLINIC_URL = process.env.CLINIC_URL
+if (CLINIC_URL) {
+  setInterval(async () => {
+    try {
+      await fetch(CLINIC_URL + '/public/clinic-info')
+      console.log('[Keep-alive] ✅ ' + new Date().toLocaleTimeString())
+    } catch(e) {
+      console.log('[Keep-alive] ⚠️', e.message)
+    }
+  }, 10 * 60 * 1000)
+  console.log('[Keep-alive] Pinging every 10min to prevent sleep')
+} else {
+  console.log('[Keep-alive] ⚠️  Add CLINIC_URL to Render env vars to prevent sleeping')
+}
+
+console.log('[Worker] Ready')
