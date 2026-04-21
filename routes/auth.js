@@ -6,49 +6,8 @@ const bcrypt   = require('bcryptjs')
 const db       = require('../database/db')
 const { generateToken, verifyToken } = require('../middleware/auth')
 
-/* ================================================
-   SETUP — add admin_users table
-   Called once on server start
-================================================ */
-
-async function setupAdminTable() {
-  return new Promise((resolve) => {
-    db.run(`
-      CREATE TABLE IF NOT EXISTS admin_users (
-        id         SERIAL PRIMARY KEY,
-        username   TEXT NOT NULL UNIQUE,
-        password   TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `, async (err) => {
-      if (err) { console.error('[Auth] Table error:', err.message); return resolve() }
-
-      // Create default admin if none exists
-      db.get('SELECT COUNT(*) as count FROM admin_users', [], async (err2, row) => {
-        if (err2 || (row && parseInt(row.count) > 0)) return resolve()
-
-        // Default password: admin123 — user MUST change this
-        const defaultPass = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123'
-        const hashed      = await bcrypt.hash(defaultPass, 10)
-
-        db.run(
-          'INSERT INTO admin_users (username, password) VALUES (?, ?)',
-          ['admin', hashed],
-          (err3) => {
-            if (!err3) {
-              console.log('[Auth] ✅ Default admin created')
-              console.log('[Auth] ⚠️  Username: admin | Password: ' + defaultPass)
-              console.log('[Auth] ⚠️  CHANGE THIS PASSWORD immediately from admin panel!')
-            }
-            resolve()
-          }
-        )
-      })
-    })
-  })
-}
-
-setupAdminTable()
+// admin_users table is created by database/db.js setupSchema()
+// Default admin user (username: admin) is also seeded there
 
 /* ================================================
    POST /auth/login

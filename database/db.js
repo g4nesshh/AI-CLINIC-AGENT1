@@ -12,7 +12,7 @@
  *   db.serialize(fn)
  *
  * Set environment variable:
- *   DATABASE_URL =
+ *   DATABASE_URL = postgres://user:pass@host:5432/dbname
  *
  * On Render: Dashboard → your service → Environment → Add
  * On Render PostgreSQL: Dashboard → New → PostgreSQL (free)
@@ -186,20 +186,41 @@ async function setupSchema() {
     // clinic_config
     await client.query(`
       CREATE TABLE IF NOT EXISTS clinic_config (
-        id             SERIAL PRIMARY KEY,
-        clinic_name    TEXT DEFAULT 'ClinicAI Dental',
-        open_hour      INTEGER DEFAULT 10,
-        close_hour     INTEGER DEFAULT 17,
-        slot_duration  INTEGER DEFAULT 30,
-        open_days      TEXT DEFAULT 'Mon,Tue,Wed,Thu,Fri,Sat',
-        max_per_day    INTEGER DEFAULT 20,
-        clinic_email   TEXT DEFAULT '',
-        smtp_host      TEXT DEFAULT 'smtp.gmail.com',
-        smtp_port      INTEGER DEFAULT 587,
-        smtp_user      TEXT DEFAULT '',
-        smtp_pass      TEXT DEFAULT ''
+        id              SERIAL PRIMARY KEY,
+        clinic_name     TEXT DEFAULT 'ClinicAI Dental',
+        clinic_tagline  TEXT DEFAULT 'Quality care, easy online booking',
+        clinic_type     TEXT DEFAULT 'dental',
+        clinic_icon     TEXT DEFAULT '🏥',
+        clinic_phone    TEXT DEFAULT '',
+        clinic_address  TEXT DEFAULT '',
+        clinic_website  TEXT DEFAULT '',
+        whatsapp        TEXT DEFAULT '',
+        google_maps     TEXT DEFAULT '',
+        open_hour       INTEGER DEFAULT 10,
+        close_hour      INTEGER DEFAULT 17,
+        slot_duration   INTEGER DEFAULT 30,
+        open_days       TEXT DEFAULT 'Mon,Tue,Wed,Thu,Fri,Sat',
+        max_per_day     INTEGER DEFAULT 20,
+        clinic_email    TEXT DEFAULT '',
+        smtp_host       TEXT DEFAULT 'smtp.gmail.com',
+        smtp_port       INTEGER DEFAULT 587,
+        smtp_user       TEXT DEFAULT '',
+        smtp_pass       TEXT DEFAULT ''
       )
     `)
+
+    // Add new columns to existing DB (safe to run multiple times)
+    for (const sql of [
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_tagline TEXT DEFAULT 'Quality care, easy online booking'`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_type TEXT DEFAULT 'dental'`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_icon TEXT DEFAULT '🏥'`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_phone TEXT DEFAULT ''`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_address TEXT DEFAULT ''`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS clinic_website TEXT DEFAULT ''`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS whatsapp TEXT DEFAULT ''`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS google_maps TEXT DEFAULT ''`,
+      `ALTER TABLE clinic_config ADD COLUMN IF NOT EXISTS max_per_day INTEGER DEFAULT 20`
+    ]) { await client.query(sql).catch(()=>{}) }
 
     // Insert default config if not exists
     await client.query(`
@@ -286,6 +307,44 @@ async function setupSchema() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `)
+
+    // admin_users
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS admin_users (
+        id         SERIAL PRIMARY KEY,
+        username   TEXT NOT NULL UNIQUE,
+        password   TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+
+    // audit_log
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS audit_log (
+        id         SERIAL PRIMARY KEY,
+        action     TEXT NOT NULL,
+        entity     TEXT,
+        entity_id  TEXT,
+        details    TEXT,
+        username   TEXT DEFAULT 'admin',
+        ip         TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+
+    // Seed default admin user if none exists
+    const adminCount = await client.query('SELECT COUNT(*) as count FROM admin_users')
+    if (parseInt(adminCount.rows[0].count) === 0) {
+      const bcrypt      = require('bcryptjs')
+      const defaultPass = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123'
+      const hashed      = await bcrypt.hash(defaultPass, 10)
+      await client.query(
+        'INSERT INTO admin_users (username, password) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+        ['admin', hashed]
+      )
+      console.log('[DB] ✅ Default admin created — username: admin | password: ' + defaultPass)
+      console.log('[DB] ⚠️  Please change this password immediately from the admin panel!')
+    }
 
     // Seed sample doctors if empty
     const docCount = await client.query('SELECT COUNT(*) as count FROM doctors')
